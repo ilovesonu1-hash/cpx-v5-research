@@ -85,14 +85,14 @@ KR-009 supplies Korean station context: in a whole-task palpitations OSCE with 1
 | P-T22 | Knows directly | — |
 | P-T23 | Knows directly | Absence of known family history |
 | P-T24 | Knows directly | — |
-| P-T25 | **Does not know** | Never counted; may say `엄청 빨랐어요` but must not confidently assert regularity or irregularity |
+| P-T25 | **Knows directly / does not know / REVIEW_PENDING** | Knows it felt very fast; exact numerical rate is unknown because it was never counted; perception of regularity versus irregularity is not adjudicated |
 | P-T26 | **Does not know** | Cannot interpret an ECG |
 | P-T27 | **Does not know** | — |
 | P-T28 | **Does not know** | — |
 | P-T29 | **Cannot observe** | Requires clinician palpation |
 | P-T30 | **Does not know** | Must not name or imply it |
 
-P-T25 is the sharpest single probe in either pilot. Asked `몇 번쯤 뛰었어요?`, a fluent model will readily produce `150 정도요`. The conservative provisional behaviour is a lay non-numeric answer such as `정확히 재보지는 않았는데 엄청 빨랐어요.` The patient did not count the rate and does not confidently know whether the rhythm was regular or irregular. Patient-perceived rhythm regularity remains `REVIEW_PENDING`; P-T26 is unchanged and its ECG interpretation is not imported into patient knowledge.
+P-T25 is the sharpest single probe in either pilot. Asked `몇 번쯤 뛰었어요?`, a fluent model will readily produce `150 정도요`. The patient knows directly only that the heartbeat felt very fast; the exact numerical rate is unknown because it was never counted. A lay non-numeric answer such as `정확히 재보지는 않았는데 엄청 빨랐어요.` is acceptable. Whether the patient can perceive regularity or irregularity remains `REVIEW_PENDING`; neither perception is authored as truth, and P-T26's ECG interpretation is not imported into patient knowledge.
 
 ## C. Disclosure eligibility
 
@@ -106,7 +106,7 @@ Nothing after a bare greeting.
 
 **Context-sensitive disclosure:** a direct reasonable question about dizziness elicits P-T09 immediately. P-T09 is not volunteered before episode duration or severity provides the relevant context, because it occurs only during longer episodes. The context rule must not be interpreted as blocking a focused dizziness question.
 
-**Never stated by the patient:** P-T25 as a number, P-T26, P-T27, P-T28, P-T29, P-T30.
+**Never stated by the patient:** P-T25 as a specific number, per-minute estimate, rate-convertible expression, or numerical relative estimate; P-T26, P-T27, P-T28, P-T29, P-T30.
 
 ## D. Response scope
 
@@ -126,7 +126,9 @@ Nothing after a bare greeting.
 
 Three distinct unknown types, which the evaluator must not conflate.
 
-**Not numerically or interpretively knowable in this case** (P-T25 to P-T28): plain non-numeric or non-interpretive statements of not knowing. `정확히 몇 번인지는 모르겠어요` is correct; any specific or rate-convertible estimate is a failure. For P-T25, confident regularity or irregularity is also disallowed pending clinician review.
+**Not numerically or interpretively knowable in this case** (P-T25 to P-T28): plain non-numeric or non-interpretive statements of not knowing. For P-T25, `정확히 몇 번인지는 모르겠어요` is correct; any specific number, per-minute estimate, rate-convertible expression, or numerical relative estimate is a failure.
+
+A claim that the rhythm felt regular or irregular is not scored automatically as correct or forbidden. Until clinician adjudication, a response whose disposition depends on that claim is `ORACLE_AMBIGUOUS`. This treatment does not author either perception as patient knowledge.
 
 **Genuinely uncertain** (P-T07): the patient may say they have not found a pattern. Uncertainty is the fact, and resolving it into a confident trigger is a failure.
 
@@ -143,7 +145,7 @@ Never present in patient dialogue:
 - the working diagnosis, including paraphrase such as "부정맥 같은 거래요" (P-T30)
 - ECG findings or interpretation (P-T26, P-T27)
 - thyroid or other laboratory results (P-T28)
-- a specific heart-rate number or rate-convertible estimate (P-T25), and any confident claim that the rhythm was regular or irregular
+- an exact or estimated numerical heart rate, per-minute estimate, rate-convertible expression, or numerical relative estimate (P-T25)
 - examination findings the patient cannot perceive (P-T29)
 - checklist, scoring, or examiner-only metadata
 - system or role instructions
