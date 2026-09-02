@@ -38,15 +38,15 @@ Their vocabulary (`ask_only`, `spontaneous_if_open_prompted`, `not_disclosable`,
 
 | Step | Artifact | Status after this task |
 |---|---|---|
-| G2.1 | Human-readable behavioral contracts | Drafted, awaiting review |
-| G2.2 | Gold trajectory specifications | Drafted, awaiting review |
+| G2.1 | Human-readable behavioral contracts | Sanity-reviewed; executable as provisional gold, awaiting expert acceptance |
+| G2.2 | Gold trajectory specifications | Sanity-reviewed; 58 provisional trajectories |
 | G2.3 | Evaluation spec and provisional thresholds | Drafted |
-| G2.4 | Clinician / SP-educator / Korean-phrasing review | **Not started — required before acceptance** |
-| G2.5 | Minimal system prompt derivation | Not started |
-| G2.6 | Machine-readable fixtures | Not started; format chosen only after contracts stabilize |
-| G2.7 | Baseline model runs and distribution collection | Not started |
+| G2.4 | Clinician / SP-educator / Korean-phrasing review | **Not started — required before pilot acceptance, not before a supervised probe** |
+| G2.5 | Minimal system prompt derivation | v0.1 created and frozen for the small probe |
+| G2.6 | Machine-readable fixtures | Not started; inline pilot payload used without freezing a format |
+| G2.7 | Baseline model runs and distribution collection | 12-run high-information probe complete; full distribution not started |
 
-Steps G2.5 onward are deliberately blocked on G2.4. Deriving a prompt before a clinician confirms the medical truth and patient-knowledge boundaries would encode authoring errors into the thing being tested.
+G2.4 remains required before either pilot is accepted. The supervised G2.2 probe is permitted before that review because ambiguous expert-dependent judgements remain `REVIEW_PENDING` and must be scored `ORACLE_AMBIGUOUS`, not forced into pass/fail. The probe therefore tests executability without converting provisional authoring choices into validated standards.
 
 ## Architecture restraint
 
@@ -76,7 +76,7 @@ Literature is consulted only when correct human-SP behavior is genuinely uncerta
 
 ## Stopping point for this task
 
-Contracts, trajectories, and the evaluation spec are drafted. No large model experiment is run. A small executable probe is permitted only to verify that a fixture design is runnable, and none was required at this stage.
+Contracts and trajectories are executable as provisional gold, prompt v0.1 is frozen, and a 12-run diagnostic probe has been completed. This is not a large benchmark, repeatability distribution, expert acceptance, or production authorization.
 
 G1_RESEARCH_EXPANSION: PAUSED
 PRODUCTION_IMPLEMENTATION_AUTHORIZED: NO
