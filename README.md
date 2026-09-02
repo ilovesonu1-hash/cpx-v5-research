@@ -1,5 +1,15 @@
 # CPX v5 research workspace
 
+## Repository authority
+
+- [`CLAUDE.md`](CLAUDE.md): the Claude Code adapter; it imports the router.
+- [`AGENTS.md`](AGENTS.md): the repository task router, authority precedence,
+  and invariants.
+- [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md): the current phase, gate,
+  blocker, and next-permitted-action authority.
+
+This README is a human entry point, not an operational authority.
+
 This directory currently contains only the G-1 evidence work for staged
 standardized-patient disclosure. It is not an application scaffold and has no
 runnable CPX code yet.
