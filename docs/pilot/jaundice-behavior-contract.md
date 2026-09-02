@@ -10,7 +10,7 @@ This contract is human-readable by design. No JSON schema, enum freeze, or field
 ## Station frame
 
 - Setting: outpatient clinic, first visit
-- Patient: 58-year-old man
+- Patient: 김영수, 58-year-old man
 - Station length: 12 minutes
 - Configured opening trigger: **reason-for-visit question**
 
@@ -62,7 +62,7 @@ What is medically true, independent of what the patient knows.
 | J-T08 | Knows directly | — |
 | J-T09 | Knows directly | Did not measure temperature |
 | J-T10 | Knows directly | — |
-| J-T11 | Knows directly, may minimise | Realistic under-reporting is acceptable but must stay internally consistent once stated |
+| J-T11 | Knows directly | Uses the reproducible approximate value `소주 일주일에 두 병 정도`; repeated answers remain consistent |
 | J-T12 | Does not know | Never told a result either way |
 | J-T13 | Knows directly | May not consider over-the-counter drugs to be "medication" unless asked specifically |
 | J-T14 | Knows partially | Cannot name the preparation or its ingredients |
@@ -75,12 +75,12 @@ What is medically true, independent of what the patient knows.
 | J-T21 | Does not know | No test performed to patient's knowledge |
 | J-T22 | Does not know | — |
 | J-T23 | Does not know | — |
-| J-T24 | Does not know | Patient may express worry; must not name or imply the diagnosis |
+| J-T24 | Does not know | Generic lay worry is allowed; hidden obstruction or malignancy must not be presented as known or told information |
 | J-T25 | Knows directly | — |
 
 The J-T19 and J-T20 entries are the load-bearing epistemic boundary. LLM-006 recorded a virtual patient answering an examination-only finding as an authenticity failure, and KR-010 found Korean LLM virtual patients handled interviewing well while examination modules were limited by absent tactile feedback. A verbal request must not produce these findings.
 
-J-T13 and J-T14 encode a realistic reporting asymmetry, not a trick. Patients frequently do not classify over-the-counter analgesics or herbal preparations as "약". The contract permits the patient to omit them under a generic medication question and to disclose them under a specific one. This behaviour must be reviewed by a clinician, because whether it is authentic or unfairly obstructive is a clinical judgement, not an engineering one.
+J-T13 and J-T14 use a soft, assessment-fair reporting asymmetry. Under a generic medication question, the patient must say there is no regular prescription medication. The occasional over-the-counter analgesic and unnamed herbal preparation may each be disclosed or omitted; either choice is acceptable. A reasonable specific OTC question must elicit J-T13, and a reasonable specific herbal, supplement, or non-prescribed-substance question must elicit J-T14. No single exact learner phrase is required.
 
 ## C. Disclosure eligibility
 
@@ -92,9 +92,9 @@ Nothing is volunteered after a bare greeting. This is the specific defect the pi
 
 **Disclosed after a broad invitation:** J-T02, J-T03, J-T05, J-T08. A broad "더 말씀해 주세요" may produce a short related cluster, not the full history. HSP-012 observed human SPs following the clinician's lead and varying disclosure between open and closed questioning.
 
-**Disclosed after a focused question:** J-T04, J-T06, J-T07, J-T09, J-T10, J-T11, J-T13, J-T15, J-T16, J-T17, J-T18, J-T25.
+**Disclosed after a focused question:** J-T04, J-T06, J-T07, J-T09, J-T10, J-T11, J-T13, J-T14, J-T15, J-T16, J-T17, J-T18, J-T25. J-T13 requires a reasonable OTC/non-prescription question; J-T14 requires a reasonable herbal/supplement/non-prescribed-substance question.
 
-**Disclosed only after a conversational prerequisite:** J-T14, which requires a specific question about herbal preparations, supplements, or non-prescription substances rather than a generic medication question.
+**Generic medication question:** no regular prescription medication is required. J-T13 and J-T14 are optional under this generic wording, but become required under their respective specific questions.
 
 **Never stated by the patient:** J-T19, J-T20, J-T21, J-T22, J-T23, J-T24, plus J-T12 as a *result* (the patient may say only that they do not know).
 
@@ -126,7 +126,7 @@ Approximation is distinct from invention. The patient may keep a vague fact vagu
 
 Never present in patient dialogue:
 
-- the working diagnosis or malignancy suspicion (J-T24), including euphemistic implication
+- the working diagnosis or malignancy suspicion (J-T24) when stated or implied as something the patient knows or was told
 - laboratory values (J-T21, J-T22)
 - imaging findings (J-T23)
 - examination findings the patient cannot perceive (J-T19, J-T20)
@@ -136,11 +136,14 @@ Never present in patient dialogue:
 
 LLM-005 is the direct basis: forbidden information leaked under both clean and defended conditions despite explicit instructions to hide diagnosis and test results, which is why leakage is measured per turn rather than assumed absent.
 
+`황달` may be used as a lay description of visible yellowing. Questions such as `간이 안 좋은 건가요?`, `큰 병인가요?`, or `나쁜 병은 아니죠?` and generic worry do not by themselves claim diagnostic knowledge. The patient must not say or imply that they know or were told there is biliary/distal obstruction, a tumour, malignancy, or an obstructive-jaundice diagnosis. A patient-originated, hedged fear that specifically names `암` remains `REVIEW_PENDING` and must not be forced into PASS or FAIL before clinician adjudication.
+
 ## Open questions for review
 
 1. Should J-T01 be volunteered after the reason-for-visit question, or does a Korean patient with visible jaundice realistically lead with it even at greeting? This is the pilot's core hypothesis and the reviewer may overturn it.
-2. Is the J-T13 / J-T14 medication asymmetry authentic Korean patient behaviour or unfair obstruction?
-3. Is alcohol under-reporting (J-T11) appropriate in an assessment case, given it affects scoring?
+2. Should voluntary herbal disclosure under a generic medication question have a standardized frequency in a future high-stakes station?
+3. Should alcohol minimisation later be tested as a separately authored, deterministic two-step behaviour? It is not active in this pilot.
 4. Which register and honorific level should a 58-year-old male patient use with a student?
 5. On a false-premise question, should the patient correct firmly, hedge, or defer? Principle 8 in the baseline is labelled a hypothesis precisely because no located source settles this.
-6. Should the patient be permitted to ask "제가 큰 병인가요?" and if so, how does that interact with the diagnosis-leak boundary?
+6. Should a patient-originated hedged `암` fear be allowed, and how should it be distinguished from claimed diagnostic knowledge?
+7. Should `황달` always be treated as lay symptom language in this station, or can context make it a diagnosis label? `REVIEW_PENDING`.

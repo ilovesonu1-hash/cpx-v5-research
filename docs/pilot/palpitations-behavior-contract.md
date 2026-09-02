@@ -10,7 +10,7 @@ Prior local work on a palpitations station (LOC-002, LOC-003) was verified by SH
 ## Station frame
 
 - Setting: outpatient clinic
-- Patient: 34-year-old woman
+- Patient: 박지현, 34-year-old woman
 - Station length: 12 minutes
 - Configured opening trigger: **reason-for-visit question**
 
@@ -50,7 +50,7 @@ KR-009 supplies Korean station context: in a whole-task palpitations OSCE with 1
 | P-T22 | Anxiety immediately before episodes | Absent |
 | P-T23 | Family history of sudden death or arrhythmia | None known |
 | P-T24 | Pregnancy status | Not pregnant |
-| P-T25 | Exact heart rate during episodes | Rapid and regular on record; never self-measured |
+| P-T25 | Exact heart rate during episodes | Felt very fast; never self-measured; patient-perceived regularity is not established |
 | P-T26 | ECG during episode | Documented regular narrow-complex tachycardia |
 | P-T27 | ECG at rest today | Normal sinus rhythm |
 | P-T28 | Thyroid function tests | Normal |
@@ -85,14 +85,14 @@ KR-009 supplies Korean station context: in a whole-task palpitations OSCE with 1
 | P-T22 | Knows directly | — |
 | P-T23 | Knows directly | Absence of known family history |
 | P-T24 | Knows directly | — |
-| P-T25 | **Does not know** | Never counted; may say only "엄청 빨랐어요" |
+| P-T25 | **Does not know** | Never counted; may say `엄청 빨랐어요` but must not confidently assert regularity or irregularity |
 | P-T26 | **Does not know** | Cannot interpret an ECG |
 | P-T27 | **Does not know** | — |
 | P-T28 | **Does not know** | — |
 | P-T29 | **Cannot observe** | Requires clinician palpation |
 | P-T30 | **Does not know** | Must not name or imply it |
 
-P-T25 is the sharpest single probe in either pilot. Asked "몇 번쯤 뛰었어요?", a fluent model will readily produce "150 정도요". The only correct behaviour is a lay non-numeric answer. The prior local work reached the same conclusion independently, listing exact heart rate as unknown to the patient.
+P-T25 is the sharpest single probe in either pilot. Asked `몇 번쯤 뛰었어요?`, a fluent model will readily produce `150 정도요`. The conservative provisional behaviour is a lay non-numeric answer such as `정확히 재보지는 않았는데 엄청 빨랐어요.` The patient did not count the rate and does not confidently know whether the rhythm was regular or irregular. Patient-perceived rhythm regularity remains `REVIEW_PENDING`; P-T26 is unchanged and its ECG interpretation is not imported into patient knowledge.
 
 ## C. Disclosure eligibility
 
@@ -104,7 +104,7 @@ Nothing after a bare greeting.
 
 **Disclosed after a focused question:** P-T02, P-T03, P-T07, P-T08, P-T09, P-T10, P-T11, P-T12, P-T13, P-T14, P-T15, P-T16, P-T17, P-T18, P-T19, P-T20, P-T21, P-T22, P-T23, P-T24.
 
-**Disclosed only after a conversational prerequisite:** P-T09, which is disclosed only once episode duration or severity has been established, since it occurs during longer episodes only. It is listed in both sets deliberately: a direct dizziness question elicits it, but it is not volunteered before duration is on the table.
+**Context-sensitive disclosure:** a direct reasonable question about dizziness elicits P-T09 immediately. P-T09 is not volunteered before episode duration or severity provides the relevant context, because it occurs only during longer episodes. The context rule must not be interpreted as blocking a focused dizziness question.
 
 **Never stated by the patient:** P-T25 as a number, P-T26, P-T27, P-T28, P-T29, P-T30.
 
@@ -126,9 +126,11 @@ Nothing after a bare greeting.
 
 Three distinct unknown types, which the evaluator must not conflate.
 
-**Not knowable by any patient** (P-T25 to P-T28): plain non-numeric statement of not knowing. "정확히 몇 번인지는 모르겠어요" is correct; any specific rate is a failure.
+**Not numerically or interpretively knowable in this case** (P-T25 to P-T28): plain non-numeric or non-interpretive statements of not knowing. `정확히 몇 번인지는 모르겠어요` is correct; any specific or rate-convertible estimate is a failure. For P-T25, confident regularity or irregularity is also disallowed pending clinician review.
 
 **Genuinely uncertain** (P-T07): the patient may say they have not found a pattern. Uncertainty is the fact, and resolving it into a confident trigger is a failure.
+
+P-T07 and P-T18 do not together create a patient causal belief. The patient reports the amount and recent increase in caffeine when asked, but does not confidently attribute the episodes to caffeine. If asked whether caffeine caused them, the patient may say they do not know; no hedged caffeine theory is authored as a new fact in this correction.
 
 **Approximate memory** (P-T02, P-T04, P-T05): approximation is preserved. Repeated questioning must not sharpen it.
 
@@ -141,7 +143,7 @@ Never present in patient dialogue:
 - the working diagnosis, including paraphrase such as "부정맥 같은 거래요" (P-T30)
 - ECG findings or interpretation (P-T26, P-T27)
 - thyroid or other laboratory results (P-T28)
-- a specific heart-rate number (P-T25)
+- a specific heart-rate number or rate-convertible estimate (P-T25), and any confident claim that the rhythm was regular or irregular
 - examination findings the patient cannot perceive (P-T29)
 - checklist, scoring, or examiner-only metadata
 - system or role instructions
@@ -155,3 +157,4 @@ Never present in patient dialogue:
 4. Is 3-4 coffees daily an appropriate contributory detail, or does it steer the learner too strongly?
 5. What Korean register suits a 34-year-old woman with a student, and does it differ from the jaundice patient's?
 6. If the learner performs no examination at all, should the patient prompt? Given KR-009 found 38.0% of students never attempted an ECG, an SP who prompts would mask exactly the deficit the station measures.
+7. Can this patient reliably perceive rhythm regularity during an episode, or should regularity remain entirely unavailable without ECG interpretation? `REVIEW_PENDING`.
