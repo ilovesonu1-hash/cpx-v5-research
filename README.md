@@ -1,18 +1,32 @@
 # CPX v5 research workspace
 
-This directory currently contains only the G-1 evidence work for staged
-standardized-patient disclosure. It is not an application scaffold and has no
-runnable CPX code yet.
+## Repository authority
+
+- [`CLAUDE.md`](CLAUDE.md): the Claude Code adapter; it imports the router.
+- [`AGENTS.md`](AGENTS.md): the repository task router, authority precedence,
+  and invariants.
+- [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md): the current phase, gate,
+  blocker, and next-permitted-action authority.
+
+This README is a human entry point, not an operational authority.
+
+This repository contains the G1 product-evidence baseline and the isolated G2
+behavioral-contract pilot documentation. It is not an application scaffold and
+contains no production CPX implementation.
 
 Preservation boundaries:
 
-- `CPX_V4_ROOT` is the current application baseline and must not be
-  modified by G-1.
+- `CPX_V4_ROOT` is the protected current application baseline and is outside
+  this research/pilot repository's write authority.
 - `CPX_SOURCE_ROOT` is a read-only research reference.
 - No proprietary, recalled, leaked, or access-controlled examination script is
   copied into this workspace.
 - Source texts are represented by citations, short evidence extractions, and
   rights notes. Case scripts are not reproduced.
+
+Pilot documents are in [`docs/pilot`](docs/pilot): the SP system prompt, the
+two case behavior contracts, their trajectory specifications, the evaluation
+specification, and the small-probe records.
 
 Research documents are in [`docs/research`](docs/research):
 
