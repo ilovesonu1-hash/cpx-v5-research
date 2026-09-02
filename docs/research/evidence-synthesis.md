@@ -5,14 +5,15 @@ Search date: 2026-09-02
 
 ## 1. Evidence-map inventory
 
-The seed screen contains 50 included candidates. The reproducible PubMed pass
-returned 58 query records (57 unique because one record appeared in both
-queries); all 58 received a title-level decision:
+The seed screen contains 50 candidate evidence records. Inclusion in this seed
+matrix does not imply completed full-text appraisal or final review eligibility.
+The reproducible PubMed pass returned 58 query records (57 unique because one
+record appeared in both queries); all 58 received a title-level decision:
 
 | Stream | Records | Main use |
 |---|---:|---|
-| Human SP / OSCE standards, guidance, and studies | 14 | Case construction, prompting boundaries, repeatability |
-| Classical virtual patients | 5 | Educational design and evaluation context |
+| Human SP / OSCE standards, guidance, and studies | 13 | Case construction, prompting boundaries, repeatability |
+| Classical virtual patients | 6 | Educational design and evaluation context |
 | LLM virtual/standardized patients | 18 | Modern failure modes, prompting, fidelity metrics |
 | Korean CPX/SP evidence | 8 | Local educational and linguistic context |
 | Read-only local `CPX_source` evidence | 5 | Prior accepted work and invalidated parser branch |
@@ -44,7 +45,8 @@ The evidence supports a **case-configurable opening trigger**, not a universal
 complaint appears only after “어떻게 오셨어요?”, while another station may
 require an immediate safety-critical or emotionally salient opening.
 
-Evidence: HSP-006, HSP-008, LLM-006.
+Evidence: HSP-006 and HSP-008 are provisional pending authorized full-text
+appraisal; LLM-006 supplies public case-specific failure evidence.
 
 ### 2.3 Prompted-only information and bounded sufficiency are established SP practices
 
@@ -163,12 +165,13 @@ Evidence: VP-001, VP-003, VP-004, LLM-002, LLM-009.
 The located literature does not establish that two frontier providers will
 implement the same disclosure contract with equivalent reliability.
 
-Decision: use the same policy source, but test and report provider-specific
-behavior rather than claiming equivalence.
+Decision: treat a common policy source as an architecture hypothesis, and test
+and report provider-specific behavior rather than claiming equivalence.
 
 ## 4. Evidence-derived product direction
 
-The most defensible initial architecture is:
+The following is a candidate implementation direction, not an
+evidence-established disclosure requirement:
 
 ```text
 server-only medical truth
@@ -223,6 +226,9 @@ This is the central correction to the earlier all-cases `greeting_only` plan.
 - Deduplicate records and create a countable PRISMA flow.
 - Retrieve and appraise full texts for the high-directness sources.
 - Perform backward/forward citation chasing.
+- Formally screen the directly relevant Davies 2021 role-template scoping
+  review and Peters 2026 consensus role-script template identified by the
+  independent audit; do not insert either source without normal appraisal.
 - Obtain independent screening and extraction review.
 - Have Korean clinicians/SP educators review the two pilot trajectory tables.
 - Freeze evidence-backed requirements only after adjudication.

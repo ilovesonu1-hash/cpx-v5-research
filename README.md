@@ -25,6 +25,8 @@ Research documents are in [`docs/research`](docs/research):
 - `disclosure-requirements.md`: evidence-linked candidate requirements
 - `source-rights-register.csv`: access and reuse boundaries
 - `local-source-manifest.csv`: SHA-256 anchors for the read-only local evidence
+- `g1-status.md`: current gate decision and remaining blockers
+- `g1.1-audit-disposition.md`: disposition of the independent seed-evidence audit
 
 Local source aliases are intentionally machine-independent:
 

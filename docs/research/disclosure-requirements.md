@@ -8,21 +8,32 @@ claiming that the implementation vocabulary is an established standard.
 
 | ID | Candidate requirement | Evidence | Support | Observable acceptance condition |
 |---|---|---|---|---|
-| DR-001 | Every case declares its opening trigger and allowed opening information units. | HSP-006, HSP-008, LLM-006 | High | A greeting-only test and a configured opening-trigger test disclose exactly the declared units. |
+| DR-001 | Each case should specify whether and when an opening statement is delivered and what information may be volunteered at that opening; exact trigger semantics require case-specific expert validation. | HSP-006, HSP-008, LLM-006 | Moderate inference pending authorized HSP-006/HSP-008 appraisal | Opening fixtures disclose no more than the expert-reviewed case opening permits. |
 | DR-002 | Facts not eligible for spontaneous disclosure remain withheld until an appropriate question or prerequisite occurs. | HSP-005, HSP-009, HSP-012 | High | No ask-only fact appears before its trigger across repeated runs. |
-| DR-003 | Open invitations may return a bounded related bundle; focused questions return the requested fact and only necessary context. | HSP-009, HSP-012, LLM-004 | Moderate-high | Open and focused fixtures have different declared maximum fact sets and stay within them. |
-| DR-004 | Medical truth and patient epistemic access are stored separately. | LLM-005, LLM-006, LOC-002 | High | The patient never states an inaccessible diagnosis, interpretation, or finding as known fact. |
-| DR-005 | Unspecified information uses a case-approved unknown or cannot-recall response instead of invention. | HSP-009, LLM-004, LLM-005 | High | Out-of-script probes yield no new factual atom. |
-| DR-006 | Leading or false-premise questions must not change established truth. | HSP-001, LOC-002 | Moderate | False premises are denied, qualified, or corrected without adding unrelated facts. |
+| DR-003 | Response scope should follow question scope: broader prompts may elicit a relevant narrative, while focused questions should remain focused without becoming misleadingly sparse. | HSP-009, HSP-012, LLM-004 | Moderate inference | Expert-reviewed open and focused fixtures differ in breadth while preserving required facts. |
+| DR-004 | Case authoring must distinguish medical truth from information the simulated patient is permitted to know or state; the storage representation remains an implementation decision. | LLM-005, LLM-006, LOC-002 | Moderate inference | The patient never states an inaccessible diagnosis, interpretation, or finding as known fact. |
+| DR-005 | Case-relevant but unspecified information uses a case-approved unknown, cannot-recall, or explicitly authored response instead of invention. | HSP-009, LLM-011, LLM-004 | High | Out-of-script probes yield no invented factual atom. |
+| DR-006 | Candidate hypothesis: learner assumptions or leading wording should not overwrite established case facts; the correction style requires pilot validation. | HSP-001, LOC-002 | Hypothesis | False-premise fixtures preserve established truth without adding unrelated facts. |
 | DR-007 | Repeated semantically equivalent questions preserve factual content while allowing natural wording variation. | HSP-001, HSP-010, HSP-011, LOC-002 | High | Repeat fixtures contain no contradiction or precision inflation. |
-| DR-008 | Physical-examination findings are available only through the examination/action channel unless the patient can directly perceive the finding. | LLM-006, KR-003, LOC-002 | High | A verbal request cannot elicit an action-gated finding; the matching performed action can. |
-| DR-009 | Diagnosis labels, examiner-only facts, hidden test results, and scoring criteria remain non-disclosable unless the case explicitly models prior patient knowledge. | HSP-001, LLM-005, LOC-002 | High | Forbidden-item scan remains zero for benign, leading, compound, and adversarial turns. |
+| DR-008 | A patient response should not provide findings obtainable only through clinician-performed examination unless the patient could realistically perceive or know them. The mechanism for returning examination findings is an implementation decision. | LLM-006, LOC-002 | Moderate inference | Verbal patient-response fixtures contain no patient-unknowable examination finding. |
+| DR-009 | The simulated patient must not disclose diagnosis labels, hidden test results, or examiner-only facts unless explicitly modeled as patient-known. Assessment and scoring metadata require a separate governance control. | LLM-005, LOC-002 | Moderate-high | Patient-output scans remain zero for case-declared forbidden medical facts; assessment metadata are tested separately. |
 | DR-010 | A reasonable in-scope question must not be answered so sparsely that the scripted pertinent fact is withheld. | HSP-009, HSP-012 | High | Requested-fact omission stays below the pilot threshold without increasing over-disclosure. |
 | DR-011 | Prompt instructions are necessary but are not treated as the only control. | LLM-005, LLM-006, LLM-007 | High | Turn-level leakage, contradiction, role, and robustness suites run for every supported provider. |
-| DR-012 | Gemini and OpenAI compile from one server-only policy source, but their results are reported separately. | LLM-003, LLM-004 | Moderate inference | Identical fixtures produce provider-specific scorecards; no equivalence claim is made without data. |
-| DR-013 | The failed SP2D parser branch is not imported into the initial architecture. | LOC-004, LOC-005 | High local engineering evidence | No SP2D routing code or unadjudicated labels enter runtime. |
 | DR-014 | Case publication requires clinical review, SP-methodology review, dry-run, and revision. | HSP-001, HSP-007, HSP-010, HSP-011, KR-001 | High | Review identities, findings, dry-run evidence, and version are recorded before release. |
-| DR-015 | Educational effectiveness and patient-role fidelity are evaluated as separate outcomes. | VP-003, VP-004, LLM-002, LLM-009 | High | A learner outcome cannot compensate for a failed disclosure/fidelity gate. |
+| DR-015 | Evaluate educational outcomes and patient-role fidelity as distinct outcome domains; evidence of improvement in one should not be treated as evidence of the other. | VP-003, VP-004, LLM-002, LLM-009 | Moderate inference | Reports present learner outcomes and role-fidelity outcomes separately. |
+
+## Relocated architecture and preservation constraints
+
+The following identifiers are retained for traceability but are not
+literature-derived patient-disclosure requirements:
+
+- **DR-012 (architecture hypothesis):** A common version-controlled case policy
+  may support multiple runtimes, but runtime-specific validation results remain
+  separate unless equivalence is empirically established. Evidence reviews
+  describe heterogeneous systems; they do not establish this architecture.
+- **DR-013 (project preservation rule):** The failed SP2D parser branch and
+  unadjudicated SP2D.6 labels remain excluded from runtime. This rule depends on
+  local engineering evidence and belongs to preservation/change control.
 
 ## Candidate authoring dimensions
 
