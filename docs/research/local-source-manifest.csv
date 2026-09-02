@@ -1,0 +1,7 @@
+record_id,source_root,relative_path,bytes,sha256,role
+LOC-001,CPX_SOURCE_ROOT,PROJECT_BASELINE_20260825.md,4980,13e9aa7dd61fe94eec6d126af10af5bbb3e8cb8f025506852f6e6502ed387fb6,"Scientific-state and preservation baseline"
+LOC-002,CPX_SOURCE_ROOT,SP_Corpus/phase_sp2b/run_20260820T060913Z/reports/sp2b_summary.md,1014,a4550f09324526ee084607891d8355025967848364ea3f4d10781a92bb0c04e4,"Accepted one-case behavior/disclosure summary"
+LOC-003,CPX_SOURCE_ROOT,SP_Corpus/phase_sp2c/run_20260820T070117Z/reports/korean_utterance_review.md,9720,10c46b4f9391adb03fc95047d55abc7fc7975c4685357bca1643afe376fb65da,"Accepted Korean realization review"
+LOC-004,CPX_SOURCE_ROOT,SP_Corpus/phase_sp2d_3/run_20260820T152624Z/reports/architecture_comparison.md,1348,3a2b52b5330dab3a71d7e192ffbfc4dee869d0d0c789a80c6b53cb319a8e8104,"Rejected deterministic routing architectures"
+LOC-005,CPX_SOURCE_ROOT,SP_Corpus/phase_sp2d_6/run_20260821T021046Z/reports/sp2d_6_acceptance.md,394,2ff757ec6b89fb222016e16960badadee28a833a35d80d77a513b23134e7f964,"Human-input-required gate"
+V4-DATASETS,CPX_V4_ROOT,lib/server/datasets.ts,7214,6091b61a5545981598616eaa347f8f0ec83e3b75b66784222a36303ba0b1c83e,"Current patient-instruction implementation reference; read-only"

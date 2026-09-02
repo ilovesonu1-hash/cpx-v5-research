@@ -1,0 +1,59 @@
+record_id,title,decision,reason,reviewer,status
+HSP-001,The Association of Standardized Patient Educators Standards of Best Practice,include,"Authoritative SP standard; direct case-development principles",Codex,seed
+HSP-002,ASPE Case Development Template 2025,include,"Official implementation template; rights restrictions recorded",Codex,seed
+HSP-003,Healthcare Simulation Standards of Best Practice Simulation Design,include,"Simulation-design standard referenced by ASPE",Codex,seed
+HSP-004,Minimum standards and development perspectives for simulated patients,include,"Consensus position paper with case-development and training relevance",Codex,seed
+HSP-005,A Practical Approach to Developing Cases for Standardized Patients,include,"Direct disclosure-guideline relevance",Codex,seed
+HSP-006,Standardized Patients Part 2 Developing a Case,include,"Case construction and opening-statement relevance",Codex,seed
+HSP-007,Developing standardized patient-based cases for communication training,include,"Iterative case-development lessons",Codex,seed
+HSP-008,Guidelines for the Development of OSCE Cases,include,"Detailed SP script and opening/cue timing guidance",Codex,seed
+HSP-009,Human Simulation Program Policy and Procedure Handbook,include,"Explicit prompted-only and no-ad-lib instructions",Codex,seed
+HSP-010,The Objective Structured Clinical Examination AMEE Guide No 81 Part II,include,"Standardization and SP training requirements",Codex,seed
+HSP-011,Training framework for high-stakes OSCE,include,"Role portrayal accuracy and script training",Codex,seed
+HSP-012,Advantages and Challenges of Unannounced Standardized Patients Methodology,include,"Empirical question-contingent disclosure and fidelity matrix",Codex,seed
+HSP-013,Standardized Patients in Medical Education A Review of the Literature,include,"Background evidence map; indirect to disclosure",Codex,seed
+VP-001,A Randomized Trial of Teaching Clinical Skills Using Virtual and Live Standardized Patients,include,"Classical VP effectiveness and standardized exposure",Codex,seed
+VP-002,Virtual patients a critical literature review and proposed next steps,include,"Foundational VP design taxonomy and research agenda",Codex,seed
+VP-003,Virtual Patient Simulations in Health Professions Education systematic review and meta-analysis,include,"Effectiveness and evaluation context",Codex,seed
+VP-004,Effectiveness of virtual patient tools for clinical reasoning systematic review,include,"Scaffolding and transfer evidence",Codex,seed
+VP-005,Training Medical Communication Skills with Virtual Patients literature review,include,"Communication-specific design evidence; preprint status noted",Codex,seed
+LLM-001,A Language Model-Powered Simulated Patient With Automated Feedback for History Taking,include,"Prospective LLM-patient study",Codex,seed
+LLM-002,A large language model digital patient system enhances ophthalmology history taking skills,include,"Educational outcome and digital-patient implementation",Codex,seed
+LLM-003,Embracing the Future of Medical Education With LLM-Based Virtual Patients,include,"Scoping review of LLM virtual patients",Codex,seed
+LLM-004,LLM-Based Virtual Patient Systems for History-Taking comprehensive systematic review,include,"Current synthesis of designs and metrics",Codex,seed
+LLM-005,Robustness of an LLM-Based Virtual Patient under instructional contamination,include,"Premature disclosure; forbidden information; turn-level robustness",Codex,seed
+LLM-006,Feasibility of LLM-Based Standardized Virtual Patients in operative dentistry,include,"Concrete greeting over-disclosure and exam-only knowledge errors",Codex,seed
+LLM-007,Automated Evaluation of Standardized Patients with LLMs,include,"Evaluation methodology; conference paper",Codex,seed
+LLM-008,Human or LLM as Standardized Patients comparative study,include,"Human comparison and fidelity framework; preprint",Codex,seed
+LLM-009,Voluntary use of LLM-powered virtual standardized patients and interview performance,include,"Association with human-SP assessment; observational",Codex,seed
+LLM-010,MedSimAI simulation and formative feedback,include,"Deliberate-practice design; preprint",Codex,seed
+KR-001,Clinical Performance Examination Utilizing Standardized Patients in Board Examination,include,"Korean high-stakes CPX training and standardization",Codex,seed
+KR-002,The Change of CPX Scores according to Repeated CPXs,include,"Korean CPX educational context; indirect to disclosure",Codex,seed
+KR-003,Relationship between problem-based learning and clinical performance evaluations,include,"Korean CPX domains and context; indirect",Codex,seed
+KR-004,진단·변증 스키마 기반 인공지능 표준화 환자 시스템 CURA 개발,include,"Recent Korean AI-SP implementation",Codex,seed
+KR-005,한의학 교육에서 내상발열 증례를 이용한 표준화환자 프로그램 개발,include,"Korean case-development example",Codex,seed
+KR-006,Introduction of a clinical skill test in the Korean Medical Licensing Examination,include,"National Korean CPX implementation and systematically trained SP context",Codex,koreamed_seed
+KR-007,Changes in medical education evaluation in Korea,include,"Documents Korean regional CPX consortium case development and SP training",Codex,koreamed_seed
+KR-008,Validity and Reliability of a Clinical Performance Examination using Standardized Patients,include,"Korean scenario and checklist development with SP-based evaluation",Codex,koreamed_seed
+LOC-001,CPX_source project baseline,include,"Controls accepted and invalidated local evidence",Codex,seed
+LOC-002,CPX_source SP2B behavior and disclosure contract,include,"Accepted local one-case policy evidence",Codex,seed
+LOC-003,CPX_source SP2C Korean realization,include,"Accepted local Korean utterance asset evidence",Codex,seed
+LOC-004,CPX_source SP2D.3 architecture comparison,include,"All deterministic parser candidates rejected",Codex,seed
+LOC-005,CPX_source SP2D.6 acceptance,include,"Human adjudication still required",Codex,seed
+HSP-014,Virtual Standardized Patient Simulation Case Development and Pilot Application to High-Value Care,include,"Natural-language VSP case development and faculty-rated response appropriateness",Codex,pubmed_title_abstract
+LLM-011,A GPT-Powered Chatbot as a Simulated Patient to Practice History Taking,include,"Explicit script coverage and fictitious-information measurements",Codex,pubmed_title_abstract
+LLM-012,Enhancing Medical Interview Skills Through AI-Simulated Patient Interactions,include,"Controlled learner outcome study with AI simulated patients",Codex,pubmed_title_abstract
+LLM-013,ECOSBot multicenter validation pilot study,include,"Multicenter expert-rated authenticity correctness relevance and script coverage",Codex,pubmed_title_abstract
+LLM-014,Development and Validation of an LLM-Based Medical History-Taking System,include,"Multicase evaluation stability human-AI consistency and transparency",Codex,pubmed_title_abstract
+LLM-015,Feasibility of generative AI for history taking in virtual patients,include,"Korean-platform expert review including hallucination and missing information",Codex,pubmed_title_abstract
+LLM-016,GenAI-Supported Virtual Patients in Health Care Education Systematic Review,include,"Two-reviewer systematic review of 15 studies and design gaps",Codex,pubmed_title_abstract
+LLM-017,AI-powered simulated patients for headache history-taking,include,"Repeated practice outcomes plus learner-reported robotic dialogue limits",Codex,pubmed_title_abstract
+LLM-018,Virtual standardized patient system for psychiatric interview training,include,"Expert and modified-Delphi case-script development plus preliminary RCT",Codex,pubmed_title_abstract
+EX-001,Current applications and challenges in LLMs for patient care systematic review,exclude,"Patient-care assistant scope rather than simulated-patient role",Codex,seed
+EX-002,Virtual patient Wikipedia article,exclude,"Tertiary source; use cited primary literature instead",Codex,seed
+EX-003,OSCE advice social-media threads,exclude,"Anecdotal and potentially examination-sensitive",Codex,seed
+EX-004,Commercial OSCE preparation pages,exclude,"Marketing or learner advice; no suitable methods",Codex,seed
+EX-005,The Atlantic standardized-patient feature,exclude,"Journalistic context only; not design evidence",Codex,seed
+EX-006,AHRQ health-literacy role-playing ideas,exclude,"Clinician communication activity; not patient-role disclosure",Codex,seed
+EX-007,General diagnostic benchmark papers with complete vignettes,exclude,"No interactive patient information-elicitation task",Codex,seed
+EX-008,Unverified local or recalled examination scripts,exclude,"Rights and examination-integrity boundary",Codex,seed
