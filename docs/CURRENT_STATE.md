@@ -25,6 +25,31 @@ The governance bootstrap that introduced `CLAUDE.md`, `AGENTS.md`, and this file
 is a review candidate. It becomes effective only after independent review and an
 accepted merge to `main`.
 
+An independent read-only cross-harness audit of the bootstrap proposal has
+completed with verdict `PASS_AFTER_MINOR_PATCH` and zero blockers; its accepted
+treatment is `docs/governance/context-bootstrap-audit-disposition.md`. That
+audit did not recommend merging unchanged, so the required remaining lifecycle
+is exactly:
+
+1. pre-merge correction;
+2. delta audit of the correction;
+3. explicit human acceptance;
+4. accepted merge to `main`;
+5. immediate post-merge synchronization of this file;
+6. verification that `main` and this file agree.
+
+The post-merge synchronization commit must:
+
+- mark the governance bootstrap `ACCEPTED / MERGED / EFFECTIVE`;
+- record the accepted governance proposal commit;
+- record the actual merge commit SHA;
+- remove pre-merge-only wording;
+- leave the effective pilot semantic checkpoint unchanged unless pilot semantics
+  actually changed; and
+- authorize no G2 execution merely by accepting governance.
+
+The merge SHA is not created or predicted before the accepted merge.
+
 ## Current phase and gate state
 
 | Gate | State |
@@ -59,8 +84,10 @@ completed probe.
 | `docs/pilot/g2-evaluation-spec.md` | metrics, scoring rules, provisional thresholds | active normative |
 | `docs/pilot/g2.1a-language-oracle-disposition.md` | accepted treatment of the language and oracle audit | disposition record |
 | `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
-| `docs/pilot/g2.2-probe-results.md` | small-probe raw evidence, aggregate, and erratum | historical evidence |
+| `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
+| `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
 | `docs/pilot/g2-plan.md` | G2 phase sequence and architecture restraint | active normative |
+| `docs/governance/context-bootstrap-audit-disposition.md` | accepted treatment of the independent context-bootstrap audit | disposition record |
 | `docs/research/g1-product-baseline.md` | product-evidence baseline and research-expansion policy | active normative |
 | `docs/research/g1-status.md` | historical publication-style G1 record, expansion paused | historical evidence |
 
@@ -97,6 +124,14 @@ P25 is the single `ORACLE_AMBIGUOUS` result. The response invented no numerical
 pulse rate, so the exact-rate safety boundary held. Patient-perceived rhythm
 regularity remains unauthored, so the responsible layer is the contract and
 oracle, not the prompt and not the architecture.
+
+Historical provenance limitation: the 12-call exploratory probe predates the
+official raw-output preservation rule. It is executability evidence, not a
+provenance-complete official baseline. Every future official execution must
+freeze complete final responses before scoring. This limits provenance claims
+only; it does not retract the probe's useful conclusions — 11 PASS, 0 FAIL,
+1 `ORACLE_AMBIGUOUS`, 0 `EXECUTION_ERROR`, no numerical pulse invention in P25,
+and minimal architecture still justified.
 
 ## Current unresolved human questions
 

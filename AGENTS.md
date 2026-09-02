@@ -62,14 +62,17 @@ adopt whichever document appears newest.
 - Current state must not duplicate detailed normative content; it references the
   owner instead.
 - Accepted historical records are not rewritten to match later state.
-- G1 research expansion stays problem-driven and paused unless explicitly
-  reopened. Topical relevance alone is not a reason to add a source.
-- The SP system prompt is not modified without measured failure evidence plus an
-  explicit authorization recorded in `docs/CURRENT_STATE.md`.
+- Research expansion must be problem-driven and governed by the active research
+  policy and current state. Topical relevance alone is not a reason to expand
+  the evidence corpus.
+- An artifact marked frozen by `docs/CURRENT_STATE.md` must not be modified
+  outside an explicitly accepted change envelope. Prompt revision additionally
+  requires preserved failure evidence and the routed normative context.
 - No architecture escalation — router, classifier, state machine, output filter,
   orchestration, retrieval — without a documented repeated structural failure
   that the smallest responsible layer cannot absorb.
-- Raw model outputs are preserved before any scoring or interpretation.
+- For every future official execution, complete final model outputs must be
+  frozen before scoring or interpretation.
 - No model or provider comparison, substitution, or migration unless the user
   explicitly requests it.
 - No restricted or recalled examination content, PHI, secrets, credentials,
@@ -145,7 +148,7 @@ historical evidence only when exact provenance or a named envelope requires it.
 |---|---|---|
 | Project orientation or present status | `README.md`, only when human-facing orientation is needed | read-only |
 | G1 evidence or literature question | `docs/research/protocol.md`; the active research status or synthesis document for the exact question | read-only |
-| Korean SP language, realism, or assessment-fairness audit | `docs/pilot/sp-system-prompt-v0.1.md`; both behavior contracts; both trajectory specifications; the latest accepted language/oracle disposition named by current state | read-only |
+| Korean SP language, realism, or assessment-fairness audit | the current SP system prompt named by `docs/CURRENT_STATE.md`; both behavior contracts; both trajectory specifications; the latest accepted language/oracle disposition named by current state | read-only |
 | Clinical-truth or patient-knowledge audit | the target case contract; the affected trajectory rows; only the clinical source the task explicitly names | read-only |
 | Contract or oracle correction | the exact audit evidence; the accepted disposition; only the affected contracts and trajectories; the relevant evaluation rule | bounded write, only when explicitly authorized |
 | System-prompt revision | the current prompt; frozen failure evidence; affected contracts and oracles; `docs/pilot/g2-evaluation-spec.md` | unauthorized unless current state or the user names an accepted prompt-revision envelope |
