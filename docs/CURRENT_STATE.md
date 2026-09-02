@@ -16,11 +16,9 @@ active normative owner.
 |---|---|
 | Repository | `ilovesonu1-hash/cpx-v5-research` |
 | Default branch | `main` |
-| Effective pilot semantic checkpoint | `e1db18d0ef9e7cec931837389875b719e9250da4` |
-| Checkpoint parent | `9d88c9d4c364960b5fa12c9c9ee8c278cdedcc0e` |
-| Checkpoint role | G2.1a language and oracle correction |
-| Proposed pilot correction | G2.1b oracle clarification on branch `pilot/g2.1b-oracle-clarification` |
-| Proposed correction base | `a1bc72238acc05b25d25f251c7d8b4a53dd8e506` |
+| Effective pilot semantic checkpoint | `33cca3781b301c29af965430c3caaf32378c28ff` |
+| Checkpoint parent | `a1bc72238acc05b25d25f251c7d8b4a53dd8e506` |
+| Checkpoint role | accepted G2.1b P25 oracle clarification |
 | Governance bootstrap | **ACCEPTED / MERGED / EFFECTIVE** |
 
 The governance bootstrap that introduced `CLAUDE.md`, `AGENTS.md`, and this file
@@ -37,9 +35,18 @@ separately from the pilot semantic checkpoint above.
 | Human acceptance | `RECORDED` |
 | Accepted treatment | `docs/governance/context-bootstrap-audit-disposition.md` |
 
-Accepting governance changed no pilot semantics and authorizes no G2 execution.
-The effective pilot semantic checkpoint is unchanged, because the accepted merge
-carried governance and documentation only.
+The governance acceptance itself changed no pilot semantics and authorized no
+G2 execution. The later accepted G2.1b semantic checkpoint is recorded
+separately above.
+
+G2.1b acceptance record:
+
+| Field | Value |
+|---|---|
+| Accepted proposal | `33cca3781b301c29af965430c3caaf32378c28ff` |
+| Acceptance merge | `e734964521041a281c51c6bf6a1984c7ec4c013d` |
+| Independent delta audit | ChatGPT GPT-5.6 Pro: `PASS`, 0 blockers, 0 major findings |
+| Human acceptance | `RECORDED` |
 
 ## Current phase and gate state
 
@@ -49,11 +56,11 @@ carried governance and documentation only.
 | `G1_PRODUCT_BASELINE` | `REACHED` |
 | `G2_CONTRACTS` | `EXECUTABLE_AS_PROVISIONAL_GOLD` |
 | `G2_1A_LANGUAGE_ORACLE_PATCH` | `COMPLETE` |
-| `G2_1A_DELTA_AUDIT` | `REVISION_REQUIRED / 0 BLOCKERS / 1 MAJOR / 1 MINOR` |
-| `G2_1B_ORACLE_CLARIFICATION` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_1A_DELTA_AUDIT` | `REVISION_REQUIRED / HISTORICAL / CORRECTED_BY_G2_1B` |
+| `G2_1B_ORACLE_CLARIFICATION` | `ACCEPTED / MERGED / EFFECTIVE` |
 | `G2_PROMPT_V0_1` | `FROZEN_UNCHANGED` |
 | `G2_SMALL_PROBE` | `COMPLETE_WITH_ERRATUM` |
-| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `BLOCKED_PENDING_G2_1B_ACCEPTANCE` |
+| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `ELIGIBLE / NOT_STARTED / NOT_ACCEPTED` |
 | `G2_FULL_COVERAGE` | `NOT_EXECUTED / UNAUTHORIZED` |
 | `SESSION_ISOLATION_BASELINE` | `NOT_ESTABLISHED` |
 | `ARCHITECTURE_ESCALATION` | `NOT_JUSTIFIED` |
@@ -69,11 +76,6 @@ semantic checkpoint unless separately identified. Governance records belong to
 the separately recorded governance checkpoint. Only the system prompt carries a
 separately pinned byte identity, because it is frozen against a completed probe.
 
-The working copies of the palpitations behavior contract and trajectory oracle
-on the G2.1b review branch contain proposed corrections. Their effective
-accepted versions remain those at `e1db18d0ef9e7cec931837389875b719e9250da4`
-until the G2.1b correction is independently audited and explicitly accepted.
-
 | Path | Role | Class |
 |---|---|---|
 | `docs/pilot/sp-system-prompt-v0.1.md` | generic SP behavioral prompt, frozen | active normative |
@@ -84,7 +86,8 @@ until the G2.1b correction is independently audited and explicitly accepted.
 | `docs/pilot/g2-evaluation-spec.md` | metrics, scoring rules, provisional thresholds | active normative |
 | `docs/pilot/g2.1a-language-oracle-disposition.md` | accepted treatment of the language and oracle audit | disposition record |
 | `docs/pilot/g2.1a-language-oracle-delta-audit.md` | independent final-state/delta audit of G2.1a | historical audit evidence |
-| `docs/pilot/g2.1b-oracle-clarification-disposition.md` | proposed treatment of the accepted G2.1a delta-audit findings | proposed disposition record |
+| `docs/pilot/g2.1b-oracle-clarification-disposition.md` | accepted treatment of the G2.1a delta-audit findings | disposition record |
+| `docs/pilot/g2.1b-oracle-clarification-delta-audit.md` | independent pre-merge delta audit of G2.1b | historical audit evidence |
 | `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
 | `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
 | `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
@@ -105,7 +108,7 @@ unchanged. **Known limitations** item 6 in the prompt document is non-prompt
 historical commentary from before the G2.1a alcohol correction; it does not
 govern current J-T11 behavior. The active jaundice behavior contract and the
 accepted G2.1a disposition require the reproducible approximate value and no
-discretionary under-reporting. The proposed G2.1b disposition records this
+discretionary under-reporting. The accepted G2.1b disposition records this
 clarification without changing the prompt file.
 
 ## Current evidence and result summary
@@ -167,18 +170,14 @@ Broader clinician and SP-methodology questions remain listed in
 
 Each step is *eligible*, not authorized. Completing one does not start the next.
 
-1. Independent read-only delta audit of the proposed G2.1b correction.
-2. Explicit human acceptance of the G2.1b disposition and validated correction.
-3. Only after G2.1b acceptance does an independent structural pre-batch audit
-   become eligible.
-4. If that audit accepts an exact isolated execution envelope, prepare frozen
+1. An independent structural pre-batch audit is the next eligible task.
+2. If that audit accepts an exact isolated execution envelope, prepare frozen
    pilot payloads and fixtures.
-5. Only after explicit acceptance of that envelope may the isolated
+3. Only after explicit acceptance of that envelope may the isolated
    58-trajectory coverage run begin.
 
-The next permitted task is the independent read-only delta audit of the G2.1b
-correction. Structural pre-batch audit remains blocked pending G2.1b acceptance,
-and the 58-trajectory execution remains unauthorized.
+The structural pre-batch audit is eligible but has not started and is not
+accepted. The 58-trajectory execution remains unauthorized.
 
 ## Explicitly unauthorized
 
