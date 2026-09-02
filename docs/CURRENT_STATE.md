@@ -19,36 +19,25 @@ active normative owner.
 | Effective pilot semantic checkpoint | `e1db18d0ef9e7cec931837389875b719e9250da4` |
 | Checkpoint parent | `9d88c9d4c364960b5fa12c9c9ee8c278cdedcc0e` |
 | Checkpoint role | G2.1a language and oracle correction |
-| Governance bootstrap | **PROPOSED / NOT YET ACCEPTED** on branch `governance/claude-context-bootstrap` |
+| Governance bootstrap | **ACCEPTED / MERGED / EFFECTIVE** |
 
 The governance bootstrap that introduced `CLAUDE.md`, `AGENTS.md`, and this file
-is a review candidate. It becomes effective only after independent review and an
-accepted merge to `main`.
+is accepted and effective on `main`. Its governance checkpoint is recorded
+separately from the pilot semantic checkpoint above.
 
-An independent read-only cross-harness audit of the bootstrap proposal has
-completed with verdict `PASS_AFTER_MINOR_PATCH` and zero blockers; its accepted
-treatment is `docs/governance/context-bootstrap-audit-disposition.md`. That
-audit did not recommend merging unchanged, so the required remaining lifecycle
-is exactly:
+| Governance field | Value |
+|---|---|
+| Accepted governance proposal | `ce254e5bb26906e1a6dd4dfe57d96e6cc8398bd8` |
+| Original proposal | `e9f7200bb14f08ea325ec378a50489f0b7c62dd7` |
+| Accepted merge commit | `43704a8e670d16fdd101d28a988acf8b96ec0089` |
+| Independent bootstrap audit | `PASS_AFTER_MINOR_PATCH`, 0 blockers |
+| Delta audit of the correction | `PASS`, 0 blockers, 0 major findings |
+| Human acceptance | `RECORDED` |
+| Accepted treatment | `docs/governance/context-bootstrap-audit-disposition.md` |
 
-1. pre-merge correction;
-2. delta audit of the correction;
-3. explicit human acceptance;
-4. accepted merge to `main`;
-5. immediate post-merge synchronization of this file;
-6. verification that `main` and this file agree.
-
-The post-merge synchronization commit must:
-
-- mark the governance bootstrap `ACCEPTED / MERGED / EFFECTIVE`;
-- record the accepted governance proposal commit;
-- record the actual merge commit SHA;
-- remove pre-merge-only wording;
-- leave the effective pilot semantic checkpoint unchanged unless pilot semantics
-  actually changed; and
-- authorize no G2 execution merely by accepting governance.
-
-The merge SHA is not created or predicted before the accepted merge.
+Accepting governance changed no pilot semantics and authorizes no G2 execution.
+The effective pilot semantic checkpoint is unchanged, because the accepted merge
+carried governance and documentation only.
 
 ## Current phase and gate state
 
@@ -70,9 +59,10 @@ executable as a test oracle, not accepted by a domain expert.
 
 ## Active artifact owners
 
-All paths below are at the effective semantic checkpoint above. Only the system
-prompt carries a separately pinned byte identity, because it is frozen against a
-completed probe.
+Pilot and research semantic artifacts below are effective at the recorded pilot
+semantic checkpoint unless separately identified. Governance records belong to
+the separately recorded governance checkpoint. Only the system prompt carries a
+separately pinned byte identity, because it is frozen against a completed probe.
 
 | Path | Role | Class |
 |---|---|---|
@@ -164,7 +154,10 @@ Each step is *eligible*, not authorized. Completing one does not start the next.
 4. Only after explicit acceptance of that envelope may the isolated
    58-trajectory coverage run begin.
 
-The governance bootstrap itself requires independent review before merging.
+The governance bootstrap is accepted and effective, so it no longer gates this
+sequence. Neither step 1 nor step 2 has been completed; each still requires its
+own independent audit and explicit acceptance. The 58-trajectory execution
+remains unauthorized.
 
 ## Explicitly unauthorized
 
