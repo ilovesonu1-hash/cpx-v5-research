@@ -49,6 +49,14 @@ LLM-015,Feasibility of generative AI for history taking in virtual patients,incl
 LLM-016,GenAI-Supported Virtual Patients in Health Care Education Systematic Review,include,"Two-reviewer systematic review of 15 studies and design gaps",Codex,pubmed_title_abstract
 LLM-017,AI-powered simulated patients for headache history-taking,include,"Repeated practice outcomes plus learner-reported robotic dialogue limits",Codex,pubmed_title_abstract
 LLM-018,Virtual standardized patient system for psychiatric interview training,include,"Expert and modified-Delphi case-script development plus preliminary RCT",Codex,pubmed_title_abstract
+HSP-015,Development of a standardized role script template for simulated participant scenarios,include,"Multi-step Delphi consensus role-script template directly relevant to opening and disclosure authoring",Codex,g1.2_pubmed_abstract
+KR-009,Clinical performance of medical students in a whole-task emergency OSCE station with a standardized patient complaining of palpitations,include,"Korean palpitations station with checklist-level history education and examination performance data",Codex,g1.2_koreamed_abstract
+KR-010,Metaverse-based objective structured clinical examinations,include,"Korean LLM virtual-patient interviewing feasibility with explicit physical-examination channel limits",Codex,g1.2_koreamed_abstract
+KR-011,Accuracy of standardized patient scoring in clinical performance examination,supplemental,"Korean SP scoring accuracy relevant to standardization but not turn-level disclosure; full text pending",Codex,g1.2_kci_metadata
+KR-012,Accuracy of faculty and standardized patient scoring in CPX using standardized patients,supplemental,"Korean SP portrayal and scoring consistency; requires Korean full-text appraisal",Codex,g1.2_kci_metadata
+EX-009,Checklist for reporting research using simulated patient methodology CRiSP,exclude,"Reporting-quality checklist for SP research rather than patient disclosure behavior",Codex,g1.2_pubmed_abstract
+EX-010,Korean nursing and pharmacy SP simulation satisfaction and self-efficacy studies,exclude,"Learner-affect outcomes without patient-role disclosure evidence",Codex,g1.2_kci_riss_screen
+EX-011,KoreaMed medical-imaging and clinical AI records retrieved by broad AI queries,exclude,"Diagnostic imaging or clinical AI scope with no simulated-patient role",Codex,g1.2_koreamed_screen
 EX-001,Current applications and challenges in LLMs for patient care systematic review,exclude,"Patient-care assistant scope rather than simulated-patient role",Codex,seed
 EX-002,Virtual patient Wikipedia article,exclude,"Tertiary source; use cited primary literature instead",Codex,seed
 EX-003,OSCE advice social-media threads,exclude,"Anecdotal and potentially examination-sensitive",Codex,seed
