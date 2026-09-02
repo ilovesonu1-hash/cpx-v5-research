@@ -16,7 +16,8 @@ Decision: **REVISION REQUIRED — implementation gate remains closed**
 - Built a 50-candidate seed evidence matrix and an eight-class exclusion log;
   inclusion does not imply completed full-text appraisal or final eligibility.
 - Completed the G1.2 Korean database-native search family across KoreaMed, KCI,
-  RISS, and a DBpia scale reference, raising the matrix to 53 records.
+  RISS, and a DBpia scale reference, and corrected the Davies false negative in
+  G1.2a, raising the matrix to 54 records.
 - Added current international standards, human-SP disclosure evidence,
   classical virtual-patient research, LLM-patient evidence, Korean CPX/SP
   evidence, and the prior local research branch.
@@ -43,9 +44,8 @@ behavior explicitly.
    and IEEE remain unrun and are now the largest search gap.
 2. Retrieve and appraise the full text of high-directness sources.
 3. Complete backward and forward citation chasing, including formal screening
-   of the audit-identified role-script records. Peters 2026 is now included as
-   HSP-015; the described Davies 2021 review was not retrievable in PubMed and
-   needs an identifier before it can be screened.
+   of the audit-identified role-script records. Both are now screened and
+   included: Peters 2026 as HSP-015 and Davies 2021 as HSP-016.
 4. Have an independent reviewer adjudicate inclusion and high-impact evidence
    extraction.
 5. Have Korean clinicians or SP educators review the jaundice and palpitations

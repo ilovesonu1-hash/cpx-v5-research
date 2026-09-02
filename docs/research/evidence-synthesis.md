@@ -5,15 +5,16 @@ Search date: 2026-09-02
 
 ## 1. Evidence-map inventory
 
-The evidence matrix contains 53 candidate evidence records: 50 from the seed
-pass and 3 added by the G1.2 Korean-search and citation-chasing pass. Inclusion
-does not imply completed full-text appraisal or final review eligibility.
+The evidence matrix contains 54 candidate evidence records: 50 from the seed
+pass, 3 added by the G1.2 Korean-search and citation-chasing pass, and 1 added
+by the G1.2a Davies correction. Inclusion does not imply completed full-text
+appraisal or final review eligibility.
 The reproducible PubMed pass returned 58 query records (57 unique because one
 record appeared in both queries); all 58 received a title-level decision:
 
 | Stream | Records | Main use |
 |---|---:|---|
-| Human SP / OSCE standards, guidance, and studies | 14 | Case construction, prompting boundaries, repeatability |
+| Human SP / OSCE standards, guidance, and studies | 15 | Case construction, prompting boundaries, repeatability |
 | Classical virtual patients | 6 | Educational design and evaluation context |
 | LLM virtual/standardized patients | 18 | Modern failure modes, prompting, fidelity metrics |
 | Korean CPX/SP evidence | 10 | Local educational and linguistic context |
@@ -229,9 +230,10 @@ This is the central correction to the earlier all-cases `greeting_only` plan.
 - Deduplicate records and create a countable PRISMA flow.
 - Retrieve and appraise full texts for the high-directness sources.
 - Perform backward/forward citation chasing.
-- G1.2 screened the two audit-identified records: Peters 2026 was included as
-  HSP-015, and the described Davies 2021 scoping review could not be retrieved
-  in PubMed and remains unverified pending a DOI or PMID.
+- G1.2 and the G1.2a correction screened both audit-identified records:
+  Peters 2026 is included as HSP-015 and Davies 2021 as HSP-016. The Davies
+  record was initially reported NOT LOCATED; that was a query-design false
+  negative, corrected once PMID 32649589 was supplied.
 - Obtain independent screening and extraction review.
 - Have Korean clinicians/SP educators review the two pilot trajectory tables.
 - Freeze evidence-backed requirements only after adjudication.
