@@ -27,6 +27,8 @@ Research documents are in [`docs/research`](docs/research):
 - `local-source-manifest.csv`: SHA-256 anchors for the read-only local evidence
 - `g1-status.md`: current gate decision and remaining blockers
 - `g1.1-audit-disposition.md`: disposition of the independent seed-evidence audit
+- `g1.2-search-completeness.md`: Korean database-native search remediation
+- `g1-product-baseline.md`: product-evidence baseline milestone and paused research expansion
 
 Local source aliases are intentionally machine-independent:
 

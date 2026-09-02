@@ -145,6 +145,12 @@ identify:
 
 ## 10. G-1 exit criteria
 
+Status note added 2026-09-02: these are publication-style research-completeness
+criteria. They are retained as the historical record and marked
+**RESEARCH-COMPLETENESS NOT PURSUED AT THIS STAGE**. Product work now proceeds
+under the separate `G1-PRODUCT-BASELINE` milestone documented in
+`g1-product-baseline.md`, which does not claim systematic-review completeness.
+
 G-1 is complete only when:
 
 1. At least 30 relevant sources have been screened, including Korean evidence.

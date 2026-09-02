@@ -1,7 +1,13 @@
 # G-1 status
 
 Date: 2026-09-02
-Decision: **REVISION REQUIRED — implementation gate remains closed**
+Decision: **RESEARCH EXPANSION PAUSED — publication-style G-1 criteria not pursued at this stage**
+
+Superseded for product purposes by `g1-product-baseline.md`, which records
+**G1-PRODUCT-BASELINE: REACHED**. The criteria and blockers below are retained
+unchanged as the historical publication-style record. They are marked
+**RESEARCH-COMPLETENESS NOT PURSUED AT THIS STAGE** rather than satisfied.
+The production implementation gate remains closed.
 
 ## Completed in this pass
 
@@ -36,7 +42,10 @@ complaint at the first greeting. For the current jaundice case, the case author
 may set `reason-for-visit question` as the opening trigger and test that
 behavior explicitly.
 
-## Remaining blockers
+## Remaining blockers (research-completeness track, not pursued at this stage)
+
+These remain genuinely open. They no longer block bounded behavioral
+prototyping, and they are not claimed to be resolved.
 
 1. Run database-native Korean searches and at least one education or computing
    index search.
