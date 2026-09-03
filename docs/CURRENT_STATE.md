@@ -48,6 +48,24 @@ G2.1b acceptance record:
 | Independent delta audit | ChatGPT GPT-5.6 Pro: `PASS`, 0 blockers, 0 major findings |
 | Human acceptance | `RECORDED` |
 
+G2.7a execution-envelope acceptance record:
+
+| Field | Value |
+|---|---|
+| Original envelope candidate | `1c8314945c203d935f35ef09b323713d0d62c92f` |
+| Accepted corrected envelope | `77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4` |
+| Accepted merge | `f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd` |
+| Structural pre-batch audit | `REVISION_REQUIRED / HISTORICAL / RESOLVED_BY_ENVELOPE_V1` |
+| Initial v1 delta audit | `PASS_AFTER_MINOR_PATCH / HISTORICAL / CORRECTED` |
+| Correction-delta audit | ChatGPT GPT-5.6 Pro: `PASS`, 0 blockers, 0 major findings, 0 minor findings |
+| Human acceptance | `RECORDED` |
+| Auditor-identity limitation | `ACCEPTED AS PROVENANCE LIMITATION`; original structural-audit model/provider remains `NOT_VERIFIABLE_FROM_REPOSITORY_STATE` unless separately `OWNER_ATTESTED` |
+
+The execution-envelope checkpoint is separate from the effective patient
+semantic checkpoint. Accepting G2.7a changes execution control and readiness,
+not patient facts, behavior contracts, trajectory oracles, the evaluation
+specification, or the frozen prompt.
+
 ## Current phase and gate state
 
 | Gate | State |
@@ -60,11 +78,13 @@ G2.1b acceptance record:
 | `G2_1B_ORACLE_CLARIFICATION` | `ACCEPTED / MERGED / EFFECTIVE` |
 | `G2_PROMPT_V0_1` | `FROZEN_UNCHANGED` |
 | `G2_SMALL_PROBE` | `COMPLETE_WITH_ERRATUM` |
-| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `REVISION_REQUIRED / 1 BLOCKER / 6 MAJOR / 10 MINOR` |
-| `G2_EXECUTION_ENVELOPE_V1` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_EXECUTION_ENVELOPE_V1_DELTA_AUDIT` | `PASS_AFTER_MINOR_PATCH / 0 BLOCKERS / 0 MAJOR / 3 MINOR` |
-| `G2_EXECUTION_ENVELOPE_V1_CORRECTION` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `BLOCKED_PENDING_ENVELOPE_ACCEPTANCE` |
+| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `REVISION_REQUIRED / HISTORICAL / RESOLVED_BY_ACCEPTED_ENVELOPE_V1` |
+| `G2_STRUCTURAL_PRE_BATCH_DISPOSITION` | `ACCEPTED / MERGED / EFFECTIVE` |
+| `G2_EXECUTION_ENVELOPE_V1` | `ACCEPTED / MERGED / EFFECTIVE` |
+| `G2_EXECUTION_ENVELOPE_V1_DELTA_AUDIT` | `PASS_AFTER_MINOR_PATCH / HISTORICAL / CORRECTED_BY_77B17F9` |
+| `G2_EXECUTION_ENVELOPE_V1_CORRECTION` | `ACCEPTED / MERGED / EFFECTIVE` |
+| `G2_EXECUTION_ENVELOPE_V1_CORRECTION_DELTA_AUDIT` | `PASS / 0 BLOCKERS / 0 MAJOR / 0 MINOR` |
+| `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `ELIGIBLE / NOT_STARTED / NOT_ACCEPTED` |
 | `G2_FULL_COVERAGE` | `NOT_EXECUTED / UNAUTHORIZED` |
 | `SESSION_ISOLATION_BASELINE` | `NOT_ESTABLISHED` |
 | `ARCHITECTURE_ESCALATION` | `NOT_JUSTIFIED` |
@@ -73,14 +93,11 @@ G2.1b acceptance record:
 No clinician or SP-educator acceptance has occurred. "Provisional gold" means
 executable as a test oracle, not accepted by a domain expert.
 
-The structural pre-batch audit is complete and its verdict is recorded. Its
-findings are treated in `docs/pilot/g2-structural-prebatch-disposition.md`,
-which is `PROPOSED / NOT YET ACCEPTED`. The audited envelope was a chat-issued
-specification with no repository SHA; the first repository-pinned
-execution-envelope candidate is
-`docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md`. Neither the
-disposition nor the envelope is accepted, so no fixture, payload snapshot,
-runner, or execution is eligible.
+The structural pre-batch audit is historical evidence. Its
+`REVISION_REQUIRED` findings are resolved by the accepted disposition and the
+accepted corrected v1 envelope. The audited original envelope was a chat-issued
+specification with no repository SHA; this provenance limitation is accepted
+without inventing an auditor identity.
 
 An independent GitHub-connected read-only delta audit by ChatGPT GPT-5.6 Pro of
 `c02ab75a..1c831494` returned `PASS_AFTER_MINOR_PATCH` with 0 blockers, 0
@@ -88,15 +105,17 @@ major findings, and 3 minor findings. The substantive envelope was found
 structurally acceptable, and the architecture direction remains
 `KEEP_MINIMAL_EXECUTION_DESIGN`.
 
-The exact authorized minor corrections are now **proposed** on the review
-branch: the section-3 concept count, removal of one duplicated
-retry-accounting paragraph, an added non-executable preflight-input-freezing
-requirement, and the recorded auditor-identity provenance disposition.
+The exact authorized corrections at `77b17f9` were independently audited by
+ChatGPT GPT-5.6 Pro with verdict `PASS`, 0 blockers, 0 major findings, and 0
+remaining minor findings. Human acceptance is recorded and the corrected
+envelope is merged and effective.
 
-No full re-audit is required if deterministic verification confirms that no
-other semantic content changed. Human acceptance and merge remain required.
-Fixture and runner implementation remains blocked, and full execution remains
-unauthorized.
+The accepted envelope retains its proposal-time heading as immutable historical
+context. Its exact accepted byte identity is carried by accepted commit
+`77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4`, merge record
+`f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd`, and this current-state record.
+Fixture and runner implementation is now eligible under a separate task;
+patient-model execution remains unauthorized.
 
 ## Active artifact owners
 
@@ -118,9 +137,10 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.1b-oracle-clarification-disposition.md` | accepted treatment of the G2.1a delta-audit findings | disposition record |
 | `docs/pilot/g2.1b-oracle-clarification-delta-audit.md` | independent pre-merge delta audit of G2.1b | historical audit evidence |
 | `docs/pilot/g2-structural-prebatch-audit.md` | independent structural pre-batch audit of the chat-issued execution envelope | historical audit evidence |
-| `docs/pilot/g2-structural-prebatch-disposition.md` | proposed treatment of the structural pre-batch audit findings | disposition record |
-| `docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md` | proposed isolated 58-unit full-coverage execution envelope, not yet accepted | proposed normative candidate |
+| `docs/pilot/g2-structural-prebatch-disposition.md` | accepted treatment of the structural pre-batch audit findings | disposition record |
+| `docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md` | accepted isolated 58-unit full-coverage execution envelope | active normative execution envelope |
 | `docs/pilot/g2.7a-execution-envelope-v1-delta-audit.md` | independent delta audit of the v1 execution-envelope candidate | historical audit evidence |
+| `docs/pilot/g2.7a-execution-envelope-v1-correction-delta-audit.md` | independent final audit of the authorized v1 correction delta | historical audit evidence |
 | `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
 | `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
 | `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
@@ -203,28 +223,39 @@ Broader clinician and SP-methodology questions remain listed in
 
 Each step is *eligible*, not authorized. Completing one does not start the next.
 
-The independent delta audit of the proposed v1 envelope is **complete**. The
-next permitted task is **explicit human acceptance and merge of the corrected
-v1 envelope**, or a bounded deterministic re-verification of the correction
-diff.
+The next eligible task is **pilot-only fixture and runner candidate
+implementation under the accepted execution envelope**.
 
-1. Deterministic verification that the correction commit changed only the
-   authorized minor content.
-2. Explicit human acceptance of the structural pre-batch disposition and the
-   corrected v1 envelope, recorded here, followed by merge.
-3. Only after that acceptance do frozen pilot payloads and fixtures become
-   eligible.
-4. Only after payloads, fixtures, and a runner exist under an accepted envelope
-   may the isolated 58-unit coverage run begin.
+Under a separate branch and explicit implementation authorization, that task
+may create:
 
-Fixture creation, runner creation, and execution are **not** eligible. The
-58-unit execution remains unauthorized.
+- two canonical payload snapshots;
+- canonical assembled system messages;
+- exact neutral preflight messages;
+- a frozen preflight manifest;
+- a 58-unit execution manifest;
+- a raw-response record specification;
+- a scorecard template;
+- a minimal `PILOT_ONLY / NON_PRODUCTION` runner; and
+- deterministic validators.
+
+It may not:
+
+- perform the isolation preflight;
+- call the patient model;
+- score model output;
+- run the 58-unit suite;
+- modify the accepted envelope; or
+- modify prompt, contract, trajectory, or evaluation semantics.
+
+Fixture/runner eligibility is not execution authorization. The isolation
+baseline remains unestablished and the 58-unit execution remains unauthorized.
 
 ## Explicitly unauthorized
 
 - Modifying SP system prompt v0.1.
-- Full-suite execution before an accepted structural audit and execution
-  envelope.
+- Session-isolation preflight, patient-model calls, scoring, or full-suite
+  execution without a separately accepted exact execution authorization.
 - Production schema design or disclosure enum freeze.
 - Any change to cpx-v4.
 - Any change to `CPX_SOURCE_ROOT`.
