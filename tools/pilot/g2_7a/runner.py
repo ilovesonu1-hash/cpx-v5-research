@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
@@ -43,6 +44,16 @@ EXECUTION_REQUIRED_GATES = (
 
 RunIdFactory = Callable[[str, int, int], str]
 TimestampFactory = Callable[[], str]
+
+
+@dataclass
+class ExecutionUnitResult:
+    """All raw-call rows and lifecycle events for one execution unit."""
+
+    attempted_call_records: list[dict[str, Any]]
+    attempt_events: list[dict[str, Any]]
+    completed: bool
+    authoritative_attempt_index: int | None
 
 
 def repo_root() -> Path:
@@ -93,6 +104,7 @@ def _base_record(
         "learner_utterance": call["learner_utterance"],
         "model": MODEL,
         "physical_isolation_verified": physical_isolation_verified,
+        "planned_call_id": call["planned_call_id"],
         "provider_completion_status": None,
         "run_id": run_id,
         "runtime": RUNTIME,
@@ -108,6 +120,33 @@ def _base_record(
     }
 
 
+def _attempt_event(
+    execution_unit_id: str,
+    attempt_index: int,
+    event_type: str,
+    timestamp_utc: str,
+    input_bundle_id: str,
+    *,
+    safe_session_id: str | None,
+    error_class: str | None,
+    safe_message: str | None,
+    authoritative_attempt: bool,
+    model_call_created: bool,
+) -> dict[str, Any]:
+    return {
+        "authoritative_attempt": authoritative_attempt,
+        "event_type": event_type,
+        "execution_error_class": error_class,
+        "execution_error_message_safe": safe_message,
+        "execution_unit_id": execution_unit_id,
+        "input_bundle_id": input_bundle_id,
+        "model_call_created": model_call_created,
+        "safe_session_id": safe_session_id,
+        "timestamp_utc": timestamp_utc,
+        "unit_attempt_index": attempt_index,
+    }
+
+
 def run_execution_unit(
     execution_unit: Mapping[str, Any],
     planned_calls: Sequence[Mapping[str, Any]],
@@ -118,7 +157,7 @@ def run_execution_unit(
     physical_isolation_verified: bool,
     run_id_factory: RunIdFactory = _default_run_id,
     timestamp_factory: TimestampFactory = _default_timestamp,
-) -> list[dict[str, Any]]:
+) -> ExecutionUnitResult:
     """Exercise one unit with full-unit restart semantics using an injected transport.
 
     This function is used only with ``FakeTransport`` in the current task.  A
@@ -133,62 +172,156 @@ def run_execution_unit(
 
     system_message_sha256 = hashlib.sha256(system_message.encode("utf-8")).hexdigest()
     all_records: list[dict[str, Any]] = []
+    attempt_events: list[dict[str, Any]] = []
     for attempt_index in range(1, MAX_EXECUTION_UNIT_ATTEMPTS + 1):
-        session = transport.create_session(system_message, RUNTIME)
-        attempt_records: list[dict[str, Any]] = []
-        attempt_complete = True
         try:
-            for call in ordered_calls:
-                run_id = run_id_factory(execution_unit_id, attempt_index, int(call["turn_index"]))
-                record = _base_record(
-                    call,
+            session = transport.create_session(system_message, RUNTIME)
+            safe_session_id = session.safe_session_id
+        except TransportError as exc:
+            attempt_events.append(
+                _attempt_event(
                     execution_unit_id,
                     attempt_index,
-                    run_id,
+                    "SESSION_CREATION_FAILED",
                     timestamp_factory(),
-                    session.safe_session_id,
-                    physical_isolation_verified,
                     input_bundle_id,
-                    system_message_sha256,
+                    safe_session_id=None,
+                    error_class=exc.error_class,
+                    safe_message=exc.safe_message,
+                    authoritative_attempt=False,
+                    model_call_created=False,
                 )
-                try:
-                    response: TransportResponse = session.send(str(call["learner_utterance"]))
-                    if response.safe_session_id != session.safe_session_id:
-                        raise TransportError(
-                            "SESSION_ID_MISMATCH",
-                            "transport response session identifier did not match the active session",
-                        )
-                    if not isinstance(response.final_response, str):
-                        raise TransportError(
-                            "FINAL_RESPONSE_CHANNEL_MISSING",
-                            "transport did not provide a learner-visible final response string",
-                        )
-                    record["final_patient_response"] = response.final_response
-                    record["provider_completion_status"] = response.completion_status
-                    record["separate_reasoning_field_present"] = response.separate_reasoning_field_present
-                except TransportError as exc:
-                    record["execution_error_class"] = exc.error_class
-                    record["execution_error_message_safe"] = exc.safe_message
-                    record["provider_completion_status"] = "execution_error"
-                    attempt_complete = False
-                except Exception:
-                    record["execution_error_class"] = "HARNESS_UNEXPECTED_ERROR"
-                    record["execution_error_message_safe"] = "unexpected harness failure; raw exception suppressed"
-                    record["provider_completion_status"] = "execution_error"
-                    attempt_complete = False
-                attempt_records.append(record)
-                all_records.append(record)
-                if not attempt_complete:
-                    break
-        finally:
+            )
+            continue
+        except Exception:
+            attempt_events.append(
+                _attempt_event(
+                    execution_unit_id,
+                    attempt_index,
+                    "SESSION_CREATION_FAILED",
+                    timestamp_factory(),
+                    input_bundle_id,
+                    safe_session_id=None,
+                    error_class="HARNESS_UNEXPECTED_ERROR",
+                    safe_message="unexpected harness failure; raw exception suppressed",
+                    authoritative_attempt=False,
+                    model_call_created=False,
+                )
+            )
+            continue
+
+        attempt_records: list[dict[str, Any]] = []
+        attempt_complete = True
+        for call in ordered_calls:
+            run_id = run_id_factory(execution_unit_id, attempt_index, int(call["turn_index"]))
+            record = _base_record(
+                call,
+                execution_unit_id,
+                attempt_index,
+                run_id,
+                timestamp_factory(),
+                safe_session_id,
+                physical_isolation_verified,
+                input_bundle_id,
+                system_message_sha256,
+            )
+            try:
+                response: TransportResponse = session.send(str(call["learner_utterance"]))
+                if response.safe_session_id != safe_session_id:
+                    raise TransportError(
+                        "SESSION_ID_MISMATCH",
+                        "transport response session identifier did not match the active session",
+                    )
+                if not isinstance(response.final_response, str):
+                    raise TransportError(
+                        "FINAL_RESPONSE_CHANNEL_MISSING",
+                        "transport did not provide a learner-visible final response string",
+                    )
+                record["final_patient_response"] = response.final_response
+                record["provider_completion_status"] = response.completion_status
+                record["separate_reasoning_field_present"] = response.separate_reasoning_field_present
+            except TransportError as exc:
+                record["execution_error_class"] = exc.error_class
+                record["execution_error_message_safe"] = exc.safe_message
+                record["provider_completion_status"] = "execution_error"
+                attempt_complete = False
+            except Exception:
+                record["execution_error_class"] = "HARNESS_UNEXPECTED_ERROR"
+                record["execution_error_message_safe"] = "unexpected harness failure; raw exception suppressed"
+                record["provider_completion_status"] = "execution_error"
+                attempt_complete = False
+            attempt_records.append(record)
+            all_records.append(record)
+            if not attempt_complete:
+                break
+
+        close_error_class: str | None = None
+        close_error_message: str | None = None
+        try:
             session.close()
+        except TransportError as exc:
+            close_error_class = exc.error_class
+            close_error_message = exc.safe_message
+        except Exception:
+            close_error_class = "HARNESS_UNEXPECTED_ERROR"
+            close_error_message = "unexpected harness failure; raw exception suppressed"
+
+        if close_error_class is not None:
+            for record in attempt_records:
+                record["authoritative_attempt"] = False
+                record["physical_isolation_verified"] = False
+            attempt_events.append(
+                _attempt_event(
+                    execution_unit_id,
+                    attempt_index,
+                    "SESSION_CLOSE_FAILED",
+                    timestamp_factory(),
+                    input_bundle_id,
+                    safe_session_id=safe_session_id,
+                    error_class=close_error_class,
+                    safe_message=close_error_message,
+                    authoritative_attempt=False,
+                    model_call_created=bool(attempt_records),
+                )
+            )
+            continue
 
         if attempt_complete and len(attempt_records) == len(ordered_calls):
             for record in attempt_records:
                 record["authoritative_attempt"] = True
-            return all_records
+            attempt_events.append(
+                _attempt_event(
+                    execution_unit_id,
+                    attempt_index,
+                    "ATTEMPT_COMPLETED",
+                    timestamp_factory(),
+                    input_bundle_id,
+                    safe_session_id=safe_session_id,
+                    error_class=None,
+                    safe_message=None,
+                    authoritative_attempt=True,
+                    model_call_created=bool(attempt_records),
+                )
+            )
+            return ExecutionUnitResult(all_records, attempt_events, True, attempt_index)
 
-    return all_records
+        failed_record = attempt_records[-1] if attempt_records else None
+        attempt_events.append(
+            _attempt_event(
+                execution_unit_id,
+                attempt_index,
+                "ATTEMPT_FAILED",
+                timestamp_factory(),
+                input_bundle_id,
+                safe_session_id=safe_session_id,
+                error_class=(failed_record or {}).get("execution_error_class"),
+                safe_message=(failed_record or {}).get("execution_error_message_safe"),
+                authoritative_attempt=False,
+                model_call_created=bool(attempt_records),
+            )
+        )
+
+    return ExecutionUnitResult(all_records, attempt_events, False, None)
 
 
 def print_plan(root: Path | None = None) -> int:

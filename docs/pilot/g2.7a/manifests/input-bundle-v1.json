@@ -10,21 +10,23 @@
     "ambiguity_map": "960e25b4e4c7ec8924fb71fde3646a2f8f4885b624893fce46e8dd17eb46ff82",
     "criticality_map": "f260d7e305e2da192e9264d393dc97b12bda05183c100636afd57aec9fb47944",
     "evaluation_spec": "defffb1e40d3da49d67ca0fda7db9212c4e05f0458f7969cab872dab798794ad",
-    "execution_manifest": "184da7a421b248f15dd867a38692ea1022c81383380661297a17b554704214f8",
+    "execution_attempt_event_spec": "6d0990ff3adaabc252bff9f1fe4c2e1d09f3a9d37adb80828901ac6a9afc34b8",
+    "execution_manifest": "56fa3a9a9b18dc3ef06859a20954c6213c244e6dad0f000c5a80b65eeb2a17e4",
     "jaundice_contract": "a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df",
-    "jaundice_payload": "848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935",
-    "jaundice_system_message": "4eb9f01ecd8a21eeb5b18d48c51855be5ba0562ad46bd1c6408124aaa109eada",
+    "jaundice_payload": "2b2eb3acf6e016d7fab0f795a0ea277f6ddcb480cb4da9e832a7febc1c4abd04",
+    "jaundice_system_message": "61ab0319bd6521b58c218c3db2fc750c984f1915b53e079dbac0f52fafeafe5f",
     "jaundice_trajectories": "267a645877cae27839e0a82dca019cdfb00c7d722e10175fb4b4abe9fc95fd7b",
     "palpitations_contract": "36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9",
-    "palpitations_payload": "54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7",
-    "palpitations_system_message": "15ac92444408efd1262654eb34e3144d59a8d971324aa755fd8474a20c3a9637",
+    "palpitations_payload": "997cda014a01eb14af81791ac9b608e81235577c7af43fe52df7211888f43cdf",
+    "palpitations_system_message": "bf66c687683dc74bf07b6efd5e6f8dd62063e683621a5dc128480c8c64d90e4c",
     "palpitations_trajectories": "becab7ac4df836a72f3d5f902c3cba3f6190fa37eed99ee4542f9704526eae75",
     "preflight_manifest": "c027265b98e64b47ee4595b26d0deecaaf4398086455ab74d77f47b27a1c21b6",
     "prompt_block": "f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8",
     "prompt_document": "373351aaa9d254e42a88c0daf209124fefb3ff59fc59571095345e28ea451d72",
-    "raw_response_spec": "fb2e2e01c01764adadf92cfcfabac40bd0e3cb95ec33b85343fc2acd579c3de1",
-    "scorecard_spec": "18a562feef275e90548b52af932125aeedfcfae65c055edc23a20ed4c0e936b4",
-    "scorecard_template": "a1df224d92bf83eb69a6bad847766c40650b499efcf00c69f577e9a87dd612bd"
+    "raw_response_spec": "6e72029c1693fdde4e88f2fad0b49574a797af17dbb67410217983f17abc863b",
+    "scorecard_spec": "105642cbd31ef53f5e319188156f3e151a17cef872bd0bc5b4cf99f1883866a0",
+    "scorecard_template": "727bb0e316b30265f3ba7218482de915158bc319533876dc7a6f5ab400884ec7",
+    "structural_prebatch_disposition": "f7628abe45698a5da2b260bf5f3d4568f624df6bc9c22367b94e1df8c1a66ce8"
   },
   "identities": {
     "accepted_execution_envelope": {
@@ -33,11 +35,11 @@
       "path": "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md"
     },
     "accepted_execution_envelope_merge": "f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd",
+    "candidate_base_commit": "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6",
     "effective_semantic_checkpoint": "33cca3781b301c29af965430c3caaf32378c28ff",
-    "governing_main": "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6",
     "payloads": {
-      "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt": "848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935",
-      "docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt": "54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7"
+      "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt": "2b2eb3acf6e016d7fab0f795a0ea277f6ddcb480cb4da9e832a7febc1c4abd04",
+      "docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt": "997cda014a01eb14af81791ac9b608e81235577c7af43fe52df7211888f43cdf"
     },
     "prompt_document": {
       "path": "docs/pilot/sp-system-prompt-v0.1.md",
@@ -71,15 +73,21 @@
         "source_commit": "33cca3781b301c29af965430c3caaf32378c28ff"
       }
     },
+    "structural_prebatch_disposition": {
+      "git_blob_sha": "2aecd7df423ef8ed74e7f2dc8f4a09690e4c027a",
+      "path": "docs/pilot/g2-structural-prebatch-disposition.md",
+      "sha256": "f7628abe45698a5da2b260bf5f3d4568f624df6bc9c22367b94e1df8c1a66ce8",
+      "source_commit": "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6"
+    },
     "system_messages": {
-      "docs/pilot/g2.7a/fixtures/jaundice-system-message-v1.txt": "4eb9f01ecd8a21eeb5b18d48c51855be5ba0562ad46bd1c6408124aaa109eada",
-      "docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt": "15ac92444408efd1262654eb34e3144d59a8d971324aa755fd8474a20c3a9637"
+      "docs/pilot/g2.7a/fixtures/jaundice-system-message-v1.txt": "61ab0319bd6521b58c218c3db2fc750c984f1915b53e079dbac0f52fafeafe5f",
+      "docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt": "bf66c687683dc74bf07b6efd5e6f8dd62063e683621a5dc128480c8c64d90e4c"
     },
     "transmitted_prompt_block": {
       "path": "docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt",
       "sha256": "f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8"
     }
   },
-  "input_bundle_id": "sha256:9c15bb52b494008eadcf7919fba6a51c2227081c745f4663873ecffdba7b423b",
+  "input_bundle_id": "sha256:991159fc06f2f135f97422995da029442d79584269c2fc2d10cf33011feed317",
   "manifest_version": "v1"
 }

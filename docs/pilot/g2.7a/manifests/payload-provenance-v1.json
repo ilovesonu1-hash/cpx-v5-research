@@ -1,7 +1,24 @@
 {
   "cases": [
     {
+      "behavioral_rule_provenance": {
+        "accepted_execution_envelope": {
+          "commit": "77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4",
+          "ownership": "payload boundary, patient-input assembly, and P29 station execution rules",
+          "path": "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md"
+        },
+        "accepted_p29_local_pilot_behavior": null,
+        "contract_response_scope": {
+          "commit": "33cca3781b301c29af965430c3caaf32378c28ff",
+          "path": "docs/pilot/jaundice-behavior-contract.md",
+          "section": "D. Response scope"
+        }
+      },
       "case": "jaundice",
+      "coverage_assurance": {
+        "semantic_paraphrase_equivalence": "audit-reviewed; not proven by structural ID-count checks",
+        "structural_id_and_source_row_coverage": "deterministically computed from parsed source and payload content"
+      },
       "duplicate_fact_ids": [],
       "excluded_source_sections": [
         "case-selection rationale",
@@ -47,19 +64,101 @@
         "J-T25"
       ],
       "missing_fact_ids": [],
+      "patient_knowledge_fact_count": 25,
+      "patient_knowledge_missing_fact_ids": [],
+      "patient_knowledge_missing_from_case_truth": [],
+      "payload_fact_occurrence_count": 25,
       "payload_path": "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt",
-      "payload_sha256": "848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935",
+      "payload_sha256": "2b2eb3acf6e016d7fab0f795a0ea277f6ddcb480cb4da9e832a7febc1c4abd04",
+      "source_case_truth_fact_ids": [
+        "J-T01",
+        "J-T02",
+        "J-T03",
+        "J-T04",
+        "J-T05",
+        "J-T06",
+        "J-T07",
+        "J-T08",
+        "J-T09",
+        "J-T10",
+        "J-T11",
+        "J-T12",
+        "J-T13",
+        "J-T14",
+        "J-T15",
+        "J-T16",
+        "J-T17",
+        "J-T18",
+        "J-T19",
+        "J-T20",
+        "J-T21",
+        "J-T22",
+        "J-T23",
+        "J-T24",
+        "J-T25"
+      ],
       "source_contract_blob_sha": "d574c1740501061b20c2a32505aed9caf2abcea3",
       "source_contract_path": "docs/pilot/jaundice-behavior-contract.md",
       "source_contract_sha256": "a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df",
+      "source_patient_knowledge_fact_ids": [
+        "J-T01",
+        "J-T02",
+        "J-T03",
+        "J-T04",
+        "J-T05",
+        "J-T06",
+        "J-T07",
+        "J-T08",
+        "J-T09",
+        "J-T10",
+        "J-T11",
+        "J-T12",
+        "J-T13",
+        "J-T14",
+        "J-T15",
+        "J-T16",
+        "J-T17",
+        "J-T18",
+        "J-T19",
+        "J-T20",
+        "J-T21",
+        "J-T22",
+        "J-T23",
+        "J-T24",
+        "J-T25"
+      ],
       "source_semantic_commit": "33cca3781b301c29af965430c3caaf32378c28ff",
       "station_frame_source": [
         "docs/pilot/jaundice-behavior-contract.md#station-frame",
         "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md#2-payload-contract"
-      ]
+      ],
+      "unexpected_fact_ids": []
     },
     {
+      "behavioral_rule_provenance": {
+        "accepted_execution_envelope": {
+          "commit": "77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4",
+          "ownership": "payload boundary, patient-input assembly, and P29 station execution rules",
+          "path": "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md"
+        },
+        "accepted_p29_local_pilot_behavior": {
+          "commit": "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6",
+          "git_blob_sha": "2aecd7df423ef8ed74e7f2dc8f4a09690e4c027a",
+          "path": "docs/pilot/g2-structural-prebatch-disposition.md",
+          "section": "P29 local pilot ruling",
+          "sha256": "f7628abe45698a5da2b260bf5f3d4568f624df6bc9c22367b94e1df8c1a66ce8"
+        },
+        "contract_response_scope": {
+          "commit": "33cca3781b301c29af965430c3caaf32378c28ff",
+          "path": "docs/pilot/palpitations-behavior-contract.md",
+          "section": "D. Response scope"
+        }
+      },
       "case": "palpitations",
+      "coverage_assurance": {
+        "semantic_paraphrase_equivalence": "audit-reviewed; not proven by structural ID-count checks",
+        "structural_id_and_source_row_coverage": "deterministically computed from parsed source and payload content"
+      },
       "duplicate_fact_ids": [],
       "excluded_source_sections": [
         "case-selection rationale",
@@ -110,16 +209,85 @@
         "P-T30"
       ],
       "missing_fact_ids": [],
+      "patient_knowledge_fact_count": 30,
+      "patient_knowledge_missing_fact_ids": [],
+      "patient_knowledge_missing_from_case_truth": [],
+      "payload_fact_occurrence_count": 30,
       "payload_path": "docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt",
-      "payload_sha256": "54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7",
+      "payload_sha256": "997cda014a01eb14af81791ac9b608e81235577c7af43fe52df7211888f43cdf",
+      "source_case_truth_fact_ids": [
+        "P-T01",
+        "P-T02",
+        "P-T03",
+        "P-T04",
+        "P-T05",
+        "P-T06",
+        "P-T07",
+        "P-T08",
+        "P-T09",
+        "P-T10",
+        "P-T11",
+        "P-T12",
+        "P-T13",
+        "P-T14",
+        "P-T15",
+        "P-T16",
+        "P-T17",
+        "P-T18",
+        "P-T19",
+        "P-T20",
+        "P-T21",
+        "P-T22",
+        "P-T23",
+        "P-T24",
+        "P-T25",
+        "P-T26",
+        "P-T27",
+        "P-T28",
+        "P-T29",
+        "P-T30"
+      ],
       "source_contract_blob_sha": "09bf2c36d153d970c93971ca82ad8ee039487bc4",
       "source_contract_path": "docs/pilot/palpitations-behavior-contract.md",
       "source_contract_sha256": "36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9",
+      "source_patient_knowledge_fact_ids": [
+        "P-T01",
+        "P-T02",
+        "P-T03",
+        "P-T04",
+        "P-T05",
+        "P-T06",
+        "P-T07",
+        "P-T08",
+        "P-T09",
+        "P-T10",
+        "P-T11",
+        "P-T12",
+        "P-T13",
+        "P-T14",
+        "P-T15",
+        "P-T16",
+        "P-T17",
+        "P-T18",
+        "P-T19",
+        "P-T20",
+        "P-T21",
+        "P-T22",
+        "P-T23",
+        "P-T24",
+        "P-T25",
+        "P-T26",
+        "P-T27",
+        "P-T28",
+        "P-T29",
+        "P-T30"
+      ],
       "source_semantic_commit": "33cca3781b301c29af965430c3caaf32378c28ff",
       "station_frame_source": [
         "docs/pilot/palpitations-behavior-contract.md#station-frame",
         "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md#2-payload-contract"
-      ]
+      ],
+      "unexpected_fact_ids": []
     }
   ],
   "classification": "PILOT_ONLY / NON_PRODUCTION",

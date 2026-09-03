@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 
-GOVERNING_MAIN = "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6"
+CANDIDATE_BASE_COMMIT = "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6"
 SEMANTIC_CHECKPOINT = "33cca3781b301c29af965430c3caaf32378c28ff"
 ENVELOPE_COMMIT = "77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4"
 ENVELOPE_MERGE = "f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd"
@@ -39,6 +39,7 @@ P_CONTRACT_PATH = "docs/pilot/palpitations-behavior-contract.md"
 J_TRAJECTORY_PATH = "docs/pilot/jaundice-trajectories.md"
 P_TRAJECTORY_PATH = "docs/pilot/palpitations-trajectories.md"
 EVALUATION_PATH = "docs/pilot/g2-evaluation-spec.md"
+STRUCTURAL_DISPOSITION_PATH = "docs/pilot/g2-structural-prebatch-disposition.md"
 
 PROMPT_FIXTURE = "docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt"
 J_PAYLOAD = "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt"
@@ -57,6 +58,7 @@ AMBIGUITY_MAP = "docs/pilot/g2.7a/manifests/ambiguity-map-v1.json"
 CRITICALITY_MAP = "docs/pilot/g2.7a/manifests/criticality-map-v1.json"
 INPUT_BUNDLE = "docs/pilot/g2.7a/manifests/input-bundle-v1.json"
 RAW_SPEC = "docs/pilot/g2.7a/specs/raw-response-record-v1.md"
+ATTEMPT_EVENT_SPEC = "docs/pilot/g2.7a/specs/execution-attempt-event-v1.md"
 SCORECARD_SPEC = "docs/pilot/g2.7a/specs/scorecard-v1.md"
 SCORECARD_TEMPLATE = "docs/pilot/g2.7a/templates/scorecard-v1.csv"
 
@@ -90,6 +92,7 @@ class SourceBundle:
     prompt_document: SourceFile
     envelope: SourceFile
     semantic: Mapping[str, SourceFile]
+    structural_disposition: SourceFile
 
 
 def repo_root() -> Path:
@@ -150,7 +153,15 @@ def load_pinned_sources(root: Path) -> SourceBundle:
         path: _source_from_git(root, SEMANTIC_CHECKPOINT, path)
         for path in SEMANTIC_PATHS
     }
-    return SourceBundle(prompt_document=prompt, envelope=envelope, semantic=semantic)
+    structural_disposition = _source_from_git(
+        root, CANDIDATE_BASE_COMMIT, STRUCTURAL_DISPOSITION_PATH
+    )
+    return SourceBundle(
+        prompt_document=prompt,
+        envelope=envelope,
+        semantic=semantic,
+        structural_disposition=structural_disposition,
+    )
 
 
 def load_working_sources_for_tests(root: Path) -> SourceBundle:
@@ -161,10 +172,17 @@ def load_working_sources_for_tests(root: Path) -> SourceBundle:
         path: SourceFile(path, SEMANTIC_CHECKPOINT, "test-working-copy", (root / path).read_bytes())
         for path in SEMANTIC_PATHS
     }
+    structural_disposition_bytes = (root / STRUCTURAL_DISPOSITION_PATH).read_bytes()
     return SourceBundle(
         prompt_document=SourceFile(PROMPT_PATH, PROMPT_SOURCE_COMMIT, "test-working-copy", prompt_bytes),
         envelope=SourceFile(ENVELOPE_PATH, ENVELOPE_COMMIT, "test-working-copy", envelope_bytes),
         semantic=semantic,
+        structural_disposition=SourceFile(
+            STRUCTURAL_DISPOSITION_PATH,
+            CANDIDATE_BASE_COMMIT,
+            "test-working-copy",
+            structural_disposition_bytes,
+        ),
     )
 
 
@@ -189,8 +207,47 @@ def markdown_bytes(value: str) -> bytes:
     return (value.strip() + "\n").replace("\r\n", "\n").encode("utf-8")
 
 
-def _fact_ids(prefix: str, count: int) -> list[str]:
-    return [f"{prefix}-T{number:02d}" for number in range(1, count + 1)]
+def parse_contract_inventory(document: bytes, section_heading: str, prefix: str) -> list[str]:
+    """Return fact IDs from one named contract table in source order."""
+
+    text = document.decode("utf-8")
+    marker = f"## {section_heading}"
+    start = text.find(marker)
+    if start < 0:
+        raise BuildError(f"Contract section is missing: {section_heading}")
+    following = text.find("\n## ", start + len(marker))
+    section = text[start:] if following < 0 else text[start:following]
+    ids = re.findall(rf"(?m)^\| ({prefix}-T\d{{2}}) \|", section)
+    if not ids:
+        raise BuildError(f"Contract inventory is empty: {section_heading}")
+    return ids
+
+
+def parse_payload_fact_ids(payload: bytes, prefix: str) -> list[str]:
+    return re.findall(rf"(?m)^({prefix}-T\d{{2}}) \|", payload.decode("utf-8"))
+
+
+def analyze_payload_provenance(
+    contract: bytes,
+    payload: bytes,
+    prefix: str,
+) -> dict[str, list[str]]:
+    """Compare actual source and payload inventories without manufactured ranges."""
+
+    case_truth_ids = parse_contract_inventory(contract, "A. Case truth", prefix)
+    patient_knowledge_ids = parse_contract_inventory(contract, "B. Patient knowledge", prefix)
+    payload_ids = parse_payload_fact_ids(payload, prefix)
+    source_set = set(case_truth_ids)
+    counts = {fact_id: payload_ids.count(fact_id) for fact_id in set(payload_ids)}
+    return {
+        "duplicate_fact_ids": sorted(fact_id for fact_id, count in counts.items() if count > 1),
+        "included_fact_ids": [fact_id for fact_id in case_truth_ids if fact_id in counts],
+        "missing_fact_ids": [fact_id for fact_id in case_truth_ids if fact_id not in counts],
+        "patient_knowledge_fact_ids": patient_knowledge_ids,
+        "payload_fact_ids": payload_ids,
+        "source_case_truth_fact_ids": case_truth_ids,
+        "unexpected_fact_ids": sorted(fact_id for fact_id in counts if fact_id not in source_set),
+    }
 
 
 def jaundice_payload() -> bytes:
@@ -234,6 +291,9 @@ J-T25 | 사실=흡연 | 값=30년 동안 하루 한 갑 | 환자지식=직접 �
 
 [응답 범위]
 인사에는 인사만, 신원 확인에는 이름과 나이만 답한다. 방문 이유 질문에는 눈 흰자위가 노래진 주호소와 짧은 자연스러운 걱정까지만 답한다. 폭넓은 질문에는 관련된 짧은 묶음만 답하고 전체 병력을 쏟아내지 않는다. 직접 질문에는 묻는 사실과 이해에 필요한 최소 맥락만 답한다. 복합 질문의 각 부분에 답하며 묻지 않은 제3의 사실을 보태지 않는다. 반복 질문에는 같은 사실과 같은 근사치를 유지한다.
+
+[상황별 행동 규칙]
+상대가 사실인 내용을 전제로 물으면 그 내용만 짧게 확인하고 관련 없는 병력을 덧붙이지 않는다. 실제로 없다고 알고 있는 증상이 있었다고 잘못 전제하면 모른다고 하지 말고 분명히 부정하거나 바로잡는다. 진찰을 요청받으면 자연스럽게 동의하고 협조하지만 진찰 결과를 대신 말하지 않는다.
 
 [모르는 정보와 불확실성]
 여기에 없는 의학적으로 의미 있는 사실, 검사받지 않은 결과, 기억하지 못하는 값은 모른다고 말한다. 대략적인 사실은 대략적으로 유지하며 정확한 숫자·날짜·제품명·성분·용량·검사값을 만들지 않는다.
@@ -288,6 +348,9 @@ P-T30 | 사실=작업 진단 | 값=발작성 심실상성 빈맥 | 환자지식=
 
 [응답 범위]
 인사에는 인사만, 신원 확인에는 이름과 나이만 답한다. 방문 이유 질문에는 오늘 발작이 유난히 길었다는 주호소와 짧은 자연스러운 맥락까지만 답한다. 폭넓은 질문에는 현재는 멎었다는 점을 포함할 수 있는 관련된 짧은 묶음만 답하고 전체 병력을 쏟아내지 않는다. 직접 질문에는 묻는 사실과 이해에 필요한 최소 맥락만 답한다. 흉통·호흡곤란·실신 복합 질문에는 세 항목 모두 답한다. 반복 질문에는 같은 사실과 같은 근사치를 유지한다.
+
+[상황별 행동 규칙]
+상대가 사실인 내용을 전제로 물으면 그 내용만 짧게 확인하고 관련 없는 병력을 덧붙이지 않는다. 실제로 없다고 알고 있는 증상이 있었다고 잘못 전제하면 모른다고 하지 말고 분명히 부정하거나 바로잡는다. 진찰을 요청받으면 자연스럽게 동의하고 협조하지만 진찰 결과를 대신 말하지 않는다. 상대가 맥박을 확인하거나 진찰하거나 심전도 또는 다른 검사를 요청하지 않더라도, 환자가 먼저 그것을 하라고 제안하거나 상기시키거나 유도하지 않는다. 상대가 해야 할 행동을 제안하지 않는 범위에서 평범한 걱정을 표현할 수 있다.
 
 [모르는 정보와 불확실성]
 여기에 없는 의학적으로 의미 있는 사실, 측정하지 않은 정확한 심박수, 해석할 수 없는 검사, 관찰할 수 없는 진찰 결과는 모른다고 말한다. 불확실한 유발 양상을 임의 원인으로 확정하지 않고 대략적인 시점과 시간은 대략적으로 유지한다. 정확한 숫자·날짜·검사값을 만들지 않는다.
@@ -514,11 +577,28 @@ def build_execution_manifest(sources: SourceBundle) -> dict[str, Any]:
         for unit in execution_units
         for scored_id in unit["scored_unit_ids"]
     }
+    calls_by_execution_unit: dict[str, list[dict[str, Any]]] = {}
+    for call in planned_calls:
+        calls_by_execution_unit.setdefault(call["execution_unit_id"], []).append(call)
     for scored_id in ordered_ids:
+        execution_unit_id = execution_by_scored_id[scored_id]
+        unit_calls = calls_by_execution_unit[execution_unit_id]
+        if scored_id == "P29":
+            evidence_call_ids = [call["planned_call_id"] for call in unit_calls]
+        else:
+            scored_call_index = next(
+                index
+                for index, call in enumerate(unit_calls)
+                if call["scored_turn"] and call["scored_unit_id"] == scored_id
+            )
+            evidence_call_ids = [
+                call["planned_call_id"] for call in unit_calls[: scored_call_index + 1]
+            ]
         scored_units.append(
             {
                 "case": _case_name(scored_id),
-                "execution_unit_id": execution_by_scored_id[scored_id],
+                "execution_unit_id": execution_unit_id,
+                "planned_evidence_call_ids": evidence_call_ids,
                 "required_information_criticality": "critical" if scored_id == "P11" else "ordinary",
                 "scorecard_row_id": scored_id,
                 "scored_unit_id": scored_id,
@@ -659,6 +739,7 @@ response row is created by this candidate task.
 | Field | Type / rule |
 |---|---|
 | `run_id` | public-safe unique call-attempt identifier |
+| `planned_call_id` | exact planned-call identity from the execution manifest |
 | `execution_unit_id` | manifest execution unit |
 | `unit_attempt_index` | integer 1 through 3 |
 | `scored_unit_id` | scored-unit linkage; null only for the P14/P15 setup call |
@@ -697,6 +778,54 @@ response row is created by this candidate task.
   and poor content are valid outputs and are never transport retries.
 - A retry restarts the complete execution unit in a new physical session. All
   partial prior rows remain preserved and nonauthoritative.
+
+Session-creation and session-close failures are preserved separately as
+execution-attempt events; a failure before a model call must not fabricate a
+raw-call row. A close failure makes every completed call in that attempt
+nonauthoritative because physical isolation was not safely closed.
+
+## Mandatory future execution-control provenance
+
+Before any real preflight or official execution, records must bind directly or
+through a separately accepted execution-control bundle to the accepted
+fixture/runner checkpoint, runner file or accepted runner commit identity, real
+transport-adapter identity, execution-authorization ID, passing
+preflight-evidence ID, and `input_bundle_id`. These future accepted identities
+do not exist in this candidate and are not included in its self-hashed bundle.
+""")
+
+
+def execution_attempt_event_spec() -> bytes:
+    return markdown_bytes("""
+# G2.7a execution-attempt event v1
+
+Classification: **PILOT_ONLY / NON_PRODUCTION**
+
+An execution-attempt event is a lifecycle record for one execution-unit
+attempt. It is not a patient-model raw-call row and cannot be used as patient
+response evidence.
+
+## Required fields
+
+| Field | Type / rule |
+|---|---|
+| `execution_unit_id` | manifest execution unit |
+| `unit_attempt_index` | integer 1 through 3 |
+| `event_type` | `SESSION_CREATION_FAILED`, `ATTEMPT_FAILED`, `SESSION_CLOSE_FAILED`, or `ATTEMPT_COMPLETED` |
+| `safe_session_id` | stable public-safe identifier when a session exists; otherwise null |
+| `execution_error_class` | safe error class, or null for a completed attempt |
+| `execution_error_message_safe` | sanitized safe message, or null for a completed attempt |
+| `timestamp_utc` | RFC 3339 UTC timestamp |
+| `input_bundle_id` | aggregate frozen input identity |
+| `authoritative_attempt` | true only for the safely completed selected attempt |
+| `model_call_created` | whether at least one raw-call row exists for the attempt |
+
+Session creation failure consumes an attempt and produces no raw-call row.
+Session close failure makes the attempt nonauthoritative, preserves its
+completed raw-call rows, and requires a complete-unit retry in a new physical
+session when attempts remain. Unexpected exceptions are represented only by a
+generic safe class and message; raw exceptions, credentials, URLs, and tokens
+must never be recorded.
 """)
 
 
@@ -713,14 +842,18 @@ both rows but is not a scored row.
 
 ## Fixed columns
 
-`scored_unit_id`, `case`, `execution_unit_id`, `authoritative_run_ids`,
+`scored_unit_id`, `case`, `execution_unit_id`, `planned_evidence_call_ids`,
+`authoritative_run_ids`,
 `disposition`, `failure_class`, `responsible_layer`,
 `critical_required_omissions`, `ordinary_required_omissions`,
 `ambiguity_trigger`, `evidence_excerpt`, `scorer_id`,
 `scoring_spec_sha256`, `input_bundle_id`, `scored_at_utc`.
 
-The candidate template prepopulates scored-unit, case, execution-unit, and
-scoring-spec identities. Run IDs, the aggregate bundle binding, semantic
+The candidate template prepopulates scored-unit, case, execution-unit, ordered
+planned-evidence-call, and scoring-spec identities. `planned_evidence_call_ids`
+is a compact JSON array. A later `authoritative_run_ids` value must map
+one-to-one and in the same order from those calls in the selected authoritative
+attempt. Run IDs, the aggregate bundle binding, semantic
 results, scorer, evidence, and time remain blank because no run or scoring is
 authorized. A future accepted scoring copy must bind every row to the exact
 `input_bundle_id` before scoring; the canonical template itself remains blank
@@ -738,6 +871,12 @@ numeric patterns, and other nonauthoritative candidate flags. They may not
 populate a final semantic disposition. Raw final responses must be frozen
 before human scoring begins. An independent automatic failure takes precedence
 over an ambiguity trigger; REQUIRED omissions always fail the scored unit.
+
+Before scoring any real output, the scoring record must bind directly or
+through a separately accepted execution-control bundle to the accepted
+fixture/runner checkpoint, runner file or accepted runner commit identity, real
+transport-adapter identity, execution-authorization ID, passing
+preflight-evidence ID, and `input_bundle_id`. None is created by this candidate.
 """)
 
 
@@ -745,6 +884,7 @@ SCORECARD_COLUMNS = (
     "scored_unit_id",
     "case",
     "execution_unit_id",
+    "planned_evidence_call_ids",
     "authoritative_run_ids",
     "disposition",
     "failure_class",
@@ -770,6 +910,11 @@ def scorecard_csv(execution_manifest: Mapping[str, Any], scoring_spec_hash: str)
             {
                 "case": scored["case"],
                 "execution_unit_id": scored["execution_unit_id"],
+                "planned_evidence_call_ids": json.dumps(
+                    scored["planned_evidence_call_ids"],
+                    ensure_ascii=False,
+                    separators=(",", ":"),
+                ),
                 "scored_unit_id": scored["scored_unit_id"],
                 "scoring_spec_sha256": scoring_spec_hash,
             }
@@ -783,12 +928,43 @@ def _provenance_case(
     source: SourceFile,
     payload_path: str,
     payload: bytes,
-    fact_ids: list[str],
+    prefix: str,
     forbidden_ids: list[str],
+    structural_disposition: SourceFile,
 ) -> dict[str, Any]:
+    analysis = analyze_payload_provenance(source.content, payload, prefix)
+    patient_knowledge_set = set(analysis["patient_knowledge_fact_ids"])
+    truth_set = set(analysis["source_case_truth_fact_ids"])
     return {
+        "behavioral_rule_provenance": {
+            "accepted_execution_envelope": {
+                "commit": ENVELOPE_COMMIT,
+                "path": ENVELOPE_PATH,
+                "ownership": "payload boundary, patient-input assembly, and P29 station execution rules",
+            },
+            "accepted_p29_local_pilot_behavior": (
+                {
+                    "commit": structural_disposition.commit,
+                    "git_blob_sha": structural_disposition.blob_sha,
+                    "path": structural_disposition.path,
+                    "section": "P29 local pilot ruling",
+                    "sha256": structural_disposition.sha256,
+                }
+                if case == "palpitations"
+                else None
+            ),
+            "contract_response_scope": {
+                "commit": source.commit,
+                "path": source.path,
+                "section": "D. Response scope",
+            },
+        },
         "case": case,
-        "duplicate_fact_ids": [],
+        "coverage_assurance": {
+            "semantic_paraphrase_equivalence": "audit-reviewed; not proven by structural ID-count checks",
+            "structural_id_and_source_row_coverage": "deterministically computed from parsed source and payload content",
+        },
+        "duplicate_fact_ids": analysis["duplicate_fact_ids"],
         "excluded_source_sections": [
             "case-selection rationale",
             "literature explanation",
@@ -796,20 +972,29 @@ def _provenance_case(
             "evaluator commentary",
             "historical implementation commentary",
         ],
-        "fact_count": len(fact_ids),
-        "forbidden_fact_ids_retained": forbidden_ids,
-        "included_fact_ids": fact_ids,
-        "missing_fact_ids": [],
+        "fact_count": len(analysis["included_fact_ids"]),
+        "forbidden_fact_ids_retained": [
+            fact_id for fact_id in forbidden_ids if fact_id in analysis["payload_fact_ids"]
+        ],
+        "included_fact_ids": analysis["included_fact_ids"],
+        "missing_fact_ids": analysis["missing_fact_ids"],
+        "patient_knowledge_fact_count": len(analysis["patient_knowledge_fact_ids"]),
+        "patient_knowledge_missing_from_case_truth": sorted(patient_knowledge_set - truth_set),
+        "patient_knowledge_missing_fact_ids": sorted(truth_set - patient_knowledge_set),
+        "payload_fact_occurrence_count": len(analysis["payload_fact_ids"]),
         "payload_path": payload_path,
         "payload_sha256": sha256_bytes(payload),
         "source_contract_blob_sha": source.blob_sha,
         "source_contract_path": source.path,
         "source_contract_sha256": source.sha256,
         "source_semantic_commit": SEMANTIC_CHECKPOINT,
+        "source_case_truth_fact_ids": analysis["source_case_truth_fact_ids"],
+        "source_patient_knowledge_fact_ids": analysis["patient_knowledge_fact_ids"],
         "station_frame_source": [
             f"{source.path}#station-frame",
             f"{ENVELOPE_PATH}#2-payload-contract",
         ],
+        "unexpected_fact_ids": analysis["unexpected_fact_ids"],
     }
 
 
@@ -883,16 +1068,18 @@ def render_artifacts(root: Path, sources: SourceBundle, nonce: str) -> dict[str,
                 sources.semantic[J_CONTRACT_PATH],
                 J_PAYLOAD,
                 j_payload,
-                _fact_ids("J", 25),
-                _fact_ids("J", 25)[18:24],
+                "J",
+                ["J-T19", "J-T20", "J-T21", "J-T22", "J-T23", "J-T24"],
+                sources.structural_disposition,
             ),
             _provenance_case(
                 "palpitations",
                 sources.semantic[P_CONTRACT_PATH],
                 P_PAYLOAD,
                 p_payload,
-                _fact_ids("P", 30),
-                _fact_ids("P", 30)[24:30],
+                "P",
+                ["P-T25", "P-T26", "P-T27", "P-T28", "P-T29", "P-T30"],
+                sources.structural_disposition,
             ),
         ],
         "classification": CLASSIFICATION,
@@ -908,6 +1095,7 @@ def render_artifacts(root: Path, sources: SourceBundle, nonce: str) -> dict[str,
     outputs[AMBIGUITY_MAP] = json_bytes(build_ambiguity_map())
     outputs[CRITICALITY_MAP] = json_bytes(build_criticality_map(sources))
     outputs[RAW_SPEC] = raw_response_spec()
+    outputs[ATTEMPT_EVENT_SPEC] = execution_attempt_event_spec()
     outputs[SCORECARD_SPEC] = scorecard_spec()
     scoring_spec_hash = sha256_bytes(outputs[SCORECARD_SPEC])
     outputs[SCORECARD_TEMPLATE] = scorecard_csv(execution_manifest, scoring_spec_hash)
@@ -917,6 +1105,7 @@ def render_artifacts(root: Path, sources: SourceBundle, nonce: str) -> dict[str,
         "ambiguity_map": AMBIGUITY_MAP,
         "criticality_map": CRITICALITY_MAP,
         "evaluation_spec": EVALUATION_PATH,
+        "execution_attempt_event_spec": ATTEMPT_EVENT_SPEC,
         "execution_manifest": EXECUTION_MANIFEST,
         "jaundice_contract": J_CONTRACT_PATH,
         "jaundice_payload": J_PAYLOAD,
@@ -932,11 +1121,13 @@ def render_artifacts(root: Path, sources: SourceBundle, nonce: str) -> dict[str,
         "raw_response_spec": RAW_SPEC,
         "scorecard_spec": SCORECARD_SPEC,
         "scorecard_template": SCORECARD_TEMPLATE,
+        "structural_prebatch_disposition": STRUCTURAL_DISPOSITION_PATH,
     }
 
     source_content = {
         PROMPT_PATH: sources.prompt_document.content,
         ENVELOPE_PATH: sources.envelope.content,
+        STRUCTURAL_DISPOSITION_PATH: sources.structural_disposition.content,
         **{path: source.content for path, source in sources.semantic.items()},
     }
     component_hashes = {
@@ -972,7 +1163,7 @@ def render_artifacts(root: Path, sources: SourceBundle, nonce: str) -> dict[str,
             },
             "accepted_execution_envelope_merge": ENVELOPE_MERGE,
             "effective_semantic_checkpoint": SEMANTIC_CHECKPOINT,
-            "governing_main": GOVERNING_MAIN,
+            "candidate_base_commit": CANDIDATE_BASE_COMMIT,
             "payloads": {
                 J_PAYLOAD: sha256_bytes(j_payload),
                 P_PAYLOAD: sha256_bytes(p_payload),
@@ -983,6 +1174,12 @@ def render_artifacts(root: Path, sources: SourceBundle, nonce: str) -> dict[str,
                 "source_commit": PROMPT_SOURCE_COMMIT,
             },
             "semantic_sources": semantic_identities,
+            "structural_prebatch_disposition": {
+                "git_blob_sha": sources.structural_disposition.blob_sha,
+                "path": STRUCTURAL_DISPOSITION_PATH,
+                "sha256": sources.structural_disposition.sha256,
+                "source_commit": CANDIDATE_BASE_COMMIT,
+            },
             "system_messages": {
                 J_SYSTEM: sha256_bytes(j_system),
                 P_SYSTEM: sha256_bytes(p_system),

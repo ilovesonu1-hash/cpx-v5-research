@@ -84,12 +84,14 @@ specification, or the frozen prompt.
 | `G2_EXECUTION_ENVELOPE_V1_DELTA_AUDIT` | `PASS_AFTER_MINOR_PATCH / HISTORICAL / CORRECTED_BY_77B17F9` |
 | `G2_EXECUTION_ENVELOPE_V1_CORRECTION` | `ACCEPTED / MERGED / EFFECTIVE` |
 | `G2_EXECUTION_ENVELOPE_V1_CORRECTION_DELTA_AUDIT` | `PASS / 0 BLOCKERS / 0 MAJOR / 0 MINOR` |
+| `G2_FIXTURE_RUNNER_CANDIDATE_V1_AUDIT` | `REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR` |
+| `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_INPUT_BUNDLE_V1` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_PAYLOAD_SNAPSHOTS_V1` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_EXECUTION_MANIFEST_V1` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_PREFLIGHT_MANIFEST_V1` | `PROPOSED / NOT YET ACCEPTED / NOT_EXECUTED` |
-| `G2_RUNNER_V1` | `PROPOSED / REAL_TRANSPORT_INTERFACE_PARTIALLY_VERIFIED` |
+| `G2_RUNNER_V1` | `PROPOSED / HARNESS_CAPABILITY_UNVERIFIED / EXECUTION_DISABLED` |
 | `G2_FULL_COVERAGE` | `NOT_EXECUTED / UNAUTHORIZED` |
 | `SESSION_ISOLATION_BASELINE` | `NOT_ESTABLISHED` |
 | `ISOLATION_PREFLIGHT_EXECUTED` | `NO` |
@@ -123,6 +125,13 @@ context. Its exact accepted byte identity is carried by accepted commit
 Fixture and runner implementation is now eligible under a separate task;
 patient-model execution remains unauthorized.
 
+The independent GitHub-connected static/delta audit of fixture/runner candidate
+`f11df66df7fc12a860cc1beac76bcd53685f22f7` returned
+`REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR`. Its bounded correction is
+proposed on the candidate branch and is not yet accepted. Target capability for
+the required Gemini-serving harness remains unverified, so the runner remains
+execution-disabled.
+
 ## Active artifact owners
 
 Pilot and research semantic artifacts below are effective at the recorded pilot
@@ -148,6 +157,8 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.7a-execution-envelope-v1-delta-audit.md` | independent delta audit of the v1 execution-envelope candidate | historical audit evidence |
 | `docs/pilot/g2.7a-execution-envelope-v1-correction-delta-audit.md` | independent final audit of the authorized v1 correction delta | historical audit evidence |
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1.md` | G2.7a candidate implementation report and validation record | proposed implementation evidence / not accepted |
+| `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit.md` | independent static/delta audit of candidate commit f11df66 | historical audit evidence |
+| `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit-disposition.md` | proposed treatment of the candidate audit findings | proposed disposition / not accepted |
 | `docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt` | exact canonical transmitted generic prompt block | proposed frozen pilot fixture / not accepted |
 | `docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt` | jaundice patient payload snapshot | proposed frozen pilot fixture / not accepted |
 | `docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt` | palpitations patient payload snapshot | proposed frozen pilot fixture / not accepted |
@@ -164,15 +175,18 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.7a/manifests/criticality-map-v1.json` | explicit-source-only provisional criticality classification | proposed pilot manifest / not accepted |
 | `docs/pilot/g2.7a/manifests/input-bundle-v1.json` | aggregate candidate input identity | proposed pilot manifest / not accepted |
 | `docs/pilot/g2.7a/specs/raw-response-record-v1.md` | attempted-call raw-record contract | proposed pilot specification / not accepted |
+| `docs/pilot/g2.7a/specs/execution-attempt-event-v1.md` | execution-unit attempt lifecycle event contract | proposed pilot specification / not accepted |
 | `docs/pilot/g2.7a/specs/scorecard-v1.md` | human-only 58-row scorecard contract | proposed pilot specification / not accepted |
 | `docs/pilot/g2.7a/templates/scorecard-v1.csv` | unscored 58-row scorecard template | proposed pilot template / not accepted |
-| `docs/pilot/g2.7a/transport-capability-v1.md` | no-call real-transport capability inspection | proposed capability evidence / partially verified / not executed |
+| `docs/pilot/g2.7a/transport-capability-v1.md` | no-call target transport capability inspection | proposed capability evidence / target harness unverified / not executed |
 | `tools/pilot/g2_7a/build_bundle.py` | deterministic pinned-source bundle builder | proposed pilot tooling / not accepted |
 | `tools/pilot/g2_7a/validate_bundle.py` | deterministic source, bundle, count, and safety validator | proposed pilot tooling / not accepted |
+| `tools/pilot/g2_7a/validate_run_records.py` | deterministic future raw-call, attempt-event, and session validator | proposed pilot tooling / not accepted / no external calls |
 | `tools/pilot/g2_7a/runner.py` | execution-disabled plan/validate runner and retry record logic | proposed pilot tooling / not accepted / execution disabled |
 | `tools/pilot/g2_7a/transport.py` | minimal transport interface and in-memory fake only | proposed pilot tooling / real adapter absent |
 | `tools/pilot/g2_7a/tests/test_bundle.py` | deterministic bundle and accounting tests | proposed pilot test evidence / not accepted |
 | `tools/pilot/g2_7a/tests/test_runner.py` | fake-transport, retry, preservation, and refusal tests | proposed pilot test evidence / not accepted |
+| `tools/pilot/g2_7a/tests/test_run_records.py` | deterministic completed-record/session topology tests | proposed pilot test evidence / not accepted |
 | `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
 | `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
 | `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
@@ -253,8 +267,8 @@ Broader clinician and SP-methodology questions remain listed in
 
 ## Next permitted sequence
 
-The next permitted task is an **independent read-only audit of the G2.7a
-fixture, manifest, validator, and runner candidate**.
+The next permitted task is an **independent read-only final-state/delta audit of
+the corrected G2.7a fixture/runner candidate**.
 
 Candidate completion does not authorize the isolation preflight, patient-model
 calls, semantic scoring, or the 58-unit suite. The session-isolation baseline

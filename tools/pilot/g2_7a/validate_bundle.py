@@ -12,7 +12,7 @@ import re
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Callable, Iterable, Mapping
 
 import build_bundle as builder
 
@@ -77,28 +77,44 @@ def _payload_fact_ids(data: bytes, prefix: str) -> list[str]:
     return pattern.findall(data.decode("utf-8"))
 
 
-def _validate_sources(root: Path, report: ValidationReport) -> builder.SourceBundle | None:
-    origin_main = _git(root, "rev-parse", "origin/main")
+def validate_source_lifetime(
+    head: str,
+    commit_exists: Callable[[str], bool],
+    is_ancestor: Callable[[str, str], bool],
+    report: ValidationReport,
+) -> None:
+    """Validate immutable ancestry without consulting a live remote-tracking ref."""
+
+    report.check(commit_exists(builder.CANDIDATE_BASE_COMMIT), "SOURCE_CANDIDATE_BASE_MISSING")
     report.check(
-        origin_main.returncode == 0
-        and origin_main.stdout.decode("ascii").strip() == builder.GOVERNING_MAIN,
-        "SOURCE_GOVERNING_MAIN_MISMATCH",
+        is_ancestor(builder.CANDIDATE_BASE_COMMIT, head),
+        "SOURCE_CANDIDATE_BASE_NOT_ANCESTOR_OF_HEAD",
     )
     for commit, code in (
         (builder.SEMANTIC_CHECKPOINT, "SOURCE_SEMANTIC_CHECKPOINT_UNREACHABLE"),
         (builder.ENVELOPE_COMMIT, "SOURCE_ENVELOPE_COMMIT_UNREACHABLE"),
         (builder.ENVELOPE_MERGE, "SOURCE_ENVELOPE_MERGE_UNREACHABLE"),
     ):
-        result = _git(root, "merge-base", "--is-ancestor", commit, "origin/main")
-        report.check(result.returncode == 0, code)
-    through_merge = _git(
-        root,
-        "merge-base",
-        "--is-ancestor",
-        builder.ENVELOPE_COMMIT,
-        builder.ENVELOPE_MERGE,
+        report.check(commit_exists(commit) and is_ancestor(commit, head), code)
+    report.check(
+        is_ancestor(builder.ENVELOPE_COMMIT, builder.ENVELOPE_MERGE),
+        "SOURCE_ENVELOPE_NOT_REACHABLE_THROUGH_MERGE",
     )
-    report.check(through_merge.returncode == 0, "SOURCE_ENVELOPE_NOT_REACHABLE_THROUGH_MERGE")
+
+
+def _validate_sources(root: Path, report: ValidationReport) -> builder.SourceBundle | None:
+    head_result = _git(root, "rev-parse", "HEAD")
+    report.check(head_result.returncode == 0, "SOURCE_HEAD_UNRESOLVED")
+    if head_result.returncode == 0:
+        head = head_result.stdout.decode("ascii").strip()
+
+        def commit_exists(commit: str) -> bool:
+            return _git(root, "cat-file", "-e", f"{commit}^{{commit}}").returncode == 0
+
+        def is_ancestor(ancestor: str, descendant: str) -> bool:
+            return _git(root, "merge-base", "--is-ancestor", ancestor, descendant).returncode == 0
+
+        validate_source_lifetime(head, commit_exists, is_ancestor, report)
 
     try:
         sources = builder.load_pinned_sources(root)
@@ -121,6 +137,11 @@ def _validate_sources(root: Path, report: ValidationReport) -> builder.SourceBun
     )
     for path, source in sources.semantic.items():
         report.check((root / path).read_bytes() == source.content, f"SOURCE_WORKING_COPY_MISMATCH:{path}")
+    report.check(
+        (root / builder.STRUCTURAL_DISPOSITION_PATH).read_bytes()
+        == sources.structural_disposition.content,
+        "SOURCE_STRUCTURAL_DISPOSITION_WORKING_COPY_MISMATCH",
+    )
     return sources
 
 
@@ -186,7 +207,11 @@ def _validate_canonical_files(root: Path, report: ValidationReport) -> None:
     )
 
 
-def _validate_payloads(root: Path, report: ValidationReport) -> None:
+def _validate_payloads(
+    root: Path,
+    sources: builder.SourceBundle,
+    report: ValidationReport,
+) -> None:
     cases = (
         (
             builder.J_PAYLOAD,
@@ -203,17 +228,44 @@ def _validate_payloads(root: Path, report: ValidationReport) -> None:
             ("이름: 박지현", "나이: 34세", "성별: 여성", "진료 환경: 외래", "스테이션 시간: 12분"),
         ),
     )
+    case_analyses: dict[str, Mapping[str, list[str]]] = {}
     for path, prefix, count, forbidden, station_markers in cases:
         data = (root / path).read_bytes()
         text = data.decode("utf-8")
-        fact_ids = _payload_fact_ids(data, prefix)
+        contract_path = builder.J_CONTRACT_PATH if prefix == "J" else builder.P_CONTRACT_PATH
+        analysis = builder.analyze_payload_provenance(
+            sources.semantic[contract_path].content,
+            data,
+            prefix,
+        )
+        case_analyses["jaundice" if prefix == "J" else "palpitations"] = analysis
+        fact_ids = analysis["payload_fact_ids"]
         expected = [f"{prefix}-T{i:02d}" for i in range(1, count + 1)]
+        report.check(
+            analysis["source_case_truth_fact_ids"] == expected
+            and analysis["patient_knowledge_fact_ids"] == expected,
+            f"PROVENANCE_SOURCE_INVENTORY:{prefix}",
+        )
         report.check(len(fact_ids) == count, f"PAYLOAD_FACT_COUNT:{prefix}")
         report.check(len(set(fact_ids)) == count, f"PAYLOAD_FACT_DUPLICATE:{prefix}")
         report.check(fact_ids == expected, f"PAYLOAD_FACT_RANGE_OR_ORDER:{prefix}")
         report.check(all(fact_id in fact_ids for fact_id in forbidden), f"PAYLOAD_FORBIDDEN_FACT_MISSING:{prefix}")
         report.check(all(marker in text for marker in station_markers), f"PAYLOAD_STATION_FRAME_MISSING:{prefix}")
         report.check("방문 이유를 묻는 질문 뒤" in text, f"PAYLOAD_OPENING_TRIGGER_MISSING:{prefix}")
+        report.check("[상황별 행동 규칙]" in text, f"PAYLOAD_BEHAVIOR_SECTION_MISSING:{prefix}")
+        report.check(
+            all(marker in text for marker in ("사실인 내용을 전제로", "분명히 부정하거나 바로잡는다", "진찰 결과를 대신 말하지 않는다")),
+            f"PAYLOAD_RESPONSE_SCOPE_RULE_MISSING:{prefix}",
+        )
+        if prefix == "P":
+            report.check(
+                all(marker in text for marker in ("심전도 또는 다른 검사를 요청하지 않더라도", "제안하거나 상기시키거나 유도하지 않는다")),
+                "PAYLOAD_P29_NO_PROMPT_RULE_MISSING",
+            )
+        report.check(
+            re.search(r"\b(?:PASS|FAIL)\b", text) is None,
+            f"PAYLOAD_EVALUATOR_TERM_PRESENT:{prefix}",
+        )
         report.check(
             not any(
                 heading in text
@@ -227,9 +279,32 @@ def _validate_payloads(root: Path, report: ValidationReport) -> None:
     report.check(by_case["jaundice"]["fact_count"] == 25, "PROVENANCE_J_FACT_COUNT")
     report.check(by_case["palpitations"]["fact_count"] == 30, "PROVENANCE_P_FACT_COUNT")
     report.check(
-        all(not case["missing_fact_ids"] and not case["duplicate_fact_ids"] for case in provenance["cases"]),
-        "PROVENANCE_MISSING_OR_DUPLICATE",
+        all(
+            not case["missing_fact_ids"]
+            and not case["duplicate_fact_ids"]
+            and not case["unexpected_fact_ids"]
+            for case in provenance["cases"]
+        ),
+        "PROVENANCE_MISSING_DUPLICATE_OR_UNEXPECTED",
     )
+    for case_name, analysis in case_analyses.items():
+        recorded = by_case[case_name]
+        report.check(
+            recorded["included_fact_ids"] == analysis["included_fact_ids"]
+            and recorded["missing_fact_ids"] == analysis["missing_fact_ids"]
+            and recorded["duplicate_fact_ids"] == analysis["duplicate_fact_ids"]
+            and recorded["unexpected_fact_ids"] == analysis["unexpected_fact_ids"],
+            f"PROVENANCE_COMPUTATION_MISMATCH:{case_name}",
+        )
+        report.check(
+            analysis["source_case_truth_fact_ids"] == analysis["patient_knowledge_fact_ids"],
+            f"PROVENANCE_SOURCE_KNOWLEDGE_COVERAGE:{case_name}",
+        )
+        report.check(
+            recorded["coverage_assurance"]["semantic_paraphrase_equivalence"]
+            == "audit-reviewed; not proven by structural ID-count checks",
+            f"PROVENANCE_SEMANTIC_ASSURANCE_OVERCLAIM:{case_name}",
+        )
 
 
 def _validate_system_messages(root: Path, report: ValidationReport) -> None:
@@ -340,6 +415,50 @@ def _validate_execution_manifest(root: Path, report: ValidationReport) -> None:
         coherent = coherent and unit["fresh_physical_session_required"] is True
         coherent = coherent and unit["same_session_required"] is True
     report.check(coherent, "EXECUTION_SESSION_BOUNDARIES_INCOHERENT")
+
+    call_by_id = {call["planned_call_id"]: call for call in calls}
+    evidence_coherent = True
+    for scored_unit in scored:
+        unit = unit_by_id[scored_unit["execution_unit_id"]]
+        unit_call_ids = unit["planned_call_ids"]
+        evidence_ids = scored_unit.get("planned_evidence_call_ids", [])
+        evidence_coherent = evidence_coherent and bool(evidence_ids)
+        evidence_coherent = evidence_coherent and all(call_id in call_by_id for call_id in evidence_ids)
+        evidence_coherent = evidence_coherent and all(
+            call_by_id[call_id]["execution_unit_id"] == unit["execution_unit_id"]
+            for call_id in evidence_ids
+            if call_id in call_by_id
+        )
+        if unit["kind"] == "p29_station":
+            expected_evidence = unit_call_ids
+        else:
+            target_index = next(
+                (
+                    index
+                    for index, call_id in enumerate(unit_call_ids)
+                    if call_by_id[call_id]["scored_turn"]
+                    and call_by_id[call_id]["scored_unit_id"] == scored_unit["scored_unit_id"]
+                ),
+                -1,
+            )
+            expected_evidence = unit_call_ids[: target_index + 1] if target_index >= 0 else []
+        evidence_coherent = evidence_coherent and evidence_ids == expected_evidence
+        if unit["kind"] == "independent_single_turn":
+            evidence_coherent = evidence_coherent and len(evidence_ids) == 1
+    report.check(evidence_coherent, "EXECUTION_PLANNED_EVIDENCE_INCOHERENT")
+    scored_by_id = {item["scored_unit_id"]: item for item in scored}
+    report.check(
+        scored_by_id["P14"]["planned_evidence_call_ids"]
+        == ["CALL-P-SETUP-DURATION-01", "CALL-P14"]
+        and scored_by_id["P15"]["planned_evidence_call_ids"]
+        == ["CALL-P-SETUP-DURATION-01", "CALL-P14", "CALL-P15"],
+        "EXECUTION_P14_P15_EVIDENCE_LINKAGE",
+    )
+    report.check(
+        scored_by_id["P29"]["planned_evidence_call_ids"]
+        == [f"CALL-P29-U{index:02d}" for index in range(1, 7)],
+        "EXECUTION_P29_EVIDENCE_LINKAGE",
+    )
     report.check(manifest["execution_authorized"] is False, "EXECUTION_AUTHORIZED_FLAG")
 
 
@@ -413,8 +532,24 @@ def _validate_scorecard(root: Path, report: ValidationReport) -> None:
     )
     report.check(all(not row[field] for row in rows for field in result_fields), "SCORECARD_RESULT_PREFILLED")
     report.check(
-        all(row["case"] and row["execution_unit_id"] and row["scoring_spec_sha256"] for row in rows),
+        all(
+            row["case"]
+            and row["execution_unit_id"]
+            and row["planned_evidence_call_ids"]
+            and row["scoring_spec_sha256"]
+            for row in rows
+        ),
         "SCORECARD_STATIC_IDENTITY_MISSING",
+    )
+    manifest = _load_json(root, builder.EXECUTION_MANIFEST)
+    scored_by_id = {item["scored_unit_id"]: item for item in manifest["scored_units"]}
+    report.check(
+        all(
+            json.loads(row["planned_evidence_call_ids"])
+            == scored_by_id[row["scored_unit_id"]]["planned_evidence_call_ids"]
+            for row in rows
+        ),
+        "SCORECARD_PLANNED_EVIDENCE_MISMATCH",
     )
 
 
@@ -427,7 +562,11 @@ def _validate_input_bundle(root: Path, report: ValidationReport) -> None:
     recomputed = "sha256:" + _sha256(canonical)
     report.check(bundle["input_bundle_id"] == recomputed, "INPUT_BUNDLE_ID_MISMATCH")
     report.check("input_bundle_id" not in components, "INPUT_BUNDLE_SELF_REFERENCE")
-    report.check(bundle["identities"]["governing_main"] == builder.GOVERNING_MAIN, "INPUT_BUNDLE_MAIN_IDENTITY")
+    report.check(
+        bundle["identities"]["candidate_base_commit"] == builder.CANDIDATE_BASE_COMMIT,
+        "INPUT_BUNDLE_CANDIDATE_BASE_IDENTITY",
+    )
+    report.check("governing_main" not in bundle["identities"], "INPUT_BUNDLE_STALE_MAIN_IDENTITY")
     report.check(
         bundle["identities"]["effective_semantic_checkpoint"] == builder.SEMANTIC_CHECKPOINT,
         "INPUT_BUNDLE_SEMANTIC_IDENTITY",
@@ -441,6 +580,7 @@ def _validate_input_bundle(root: Path, report: ValidationReport) -> None:
         "jaundice_trajectories",
         "palpitations_trajectories",
         "evaluation_spec",
+        "execution_attempt_event_spec",
         "jaundice_payload",
         "palpitations_payload",
         "jaundice_system_message",
@@ -452,6 +592,7 @@ def _validate_input_bundle(root: Path, report: ValidationReport) -> None:
         "raw_response_spec",
         "scorecard_spec",
         "scorecard_template",
+        "structural_prebatch_disposition",
     }
     report.check(set(components) == required_components, "INPUT_BUNDLE_COMPONENT_INVENTORY")
 
@@ -467,15 +608,27 @@ def _validate_safety(root: Path, report: ValidationReport) -> None:
     report.check(not forbidden_artifacts, "SAFETY_AUTHORIZATION_OR_RUN_OUTPUT_PRESENT")
 
     transport_imports = _source_imports(root / "tools/pilot/g2_7a/transport.py")
+    transport_source = (root / "tools/pilot/g2_7a/transport.py").read_text(encoding="utf-8")
+    record_validator_imports = _source_imports(root / "tools/pilot/g2_7a/validate_run_records.py")
     report.check(
         not transport_imports.intersection({"subprocess", "socket", "requests", "urllib", "http", "asyncio"}),
         "SAFETY_FAKE_TRANSPORT_EXTERNAL_CAPABILITY",
+    )
+    report.check(
+        not record_validator_imports.intersection(
+            {"subprocess", "socket", "requests", "urllib", "http", "asyncio"}
+        ),
+        "SAFETY_RUN_RECORD_VALIDATOR_EXTERNAL_CAPABILITY",
     )
     runner_source = (root / "tools/pilot/g2_7a/runner.py").read_text(encoding="utf-8")
     report.check('DEFAULT_COMMAND = "plan"' in runner_source, "SAFETY_RUNNER_DEFAULT_NOT_PLAN")
     report.check(builder.RUNTIME in runner_source, "SAFETY_RUNTIME_NOT_EXACT")
     report.check("PREFLIGHT_EXECUTION_NOT_AUTHORIZED" in runner_source, "SAFETY_PREFLIGHT_REFUSAL_MISSING")
     report.check("PATIENT_MODEL_EXECUTION_NOT_AUTHORIZED" in runner_source, "SAFETY_EXECUTION_REFUSAL_MISSING")
+    report.check(
+        "RealTransport" not in runner_source and "RealTransport" not in transport_source,
+        "SAFETY_REAL_TRANSPORT_ADAPTER_PRESENT",
+    )
 
     candidate_files = [
         path
@@ -493,11 +646,11 @@ def _validate_safety(root: Path, report: ValidationReport) -> None:
 def validate_repository(root: Path) -> int:
     report = ValidationReport()
     sources = _validate_sources(root, report)
-    if sources is not None:
-        _validate_generated_identity(root, sources, report)
     try:
+        if sources is not None:
+            _validate_generated_identity(root, sources, report)
+            _validate_payloads(root, sources, report)
         _validate_canonical_files(root, report)
-        _validate_payloads(root, report)
         _validate_system_messages(root, report)
         _validate_preflight(root, report)
         _validate_execution_manifest(root, report)

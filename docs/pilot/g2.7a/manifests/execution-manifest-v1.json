@@ -1753,6 +1753,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J01-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J01"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J01",
       "scored_unit_id": "J01",
@@ -1761,6 +1764,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J02-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J02"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J02",
       "scored_unit_id": "J02",
@@ -1769,6 +1775,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-01",
+      "planned_evidence_call_ids": [
+        "CALL-J03"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J03",
       "scored_unit_id": "J03",
@@ -1777,6 +1786,10 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-01",
+      "planned_evidence_call_ids": [
+        "CALL-J03",
+        "CALL-J04"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J04",
       "scored_unit_id": "J04",
@@ -1785,6 +1798,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J05-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J05"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J05",
       "scored_unit_id": "J05",
@@ -1793,6 +1809,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J06-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J06"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J06",
       "scored_unit_id": "J06",
@@ -1801,6 +1820,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-02",
+      "planned_evidence_call_ids": [
+        "CALL-J07"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J07",
       "scored_unit_id": "J07",
@@ -1809,6 +1831,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J08-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J08"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J08",
       "scored_unit_id": "J08",
@@ -1817,6 +1842,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J09-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J09"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J09",
       "scored_unit_id": "J09",
@@ -1825,6 +1853,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J10-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J10"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J10",
       "scored_unit_id": "J10",
@@ -1833,6 +1864,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J11-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J11"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J11",
       "scored_unit_id": "J11",
@@ -1841,6 +1875,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J12-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J12"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J12",
       "scored_unit_id": "J12",
@@ -1849,6 +1886,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J13-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J13"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J13",
       "scored_unit_id": "J13",
@@ -1857,6 +1897,10 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-02",
+      "planned_evidence_call_ids": [
+        "CALL-J07",
+        "CALL-J14"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J14",
       "scored_unit_id": "J14",
@@ -1865,6 +1909,11 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-02",
+      "planned_evidence_call_ids": [
+        "CALL-J07",
+        "CALL-J14",
+        "CALL-J15"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J15",
       "scored_unit_id": "J15",
@@ -1873,6 +1922,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-03",
+      "planned_evidence_call_ids": [
+        "CALL-J16"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J16",
       "scored_unit_id": "J16",
@@ -1881,6 +1933,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J17-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J17"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J17",
       "scored_unit_id": "J17",
@@ -1889,6 +1944,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-04",
+      "planned_evidence_call_ids": [
+        "CALL-J18"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J18",
       "scored_unit_id": "J18",
@@ -1897,6 +1955,10 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-04",
+      "planned_evidence_call_ids": [
+        "CALL-J18",
+        "CALL-J19"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J19",
       "scored_unit_id": "J19",
@@ -1905,6 +1967,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J20-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J20"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J20",
       "scored_unit_id": "J20",
@@ -1913,6 +1978,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J21-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J21"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J21",
       "scored_unit_id": "J21",
@@ -1921,6 +1989,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J22-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J22"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J22",
       "scored_unit_id": "J22",
@@ -1929,6 +2000,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J23-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J23"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J23",
       "scored_unit_id": "J23",
@@ -1937,6 +2011,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J24-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J24"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J24",
       "scored_unit_id": "J24",
@@ -1945,6 +2022,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-05",
+      "planned_evidence_call_ids": [
+        "CALL-J25"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J25",
       "scored_unit_id": "J25",
@@ -1953,6 +2033,10 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-05",
+      "planned_evidence_call_ids": [
+        "CALL-J25",
+        "CALL-J26"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J26",
       "scored_unit_id": "J26",
@@ -1961,6 +2045,9 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J27-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-J27"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J27",
       "scored_unit_id": "J27",
@@ -1969,6 +2056,10 @@
     {
       "case": "jaundice",
       "execution_unit_id": "J-SEQ-03",
+      "planned_evidence_call_ids": [
+        "CALL-J16",
+        "CALL-J28"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "J28",
       "scored_unit_id": "J28",
@@ -1977,6 +2068,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P01-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P01"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P01",
       "scored_unit_id": "P01",
@@ -1985,6 +2079,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P02-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P02"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P02",
       "scored_unit_id": "P02",
@@ -1993,6 +2090,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-01",
+      "planned_evidence_call_ids": [
+        "CALL-P03"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P03",
       "scored_unit_id": "P03",
@@ -2001,6 +2101,10 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-01",
+      "planned_evidence_call_ids": [
+        "CALL-P03",
+        "CALL-P04"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P04",
       "scored_unit_id": "P04",
@@ -2009,6 +2113,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P05-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P05"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P05",
       "scored_unit_id": "P05",
@@ -2017,6 +2124,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P06-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P06"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P06",
       "scored_unit_id": "P06",
@@ -2025,6 +2135,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P07-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P07"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P07",
       "scored_unit_id": "P07",
@@ -2033,6 +2146,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P08-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P08"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P08",
       "scored_unit_id": "P08",
@@ -2041,6 +2157,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P09-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P09"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P09",
       "scored_unit_id": "P09",
@@ -2049,6 +2168,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P10-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P10"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P10",
       "scored_unit_id": "P10",
@@ -2057,6 +2179,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P11-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P11"
+      ],
       "required_information_criticality": "critical",
       "scorecard_row_id": "P11",
       "scored_unit_id": "P11",
@@ -2065,6 +2190,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P12-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P12"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P12",
       "scored_unit_id": "P12",
@@ -2073,6 +2201,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P13-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P13"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P13",
       "scored_unit_id": "P13",
@@ -2081,6 +2212,10 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-02",
+      "planned_evidence_call_ids": [
+        "CALL-P-SETUP-DURATION-01",
+        "CALL-P14"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P14",
       "scored_unit_id": "P14",
@@ -2089,6 +2224,11 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-02",
+      "planned_evidence_call_ids": [
+        "CALL-P-SETUP-DURATION-01",
+        "CALL-P14",
+        "CALL-P15"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P15",
       "scored_unit_id": "P15",
@@ -2097,6 +2237,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-04",
+      "planned_evidence_call_ids": [
+        "CALL-P16"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P16",
       "scored_unit_id": "P16",
@@ -2105,6 +2248,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P17-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P17"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P17",
       "scored_unit_id": "P17",
@@ -2113,6 +2259,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-03",
+      "planned_evidence_call_ids": [
+        "CALL-P18"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P18",
       "scored_unit_id": "P18",
@@ -2121,6 +2270,10 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-03",
+      "planned_evidence_call_ids": [
+        "CALL-P18",
+        "CALL-P19"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P19",
       "scored_unit_id": "P19",
@@ -2129,6 +2282,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P20-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P20"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P20",
       "scored_unit_id": "P20",
@@ -2137,6 +2293,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P21-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P21"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P21",
       "scored_unit_id": "P21",
@@ -2145,6 +2304,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P22-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P22"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P22",
       "scored_unit_id": "P22",
@@ -2153,6 +2315,10 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P-SEQ-04",
+      "planned_evidence_call_ids": [
+        "CALL-P16",
+        "CALL-P23"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P23",
       "scored_unit_id": "P23",
@@ -2161,6 +2327,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P24-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P24"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P24",
       "scored_unit_id": "P24",
@@ -2169,6 +2338,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P25-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P25"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P25",
       "scored_unit_id": "P25",
@@ -2177,6 +2349,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P26-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P26"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P26",
       "scored_unit_id": "P26",
@@ -2185,6 +2360,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P27-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P27"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P27",
       "scored_unit_id": "P27",
@@ -2193,6 +2371,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P28-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P28"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P28",
       "scored_unit_id": "P28",
@@ -2201,6 +2382,14 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P29-STATION-01",
+      "planned_evidence_call_ids": [
+        "CALL-P29-U01",
+        "CALL-P29-U02",
+        "CALL-P29-U03",
+        "CALL-P29-U04",
+        "CALL-P29-U05",
+        "CALL-P29-U06"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P29",
       "scored_unit_id": "P29",
@@ -2209,6 +2398,9 @@
     {
       "case": "palpitations",
       "execution_unit_id": "P30-SINGLE",
+      "planned_evidence_call_ids": [
+        "CALL-P30"
+      ],
       "required_information_criticality": "ordinary",
       "scorecard_row_id": "P30",
       "scored_unit_id": "P30",

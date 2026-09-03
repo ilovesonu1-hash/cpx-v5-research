@@ -10,6 +10,7 @@ response row is created by this candidate task.
 | Field | Type / rule |
 |---|---|
 | `run_id` | public-safe unique call-attempt identifier |
+| `planned_call_id` | exact planned-call identity from the execution manifest |
 | `execution_unit_id` | manifest execution unit |
 | `unit_attempt_index` | integer 1 through 3 |
 | `scored_unit_id` | scored-unit linkage; null only for the P14/P15 setup call |
@@ -48,3 +49,17 @@ response row is created by this candidate task.
   and poor content are valid outputs and are never transport retries.
 - A retry restarts the complete execution unit in a new physical session. All
   partial prior rows remain preserved and nonauthoritative.
+
+Session-creation and session-close failures are preserved separately as
+execution-attempt events; a failure before a model call must not fabricate a
+raw-call row. A close failure makes every completed call in that attempt
+nonauthoritative because physical isolation was not safely closed.
+
+## Mandatory future execution-control provenance
+
+Before any real preflight or official execution, records must bind directly or
+through a separately accepted execution-control bundle to the accepted
+fixture/runner checkpoint, runner file or accepted runner commit identity, real
+transport-adapter identity, execution-authorization ID, passing
+preflight-evidence ID, and `input_bundle_id`. These future accepted identities
+do not exist in this candidate and are not included in its self-hashed bundle.

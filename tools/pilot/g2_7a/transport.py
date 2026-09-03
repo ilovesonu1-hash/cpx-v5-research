@@ -64,7 +64,8 @@ class FakeSessionState:
     closed: bool = False
 
 
-FakeOutcome = str | TransportResponse | TransportError
+FakeOutcome = str | TransportResponse | TransportError | Exception
+LifecycleOutcome = TransportError | Exception | None
 ResponseFactory = Callable[[FakeSessionState, str], FakeOutcome]
 
 
@@ -91,6 +92,8 @@ class FakeSession:
         outcome = self._owner.next_outcome(self._state, user_message)
         if isinstance(outcome, TransportError):
             raise outcome
+        if isinstance(outcome, Exception):
+            raise outcome
         if isinstance(outcome, TransportResponse):
             if outcome.safe_session_id != self.safe_session_id:
                 raise TransportError("SESSION_ID_MISMATCH", "fake response used another session identifier")
@@ -104,6 +107,10 @@ class FakeSession:
 
     def close(self) -> None:
         if not self._state.closed:
+            self._owner.close_attempted_session_ids.append(self.safe_session_id)
+            outcome = self._owner.next_close_outcome()
+            if isinstance(outcome, Exception):
+                raise outcome
             self._state.closed = True
             self._owner.closed_session_ids.append(self.safe_session_id)
 
@@ -115,16 +122,27 @@ class FakeTransport:
         self,
         scripted_outcomes: Sequence[FakeOutcome] | None = None,
         response_factory: ResponseFactory | None = None,
+        create_session_outcomes: Sequence[LifecycleOutcome] | None = None,
+        close_outcomes: Sequence[LifecycleOutcome] | None = None,
     ) -> None:
         self._scripted_outcomes = list(scripted_outcomes or ())
         self._response_factory = response_factory
+        self._create_session_outcomes = list(create_session_outcomes or ())
+        self._close_outcomes = list(close_outcomes or ())
         self._session_counter = 0
+        self.create_session_attempts = 0
         self.sessions: dict[str, FakeSessionState] = {}
         self.created_session_ids: list[str] = []
+        self.close_attempted_session_ids: list[str] = []
         self.closed_session_ids: list[str] = []
         self.calls: list[FakeCall] = []
 
     def create_session(self, system_message: str, runtime: str) -> FakeSession:
+        self.create_session_attempts += 1
+        if self._create_session_outcomes:
+            outcome = self._create_session_outcomes.pop(0)
+            if isinstance(outcome, Exception):
+                raise outcome
         self._session_counter += 1
         safe_session_id = f"fake-session-{self._session_counter:03d}"
         state = FakeSessionState(
@@ -142,6 +160,11 @@ class FakeTransport:
         if self._response_factory is not None:
             return self._response_factory(state, user_message)
         return self._neutral_memory_response(state, user_message)
+
+    def next_close_outcome(self) -> LifecycleOutcome:
+        if self._close_outcomes:
+            return self._close_outcomes.pop(0)
+        return None
 
     @staticmethod
     def _neutral_memory_response(state: FakeSessionState, user_message: str) -> str:

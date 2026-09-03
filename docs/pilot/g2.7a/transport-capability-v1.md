@@ -2,13 +2,13 @@
 
 Date: 2026-09-03
 Classification: **PILOT_ONLY / NON_PRODUCTION**
-Status: **REAL_TRANSPORT_INTERFACE_PARTIALLY_VERIFIED**
+Status: **HARNESS_CAPABILITY_UNVERIFIED**
 
 This is a no-call capability inspection. It is not preflight evidence, session
 isolation evidence, execution authorization, or proof that the required
 patient-model runtime is available.
 
-## Inspected surface
+## Background observation only
 
 Commands run without a prompt:
 
@@ -23,7 +23,12 @@ No settings file, environment variable value, credential, token, authentication
 header, keychain entry, or provider configuration was read. No prompt was sent
 and no model/provider call occurred.
 
-## Capability disposition
+The observed surface was Claude Code CLI help. It is not the actual
+Gemini-serving Paseo/provider path required for
+`google-vertex/gemini-3.7-flash`; generic CLI features were only partially
+observed and cannot verify the target harness.
+
+## Target-path capability disposition
 
 | Required capability | No-call observation | Status |
 |---|---|---|
@@ -34,7 +39,11 @@ and no model/provider call occurred.
 | Final response separated from reasoning/tool traces | Help distinguishes output formats and reasoning-related streaming options, but final-field separation was not verified. | unverified |
 | Exact runtime `google-vertex/gemini-3.7-flash` | The inspected CLI's model option documents Claude aliases/full names. The required runtime was not verifiable from help. | unverified |
 
-Because all six requirements are not verified, no real adapter is implemented.
-The runner contains only a process-local fake used by unit tests and refuses
-both `preflight` and `execute`. A later task must independently verify the
-actual authorized harness before any execution-capable adapter is considered.
+Because all six requirements are not verified for the actual target path,
+target harness capability is `HARNESS_CAPABILITY_UNVERIFIED`. No real adapter
+is implemented. The runner contains only a process-local fake used by unit
+tests and refuses both `preflight` and `execute`.
+
+This does not invalidate the deterministic fixture bundle. It does block real
+preflight and execute enablement until a later authorized task independently
+verifies the Gemini-serving Paseo/provider path without guessing.

@@ -74,7 +74,7 @@ class FakeTransportTests(unittest.TestCase):
                 "retry second",
             ]
         )
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit(["CALL-1", "CALL-2"]),
             calls,
             "system",
@@ -84,6 +84,9 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
+        records = result.attempted_call_records
+        self.assertTrue(result.completed)
+        self.assertEqual(2, result.authoritative_attempt_index)
         self.assertEqual(4, len(records))
         self.assertEqual(2, len(transport.created_session_ids))
         self.assertEqual(["turn one", "turn two", "turn one", "turn two"], [call.user_message for call in transport.calls])
@@ -102,7 +105,7 @@ class FakeTransportTests(unittest.TestCase):
                 "must not be consumed",
             ]
         )
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit(["CALL-1"]),
             calls,
             "system",
@@ -112,6 +115,8 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
+        records = result.attempted_call_records
+        self.assertFalse(result.completed)
         self.assertEqual(3, len(records))
         self.assertEqual(3, len(transport.created_session_ids))
         self.assertTrue(all(not record["authoritative_attempt"] for record in records))
@@ -119,7 +124,7 @@ class FakeTransportTests(unittest.TestCase):
     def test_valid_poor_response_is_not_retried(self) -> None:
         calls = [planned_call("CALL-1", 1, "turn one")]
         transport = FakeTransport(scripted_outcomes=["I AM A DOCTOR", "unused"])
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit(["CALL-1"]),
             calls,
             "system",
@@ -129,6 +134,7 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
+        records = result.attempted_call_records
         self.assertEqual(1, len(records))
         self.assertEqual(1, len(transport.created_session_ids))
         self.assertEqual("I AM A DOCTOR", records[0]["final_patient_response"])
@@ -137,7 +143,7 @@ class FakeTransportTests(unittest.TestCase):
     def test_successful_empty_response_is_valid_output(self) -> None:
         calls = [planned_call("CALL-1", 1, "turn one")]
         transport = FakeTransport(scripted_outcomes=[""])
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit(["CALL-1"]),
             calls,
             "system",
@@ -147,6 +153,7 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
+        records = result.attempted_call_records
         self.assertEqual("", records[0]["final_patient_response"])
         self.assertIsNone(records[0]["execution_error_class"])
         self.assertTrue(records[0]["authoritative_attempt"])
@@ -155,7 +162,7 @@ class FakeTransportTests(unittest.TestCase):
         raw = "  analysis-like text\nFINAL: patient words  \n"
         calls = [planned_call("CALL-1", 1, "turn one")]
         transport = FakeTransport(scripted_outcomes=[raw])
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit(["CALL-1"]),
             calls,
             "system",
@@ -165,12 +172,12 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
-        self.assertEqual(raw, records[0]["final_patient_response"])
+        self.assertEqual(raw, result.attempted_call_records[0]["final_patient_response"])
 
     def test_raw_record_contains_required_fields(self) -> None:
         calls = [planned_call("CALL-1", 1, "turn one")]
         transport = FakeTransport(scripted_outcomes=["patient response"])
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit(["CALL-1"]),
             calls,
             "system",
@@ -180,13 +187,14 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
+        records = result.attempted_call_records
         required = {
             "run_id", "execution_unit_id", "unit_attempt_index", "scored_unit_id",
             "source_trajectory_id", "constituent_or_setup_id", "turn_index",
             "scored_turn", "authoritative_attempt", "case", "safe_session_id",
             "physical_isolation_verified", "model", "runtime",
             "exposed_generation_settings", "input_bundle_id", "system_message_sha256",
-            "learner_utterance", "final_patient_response", "provider_completion_status",
+            "learner_utterance", "planned_call_id", "final_patient_response", "provider_completion_status",
             "separate_reasoning_field_present", "execution_error_class",
             "execution_error_message_safe", "timestamp_utc",
         }
@@ -195,7 +203,7 @@ class FakeTransportTests(unittest.TestCase):
     def test_p29_six_calls_in_one_fake_session(self) -> None:
         calls = [planned_call(f"CALL-P29-U{i:02d}", i, f"turn {i}") for i in range(1, 7)]
         transport = FakeTransport(scripted_outcomes=[f"response {i}" for i in range(1, 7)])
-        records = runner.run_execution_unit(
+        result = runner.run_execution_unit(
             execution_unit([call["planned_call_id"] for call in calls]),
             calls,
             "system",
@@ -205,9 +213,93 @@ class FakeTransportTests(unittest.TestCase):
             run_id_factory=deterministic_run_id,
             timestamp_factory=lambda: "2026-09-03T00:00:00Z",
         )
+        records = result.attempted_call_records
         self.assertEqual(6, len(records))
         self.assertEqual(1, len(transport.created_session_ids))
         self.assertEqual(1, len({record["safe_session_id"] for record in records}))
+
+    def test_create_session_failure_retries_without_fake_call_row(self) -> None:
+        calls = [planned_call("CALL-1", 1, "turn one")]
+        transport = FakeTransport(
+            scripted_outcomes=["success"],
+            create_session_outcomes=[TransportError("CREATE_TIMEOUT", "safe create timeout"), None],
+        )
+        result = runner.run_execution_unit(
+            execution_unit(["CALL-1"]),
+            calls,
+            "system",
+            transport,
+            "sha256:test",
+            physical_isolation_verified=True,
+            run_id_factory=deterministic_run_id,
+            timestamp_factory=lambda: "2026-09-03T00:00:00Z",
+        )
+        self.assertTrue(result.completed)
+        self.assertEqual(2, result.authoritative_attempt_index)
+        self.assertEqual(1, len(result.attempted_call_records))
+        self.assertEqual("SESSION_CREATION_FAILED", result.attempt_events[0]["event_type"])
+        self.assertFalse(result.attempt_events[0]["model_call_created"])
+        self.assertIsNone(result.attempt_events[0]["safe_session_id"])
+        self.assertEqual(2, transport.create_session_attempts)
+
+    def test_three_create_session_failures_consume_attempt_cap(self) -> None:
+        failure = TransportError("CREATE_TIMEOUT", "safe create timeout")
+        transport = FakeTransport(create_session_outcomes=[failure, failure, failure])
+        result = runner.run_execution_unit(
+            execution_unit(["CALL-1"]),
+            [planned_call("CALL-1", 1, "turn one")],
+            "system",
+            transport,
+            "sha256:test",
+            physical_isolation_verified=True,
+            run_id_factory=deterministic_run_id,
+            timestamp_factory=lambda: "2026-09-03T00:00:00Z",
+        )
+        self.assertFalse(result.completed)
+        self.assertEqual([], result.attempted_call_records)
+        self.assertEqual(3, len(result.attempt_events))
+        self.assertEqual(3, transport.create_session_attempts)
+
+    def test_close_failure_invalidates_attempt_and_restarts_whole_unit(self) -> None:
+        calls = [planned_call("CALL-1", 1, "turn one"), planned_call("CALL-2", 2, "turn two")]
+        transport = FakeTransport(
+            scripted_outcomes=["first one", "first two", "retry one", "retry two"],
+            close_outcomes=[TransportError("CLOSE_FAILED", "safe close failure"), None],
+        )
+        result = runner.run_execution_unit(
+            execution_unit(["CALL-1", "CALL-2"]),
+            calls,
+            "system",
+            transport,
+            "sha256:test",
+            physical_isolation_verified=True,
+            run_id_factory=deterministic_run_id,
+            timestamp_factory=lambda: "2026-09-03T00:00:00Z",
+        )
+        records = result.attempted_call_records
+        self.assertTrue(result.completed)
+        self.assertEqual(2, len(transport.created_session_ids))
+        self.assertEqual([False, False, True, True], [row["authoritative_attempt"] for row in records])
+        self.assertEqual([False, False], [row["physical_isolation_verified"] for row in records[:2]])
+        self.assertEqual("SESSION_CLOSE_FAILED", result.attempt_events[0]["event_type"])
+        self.assertEqual(["turn one", "turn two", "turn one", "turn two"], [call.user_message for call in transport.calls])
+
+    def test_unexpected_lifecycle_exception_is_sanitized(self) -> None:
+        secret_text = "sensitive-value-that-must-not-escape"
+        transport = FakeTransport(create_session_outcomes=[RuntimeError(secret_text)] * 3)
+        result = runner.run_execution_unit(
+            execution_unit(["CALL-1"]),
+            [planned_call("CALL-1", 1, "turn one")],
+            "system",
+            transport,
+            "sha256:test",
+            physical_isolation_verified=True,
+            run_id_factory=deterministic_run_id,
+            timestamp_factory=lambda: "2026-09-03T00:00:00Z",
+        )
+        serialized = str(result.attempt_events)
+        self.assertNotIn(secret_text, serialized)
+        self.assertTrue(all(event["execution_error_class"] == "HARNESS_UNEXPECTED_ERROR" for event in result.attempt_events))
 
 
 class AuthorizationTests(unittest.TestCase):

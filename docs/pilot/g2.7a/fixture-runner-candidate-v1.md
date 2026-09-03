@@ -4,111 +4,132 @@ Date: 2026-09-03
 Status: **PROPOSED / NOT YET ACCEPTED**
 Classification: **PILOT_ONLY / NON_PRODUCTION**
 
-## Purpose and boundary
+## Purpose and correction state
 
-This candidate reconstructs frozen patient-model inputs, represents all 58
+This candidate reconstructs the frozen patient inputs, represents all 58
 scored units, plans 64 official calls in 48 isolated execution units, preserves
-P29 as one six-call station-level unit, freezes neutral isolation-preflight
-inputs, and exercises retry/session/raw-record behavior with an in-memory fake.
+P29 as one six-call station unit, freezes neutral isolation-preflight inputs,
+and tests retry/session/record behavior using only an in-memory fake.
 
-It performs no preflight, patient-model call, evaluator-model call, semantic
-scoring, official batch execution, production integration, or architecture
-escalation. It modifies no prompt, contract, trajectory, evaluation
-specification, accepted envelope, or historical record.
+The independent audit of candidate commit
+`f11df66df7fc12a860cc1beac76bcd53685f22f7` returned
+`REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR`. This corrected state
+records the audit and proposed disposition, removes the self-expiring live-main
+check, completes payload response-scope behavior, adds attempt events and
+post-run record validation, and freezes ordered score evidence. It remains
+unaccepted pending independent final-state/delta audit.
 
-Accepted execution envelope:
+No prompt, contract, trajectory, evaluation specification, accepted envelope,
+or clinical fact was changed. No preflight, provider/model call, semantic
+score, official execution, real adapter, production integration, or
+architecture escalation occurred.
 
-- commit: `77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4`
-- merge: `f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd`
-- file SHA-256: `2b69b1d1fbf0c1a5fcc0ab8177362e998a198860d763e4a65552e90e797f4fc5`
-- working file byte-identical to the accepted commit: yes
+## Frozen sources
 
-## Artifact inventory
+- Candidate base commit: `1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6`.
+  This is immutable derivation provenance, not a permanent expected
+  `origin/main` tip.
+- Effective patient semantic checkpoint:
+  `33cca3781b301c29af965430c3caaf32378c28ff`.
+- Accepted execution envelope:
+  `77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4`, merged through
+  `f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd`; file SHA-256
+  `2b69b1d1fbf0c1a5fcc0ab8177362e998a198860d763e4a65552e90e797f4fc5`.
+- Frozen prompt document SHA-256:
+  `373351aaa9d254e42a88c0daf209124fefb3ff59fc59571095345e28ea451d72`.
+- Canonical transmitted prompt block SHA-256:
+  `f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8`.
 
-The bounded candidate consists of:
-
-- exact prompt, two payload, two assembled system-message, and four preflight
-  text fixtures under `docs/pilot/g2.7a/fixtures/`;
-- payload-provenance, preflight, execution, ambiguity, criticality, and
-  aggregate input-bundle manifests under `docs/pilot/g2.7a/manifests/`;
-- raw-response and scorecard specifications under
-  `docs/pilot/g2.7a/specs/`;
-- one unscored 58-row scorecard CSV under
-  `docs/pilot/g2.7a/templates/`;
-- this report and the no-call transport capability record; and
-- the builder, validator, execution-disabled runner, minimal transport
-  interface, in-memory fake, and standard-library tests under
-  `tools/pilot/g2_7a/`.
-
-No listed file is a production package, API, schema, database, router, model
-judge, retrieval component, or orchestration framework.
-
-## Canonicalization and construction
-
-Canonical text fixtures are UTF-8 without BOM, LF-only, without trailing
-spaces, and without a terminal LF. JSON is UTF-8 without BOM, two-space
-indented with sorted keys, LF-only, and has one terminal LF. CSV is RFC
-4180-compatible, UTF-8 without BOM, fixed-column, LF-only, and has one terminal
-LF.
-
-The builder reads prompt, contract, trajectory, evaluation, and envelope bytes
-from exact Git objects. It extracts only the fenced `text` block following
-`## Exact prompt`, constructs each system message as
-`prompt + "\n\n[환자 정보]\n" + payload`, and renders all generated artifacts
-deterministically. The committed nonce is reused after its one-time generation.
-
-## Frozen source identities
-
-| Source | Git blob SHA | SHA-256 |
+| Semantic source at `33cca378…` | Git blob SHA | SHA-256 |
 |---|---|---|
-| Prompt document at `997e5200370ee5f5823af4c24b86c5d62f4625ee` | `fa11f52c22a4a8fe6d07e31d58baa504709a6cc1` | `373351aaa9d254e42a88c0daf209124fefb3ff59fc59571095345e28ea451d72` |
-| Transmitted prompt block | n/a | `f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8` |
-| Jaundice contract at `33cca3781b301c29af965430c3caaf32378c28ff` | `d574c1740501061b20c2a32505aed9caf2abcea3` | `a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df` |
-| Palpitations contract at `33cca3781b301c29af965430c3caaf32378c28ff` | `09bf2c36d153d970c93971ca82ad8ee039487bc4` | `36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9` |
-| Jaundice trajectories at `33cca3781b301c29af965430c3caaf32378c28ff` | `767912271f90a516d9ec59cbc533f751e004bfc6` | `267a645877cae27839e0a82dca019cdfb00c7d722e10175fb4b4abe9fc95fd7b` |
-| Palpitations trajectories at `33cca3781b301c29af965430c3caaf32378c28ff` | `ad0067d14f6d3dad894eb0eac28e7bca208b2a3c` | `becab7ac4df836a72f3d5f902c3cba3f6190fa37eed99ee4542f9704526eae75` |
-| Evaluation specification at `33cca3781b301c29af965430c3caaf32378c28ff` | `d9b911cadf45572986f926186746951c14234744` | `defffb1e40d3da49d67ca0fda7db9212c4e05f0458f7969cab872dab798794ad` |
+| Jaundice contract | `d574c1740501061b20c2a32505aed9caf2abcea3` | `a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df` |
+| Palpitations contract | `09bf2c36d153d970c93971ca82ad8ee039487bc4` | `36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9` |
+| Jaundice trajectories | `767912271f90a516d9ec59cbc533f751e004bfc6` | `267a645877cae27839e0a82dca019cdfb00c7d722e10175fb4b4abe9fc95fd7b` |
+| Palpitations trajectories | `ad0067d14f6d3dad894eb0eac28e7bca208b2a3c` | `becab7ac4df836a72f3d5f902c3cba3f6190fa37eed99ee4542f9704526eae75` |
+| Evaluation specification | `d9b911cadf45572986f926186746951c14234744` | `defffb1e40d3da49d67ca0fda7db9212c4e05f0458f7969cab872dab798794ad` |
 
-## Payloads and assembled messages
+The accepted structural disposition that owns the local P29 no-prompt rule is
+also frozen as a bundle component from the candidate base: Git blob
+`2aecd7df423ef8ed74e7f2dc8f4a09690e4c027a`, SHA-256
+`f7628abe45698a5da2b260bf5f3d4568f624df6bc9c22367b94e1df8c1a66ce8`.
+
+## Artifact and canonicalization approach
+
+Fixtures, manifests, raw-call and attempt-event specifications, the 58-row
+scorecard template, this report, audit evidence/disposition, transport status,
+builder, validators, execution-disabled runner, minimal transport protocol, and
+tests remain within `docs/pilot/g2.7a/` and `tools/pilot/g2_7a/`.
+
+Canonical `.txt` fixtures are UTF-8 without BOM, LF-only, without trailing
+spaces or terminal LF. JSON is two-space indented with sorted keys and one
+terminal LF. CSV is RFC 4180-compatible with fixed columns and one terminal LF.
+The builder reads pinned Git objects, reuses the committed nonce, and reproduces
+all generated bytes deterministically.
+
+## Payloads and system messages
 
 | Case | Station frame | Facts | Forbidden facts retained | Payload SHA-256 | System-message SHA-256 |
 |---|---|---:|---|---|---|
-| Jaundice | 김영수; 58; male; outpatient first visit; 12 minutes; opening after reason-for-visit question | 25 | J-T19 through J-T24 | `848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935` | `4eb9f01ecd8a21eeb5b18d48c51855be5ba0562ad46bd1c6408124aaa109eada` |
-| Palpitations | 박지현; 34; female; outpatient; 12 minutes; opening after reason-for-visit question | 30 | P-T25 through P-T30 | `54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7` | `15ac92444408efd1262654eb34e3144d59a8d971324aa755fd8474a20c3a9637` |
+| Jaundice | 김영수; 58; male; outpatient first visit; 12 minutes; opens after a reason-for-visit question | 25 | J-T19 through J-T24 | `2b2eb3acf6e016d7fab0f795a0ea277f6ddcb480cb4da9e832a7febc1c4abd04` | `61ab0319bd6521b58c218c3db2fc750c984f1915b53e079dbac0f52fafeafe5f` |
+| Palpitations | 박지현; 34; female; outpatient; 12 minutes; opens after a reason-for-visit question | 30 | P-T25 through P-T30 | `997cda014a01eb14af81791ac9b608e81235577c7af43fe52df7211888f43cdf` | `bf66c687683dc74bf07b6efd5e6f8dd62063e683621a5dc128480c8c64d90e4c` |
 
-Each source fact ID occurs once in its inventory. The payloads preserve authored
-meaning, approximation, absence/presence, knowledge, disclosure eligibility,
-focused/prerequisite behavior, uncertainty, cannot-observe behavior, and
-never-disclose constraints. They exclude case-selection rationale, literature,
-open review questions, evaluator/audit text, and historical implementation
-commentary. No new clinical case fact was added and no `REVIEW_PENDING` item
-was resolved.
+Both payloads now state true-premise confirmation, known-absence correction,
+and examination consent without reporting a finding. The palpitations payload
+also states the accepted local P29 no-prompt behavior. These are patient
+behavior rules, not evaluator language, and introduce no medical truth.
 
-## Execution plan
+The provenance manifest parses the case-truth and patient-knowledge tables from
+the pinned contracts and parses payload fact IDs. Included, missing, duplicate,
+and unexpected IDs are computed from those bytes. Both source inventories and
+payloads cover exactly 25/30 facts with no missing, duplicate, or unexpected
+ID. Structural coverage is deterministic; semantic paraphrase equivalence is
+audit-reviewed rather than claimed as proven by counts.
 
-| Quantity | Planned count |
+## Execution and score evidence
+
+| Quantity | Count |
 |---|---:|
 | Scored units / scorecard rows | 58 |
 | Individually scored response calls | 57 |
 | Official unscored calls | 7 |
 | Official calls | 64 |
-| Independent single-turn execution units/sessions | 38 |
-| Ordinary sequence execution units/sessions | 9 |
-| P29 station execution units/sessions | 1 |
-| Total execution units/sessions | 48 |
+| Independent single-turn sessions | 38 |
+| Ordinary sequence sessions | 9 |
+| P29 station sessions | 1 |
+| Total execution units / sessions | 48 |
 
-The nine ordinary sequences are J-SEQ-01 through J-SEQ-05 and P-SEQ-01
-through P-SEQ-04 exactly as accepted. P-SEQ-02 begins with the one unscored
-`P-SETUP-DURATION-01` call. P29 is one scored row linked to six ordered,
-unscored constituent calls P29-U01 through P29-U06 in one session.
+The nine sequence groups remain J-SEQ-01 through J-SEQ-05 and P-SEQ-01
+through P-SEQ-04. P-SEQ-02 includes its single unscored setup call. P29 remains
+one scored row linked to six ordered unscored calls in one session.
 
-Execution-manifest SHA-256:
-`184da7a421b248f15dd867a38692ea1022c81383380661297a17b554704214f8`.
+Every scored unit now has ordered `planned_evidence_call_ids`. Independent
+units reference their own call; a sequence score references the execution-unit
+prefix through that score turn, including the P14/P15 setup; P29 references all
+six constituent calls. Later authoritative run IDs must map one-to-one and in
+that order.
 
-## Preflight inputs
+## Retry, attempt events, and completed-record validation
 
-Committed public-safe nonce:
-`CPX-G2-ISO-012fb514aefc248b0e058f8f98c0e43e`.
+Session creation is part of the three-attempt whole-unit retry loop. A creation
+failure consumes an attempt and creates a sanitized attempt event but no fake
+model-call row. A close failure preserves completed rows as nonauthoritative,
+records a sanitized close-failure event, marks physical isolation unverified,
+and restarts the whole unit in a new session when attempts remain.
+
+`validate_run_records.py` deterministically checks future raw-call and attempt-
+event JSONL for per-attempt session identity, cross-attempt/session separation,
+preflight disjointness, one fully complete authoritative attempt, exact planned
+call order/text/identity, record nullability, P29 and setup structure, and
+ordered derivation of scorecard run IDs. It creates no official output.
+
+Future official records must bind an accepted fixture/runner checkpoint,
+runner identity, real adapter identity, execution authorization, passing
+preflight evidence, and the exact input bundle. Those identities do not yet
+exist and are not added self-referentially to this bundle.
+
+## Preflight
+
+Nonce: `CPX-G2-ISO-012fb514aefc248b0e058f8f98c0e43e` (unchanged).
 
 | Input | SHA-256 |
 |---|---|
@@ -117,88 +138,68 @@ Committed public-safe nonce:
 | Session A turn 2 | `2b5dfc3b8fe2eee09c247617587ac298cba934e8b891e4f1c5470e881943723d` |
 | Session B turn 1 | `958ad26637372fb4d67f4ac20a970d1cb4002da6ef46bb916c83ecc365aff263` |
 
-The manifest plans three calls in two sessions using the same future runtime,
-session creation, history, and final-output extraction mechanisms as the
-official run. It records `executed=false`, `execution_authorized=false`, and
-fail-closed result `HARNESS_ISOLATION_BLOCKED`.
+The preflight remains three calls in two sessions, `executed=false`,
+`execution_authorized=false`, and **NOT_EXECUTED**.
 
-Preflight status: **NOT_EXECUTED**.
+## Current hashes and aggregate identity
 
-## Aggregate input bundle
-
-`input_bundle_id`:
-`sha256:9c15bb52b494008eadcf7919fba6a51c2227081c745f4663873ecffdba7b423b`.
-
-It is the SHA-256 of canonical compact JSON containing only the sorted logical
-component-name to component-SHA-256 mapping. The aggregate identifier is not
-included in its own calculation. The execution manifest has no aggregate-ID
-back-reference, avoiding a circular hash.
-
-## Runner and transport
-
-| Command | Current behavior |
+| Artifact | SHA-256 |
 |---|---|
-| `plan` | Loads frozen manifests and prints 58 scored units / 64 calls / 48 ordered execution units; no call |
-| `validate` | Runs deterministic validation only; no call |
-| `preflight` | Refuses with `PREFLIGHT_EXECUTION_NOT_AUTHORIZED` |
-| `execute` | Refuses with `PATIENT_MODEL_EXECUTION_NOT_AUTHORIZED` |
+| Payload provenance manifest | `58f0da2dbc2415b0cf7c813406a9ea1b28c41800f70c17c41924dc0823a12725` |
+| Preflight manifest | `c027265b98e64b47ee4595b26d0deecaaf4398086455ab74d77f47b27a1c21b6` |
+| Execution manifest | `56fa3a9a9b18dc3ef06859a20954c6213c244e6dad0f000c5a80b65eeb2a17e4` |
+| Ambiguity map | `960e25b4e4c7ec8924fb71fde3646a2f8f4885b624893fce46e8dd17eb46ff82` |
+| Criticality map | `f260d7e305e2da192e9264d393dc97b12bda05183c100636afd57aec9fb47944` |
+| Raw-response spec | `6e72029c1693fdde4e88f2fad0b49574a797af17dbb67410217983f17abc863b` |
+| Execution-attempt event spec | `6d0990ff3adaabc252bff9f1fe4c2e1d09f3a9d37adb80828901ac6a9afc34b8` |
+| Scorecard spec | `105642cbd31ef53f5e319188156f3e151a17cef872bd0bc5b4cf99f1883866a0` |
+| Scorecard template | `727bb0e316b30265f3ba7218482de915158bc319533876dc7a6f5ab400884ec7` |
 
-Retry logic is capped at three complete execution-unit attempts, uses a new
-physical session per retry, preserves partial records, and restarts an entire
-sequence or P29. Successful empty or poor outputs are valid outputs and are not
-retried. Only the explicitly designated learner-visible final field is copied;
-no stripping or repair occurs.
+Active `input_bundle_id`:
+`sha256:991159fc06f2f135f97422995da029442d79584269c2fc2d10cf33011feed317`.
 
-The process-local fake covers same-session memory, cross-session isolation,
-sequence restart, P29's six calls, raw-record creation, retry accounting,
-successful empty output, poor valid output, and exact final-field preservation.
+## Runner and transport status
 
-Real transport status:
-`REAL_TRANSPORT_INTERFACE_PARTIALLY_VERIFIED`. Claude Code 2.1.259 help was
-inspected without a prompt. The exact required runtime and all physical-session
-and final/reasoning-channel guarantees remain unverified, so no real adapter is
-implemented and execution remains disabled.
+`plan` and `validate` remain offline and permitted. `preflight` refuses with
+`PREFLIGHT_EXECUTION_NOT_AUTHORIZED`; `execute` refuses with
+`PATIENT_MODEL_EXECUTION_NOT_AUTHORIZED`. Successful poor or empty outputs are
+never retried, and the explicit learner-visible final field is preserved
+without heuristic cleanup.
+
+Target status is **HARNESS_CAPABILITY_UNVERIFIED**. Only generic Claude CLI
+help was observed previously; the actual Gemini-serving Paseo/provider path for
+`google-vertex/gemini-3.7-flash` was not verified. No real adapter exists, so
+execution stays disabled. This limitation does not invalidate the deterministic
+fixture bundle.
 
 ## Validation record
 
-Portable command notation is used so no private machine path is committed.
+Portable command notation is used; no private absolute path is recorded.
 
 | Command | Result |
 |---|---|
-| `python tools/pilot/g2_7a/build_bundle.py` | PASS; deterministic bundle rendered |
-| same builder command a second time | PASS; no byte change |
-| `python tools/pilot/g2_7a/build_bundle.py --check` | PASS; temporary regeneration byte-identical |
-| `python tools/pilot/g2_7a/build_bundle.py --print-summary` | PASS; 58 / 64 / 48 and bundle ID reported without writes |
-| `python tools/pilot/g2_7a/validate_bundle.py` | PASS; 157 deterministic checks |
-| `python tools/pilot/g2_7a/runner.py plan` | PASS; 58 scored units / 64 calls / 48 sessions |
-| `python tools/pilot/g2_7a/runner.py validate` | PASS; deterministic validation only |
-| `python -m unittest discover -s tools/pilot/g2_7a/tests -v` | PASS; 23 tests |
-| JSON and CSV parsing | PASS through validator and tests |
-| aggregate ID recomputation | PASS through validator and tests |
-| `git diff --check` | PASS |
+| `python tools/pilot/g2_7a/build_bundle.py` twice | PASS; second run produced no diff |
+| `python tools/pilot/g2_7a/build_bundle.py --check` | PASS; regenerated bytes identical |
+| `python tools/pilot/g2_7a/build_bundle.py --print-summary` | PASS; 58 / 64 / 48 |
+| `python tools/pilot/g2_7a/validate_bundle.py` | PASS; 184 deterministic checks |
+| `python tools/pilot/g2_7a/runner.py plan` | PASS; 58 / 64 / 48 |
+| `python tools/pilot/g2_7a/runner.py validate` | PASS; offline deterministic validation |
+| `python -m unittest discover -s tools/pilot/g2_7a/tests -v` | PASS; 40 tests |
+| JSON/CSV parsing and aggregate-ID recomputation | PASS |
+| Scope, credential/private-path, and `git diff --check` checks | PASS |
 
-No unit test imports a network client or invokes a subprocess. No preflight,
-provider probe, model call, evaluator call, semantic score, raw run output, or
-authorization artifact was created.
+No unit test invokes a network client or external command. No preflight,
+provider probe, model call, evaluator call, semantic score, official raw output,
+or authorization artifact was created.
 
-## Known limitations
+## Known limitations and nonauthorization
 
-- The required real transport interface is only partially verified and has no
-  adapter.
-- Session isolation is not established; only fake behavior is tested.
-- Future output is `INPUT_REPRODUCIBLE / OUTPUT_NOT_DETERMINISTIC` if generation
-  controls remain unexposed.
-- Criticality uses the required explicit-source-only provisional policy and
-  awaits audit and human acceptance.
-- The canonical scorecard template leaves its aggregate bundle field blank.
-  A future accepted scoring copy binds that field before scoring because the
-  template hash itself participates in the bundle identity.
-- Semantic scoring remains human-only; `MODEL_JUDGE = NONE`.
+Session isolation is not established. The target harness is unverified.
+Criticality remains the explicit-source-only proposed policy. Semantic scoring
+is human-only and `MODEL_JUDGE = NONE`.
 
-## Explicit nonauthorization
-
-Candidate completion does not authorize preflight, patient-model execution,
-scoring, the official 58-unit run, prompt/contract/trajectory/evaluation
-changes, architecture escalation, production integration, or a real transport
-adapter. The next permitted task is an independent read-only audit of this
-candidate.
+Candidate correction does not authorize preflight, patient-model execution,
+scoring, the official suite, a real adapter, prompt/contract/trajectory/
+evaluation changes, architecture escalation, production integration, or merge.
+The next permitted task is an independent read-only final-state/delta audit of
+the corrected G2.7a fixture/runner candidate.

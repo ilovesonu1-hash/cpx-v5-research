@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+import inspect
 import re
 import sys
 import unittest
@@ -16,6 +17,7 @@ if str(MODULE_DIR) not in sys.path:
     sys.path.insert(0, str(MODULE_DIR))
 
 import build_bundle as builder
+import validate_bundle as validator
 
 
 class BundleTests(unittest.TestCase):
@@ -45,6 +47,47 @@ class BundleTests(unittest.TestCase):
         self.assertEqual(25, len(set(j_ids)))
         self.assertEqual(30, len(p_ids))
         self.assertEqual(30, len(set(p_ids)))
+
+    def test_source_contract_and_patient_knowledge_inventories_are_parsed(self) -> None:
+        for path, prefix, count in (
+            (builder.J_CONTRACT_PATH, "J", 25),
+            (builder.P_CONTRACT_PATH, "P", 30),
+        ):
+            contract = self.sources.semantic[path].content
+            truth = builder.parse_contract_inventory(contract, "A. Case truth", prefix)
+            knowledge = builder.parse_contract_inventory(contract, "B. Patient knowledge", prefix)
+            self.assertEqual(count, len(truth))
+            self.assertEqual(truth, knowledge)
+
+    def test_payload_provenance_mutations_are_detected(self) -> None:
+        contract = self.sources.semantic[builder.J_CONTRACT_PATH].content
+        payload = self.outputs[builder.J_PAYLOAD]
+        deleted = payload.replace(b"J-T01 |", b"REMOVED |", 1)
+        duplicated = payload + b"\n" + next(
+            line for line in payload.splitlines() if line.startswith(b"J-T01 |")
+        )
+        substituted = payload.replace(b"J-T01 |", b"J-T99 |", 1)
+        self.assertEqual(
+            ["J-T01"],
+            builder.analyze_payload_provenance(contract, deleted, "J")["missing_fact_ids"],
+        )
+        self.assertEqual(
+            ["J-T01"],
+            builder.analyze_payload_provenance(contract, duplicated, "J")["duplicate_fact_ids"],
+        )
+        substitution = builder.analyze_payload_provenance(contract, substituted, "J")
+        self.assertEqual(["J-T01"], substitution["missing_fact_ids"])
+        self.assertEqual(["J-T99"], substitution["unexpected_fact_ids"])
+
+    def test_behavioral_payload_rules_are_present_without_evaluator_terms(self) -> None:
+        j = self.outputs[builder.J_PAYLOAD].decode("utf-8")
+        p = self.outputs[builder.P_PAYLOAD].decode("utf-8")
+        for payload in (j, p):
+            self.assertIn("사실인 내용을 전제로", payload)
+            self.assertIn("분명히 부정하거나 바로잡는다", payload)
+            self.assertIn("진찰 결과를 대신 말하지 않는다", payload)
+            self.assertIsNone(re.search(r"\b(?:PASS|FAIL)\b", payload))
+        self.assertIn("제안하거나 상기시키거나 유도하지 않는다", p)
 
     def test_forbidden_fact_retention(self) -> None:
         j = self.outputs[builder.J_PAYLOAD].decode("utf-8")
@@ -85,6 +128,31 @@ class BundleTests(unittest.TestCase):
         self.assertEqual(64, len(manifest["planned_calls"]))
         self.assertEqual(57, sum(call["scored_turn"] for call in manifest["planned_calls"]))
 
+    def test_post_merge_and_detached_source_lifetime_has_no_remote_dependency(self) -> None:
+        head = "future-merge-descendant"
+        existing = {
+            builder.CANDIDATE_BASE_COMMIT,
+            builder.SEMANTIC_CHECKPOINT,
+            builder.ENVELOPE_COMMIT,
+            builder.ENVELOPE_MERGE,
+        }
+        ancestor_pairs = {
+            (builder.CANDIDATE_BASE_COMMIT, head),
+            (builder.SEMANTIC_CHECKPOINT, head),
+            (builder.ENVELOPE_COMMIT, head),
+            (builder.ENVELOPE_MERGE, head),
+            (builder.ENVELOPE_COMMIT, builder.ENVELOPE_MERGE),
+        }
+        report = validator.ValidationReport()
+        validator.validate_source_lifetime(
+            head,
+            lambda commit: commit in existing,
+            lambda ancestor, descendant: (ancestor, descendant) in ancestor_pairs,
+            report,
+        )
+        self.assertEqual([], report.errors)
+        self.assertNotIn("origin/main", inspect.getsource(validator._validate_sources))
+
     def test_sequence_memberships(self) -> None:
         manifest = json.loads((ROOT / builder.EXECUTION_MANIFEST).read_text(encoding="utf-8"))
         by_id = {unit["execution_unit_id"]: unit for unit in manifest["execution_units"]}
@@ -111,12 +179,32 @@ class BundleTests(unittest.TestCase):
         self.assertTrue(all(call["source_trajectory_id"] is None for call in calls))
         self.assertTrue(all(not call["scored_turn"] for call in calls))
 
+    def test_planned_score_evidence_prefixes(self) -> None:
+        manifest = json.loads((ROOT / builder.EXECUTION_MANIFEST).read_text(encoding="utf-8"))
+        scored = {row["scored_unit_id"]: row for row in manifest["scored_units"]}
+        self.assertEqual(["CALL-J01"], scored["J01"]["planned_evidence_call_ids"])
+        self.assertEqual(["CALL-J03", "CALL-J04"], scored["J04"]["planned_evidence_call_ids"])
+        self.assertEqual(["CALL-J07", "CALL-J14"], scored["J14"]["planned_evidence_call_ids"])
+        self.assertEqual(
+            ["CALL-J07", "CALL-J14", "CALL-J15"],
+            scored["J15"]["planned_evidence_call_ids"],
+        )
+        self.assertEqual(
+            ["CALL-P-SETUP-DURATION-01", "CALL-P14", "CALL-P15"],
+            scored["P15"]["planned_evidence_call_ids"],
+        )
+        self.assertEqual(
+            [f"CALL-P29-U{index:02d}" for index in range(1, 7)],
+            scored["P29"]["planned_evidence_call_ids"],
+        )
+
     def test_scorecard_has_58_unscored_rows(self) -> None:
         text = (ROOT / builder.SCORECARD_TEMPLATE).read_text(encoding="utf-8")
         rows = list(csv.DictReader(io.StringIO(text)))
         self.assertEqual(58, len(rows))
         self.assertEqual(1, sum(row["scored_unit_id"] == "P29" for row in rows))
         self.assertTrue(all(not row["disposition"] for row in rows))
+        self.assertTrue(all(json.loads(row["planned_evidence_call_ids"]) for row in rows))
 
 
 if __name__ == "__main__":
