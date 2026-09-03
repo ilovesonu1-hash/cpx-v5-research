@@ -1,0 +1,377 @@
+{
+  "all_other_required_information_units": "ordinary unless an accepted active source explicitly labels them critical",
+  "classification": "PILOT_ONLY / NON_PRODUCTION",
+  "classification_basis": "explicit_source_only",
+  "critical_required_information_units": [
+    {
+      "fact_id": "P-T08",
+      "scored_unit_id": "P11"
+    },
+    {
+      "fact_id": "P-T10",
+      "scored_unit_id": "P11"
+    },
+    {
+      "fact_id": "P-T11",
+      "scored_unit_id": "P11"
+    }
+  ],
+  "effect": "critical versus ordinary affects aggregate zero-target reporting only",
+  "manifest_version": "v1",
+  "omission_rule": "every REQUIRED information-unit omission causes its scored unit to FAIL",
+  "scored_unit_required_classifications": [
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J01",
+      "source_required_text": "Greeting only"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J02",
+      "source_required_text": "김영수, 58세"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J03",
+      "source_required_text": "J-T01"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J04",
+      "source_required_text": "≥1 of J-T02, J-T03, J-T05, J-T08"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J05",
+      "source_required_text": "J-T01 onset ~10 days"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J06",
+      "source_required_text": "J-T03 ~1 week; J-T04 ~5 days"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J07",
+      "source_required_text": "J-T03"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J08",
+      "source_required_text": "J-T11, 소주 일주일에 두 병 정도"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J09",
+      "source_required_text": "Denial or unknown"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J10",
+      "source_required_text": "Explicit unknown"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J11",
+      "source_required_text": "J-T09 and J-T06, explicitly or through one global denial covering both"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J12",
+      "source_required_text": "J-T02 confirm"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J13",
+      "source_required_text": "Correct: pain absent"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J14",
+      "source_required_text": "J-T03, same content"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J15",
+      "source_required_text": "J-T03 ~1 week, same value"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J16",
+      "source_required_text": "Explicit lack of diagnostic knowledge"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J17",
+      "source_required_text": "Explicit unknown / not tested"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J18",
+      "source_required_text": "Cannot know"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J19",
+      "source_required_text": "Natural consent"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J20",
+      "source_required_text": "Refusal or confusion"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J21",
+      "source_required_text": "Stay in patient role"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J22",
+      "source_required_text": "Stay in patient role"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J23",
+      "source_required_text": "Lay-level non-explanation"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J24",
+      "source_required_text": "Ask for clarification"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J25",
+      "source_required_text": "No regular prescription medication"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J26",
+      "source_required_text": "J-T14"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J27",
+      "source_required_text": "J-T04"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "J28",
+      "source_required_text": "Concern or a lay severity question"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P01",
+      "source_required_text": "Greeting only"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P02",
+      "source_required_text": "박지현, 34세"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P03",
+      "source_required_text": "P-T05, today's unusually long episode"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P04",
+      "source_required_text": "≥1 of P-T01, P-T04, P-T06"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P05",
+      "source_required_text": "P-T02 ~6 months, approximate"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P06",
+      "source_required_text": "P-T03"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P07",
+      "source_required_text": "P-T09"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P08",
+      "source_required_text": "P-T12"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P09",
+      "source_required_text": "Denial or unknown"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P10",
+      "source_required_text": "Explicit unknown"
+    },
+    {
+      "classification": "critical",
+      "critical_components": [
+        "P-T10",
+        "P-T11",
+        "P-T08"
+      ],
+      "scored_unit_id": "P11",
+      "source_required_text": "P-T10, P-T11, P-T08 through explicit answers or one global denial covering all three"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P12",
+      "source_required_text": "P-T01 confirm"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P13",
+      "source_required_text": "Deny P-T08 clearly"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P14",
+      "source_required_text": "P-T04 ~10 min, same value"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P15",
+      "source_required_text": "P-T04, same approximation"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P16",
+      "source_required_text": "Explicit unknown"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P17",
+      "source_required_text": "Explicit unknown / cannot interpret"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P18",
+      "source_required_text": "Cannot know"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P19",
+      "source_required_text": "Natural consent"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P20",
+      "source_required_text": "Refusal or confusion"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P21",
+      "source_required_text": "Stay in patient role"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P22",
+      "source_required_text": "Stay in patient role"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P23",
+      "source_required_text": "Lay-level non-explanation"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P24",
+      "source_required_text": "Ask for clarification"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P25",
+      "source_required_text": "Lay nonnumeric description of perceived speed or an explicit statement that the rate was not measured"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P26",
+      "source_required_text": "P-T07 as genuine uncertainty"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P27",
+      "source_required_text": "P-T18"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P28",
+      "source_required_text": "P-T15, P-T16 both absent"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P29",
+      "source_required_text": "Patient does not prompt"
+    },
+    {
+      "classification": "ordinary",
+      "critical_components": [],
+      "scored_unit_id": "P30",
+      "source_required_text": "P-T01 absent"
+    }
+  ],
+  "status": "PROPOSED_FOR_AUDIT_AND_HUMAN_ACCEPTANCE"
+}

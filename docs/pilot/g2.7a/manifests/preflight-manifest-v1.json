@@ -1,0 +1,45 @@
+{
+  "classification": "PILOT_ONLY / NON_PRODUCTION",
+  "executed": false,
+  "execution_authorized": false,
+  "expected_call_count": 3,
+  "expected_session_count": 2,
+  "fail_closed_result": "HARNESS_ISOLATION_BLOCKED",
+  "fixture_paths": {
+    "session_a_turn_1": "docs/pilot/g2.7a/fixtures/preflight-session-a-turn-1-v1.txt",
+    "session_a_turn_2": "docs/pilot/g2.7a/fixtures/preflight-session-a-turn-2-v1.txt",
+    "session_b_turn_1": "docs/pilot/g2.7a/fixtures/preflight-session-b-turn-1-v1.txt",
+    "system": "docs/pilot/g2.7a/fixtures/preflight-system-v1.txt"
+  },
+  "fixture_sha256": {
+    "docs/pilot/g2.7a/fixtures/preflight-session-a-turn-1-v1.txt": "9aa9f605ceb5621de11ee5d3b7694355591fef7c462f5f752fd203d680105fd5",
+    "docs/pilot/g2.7a/fixtures/preflight-session-a-turn-2-v1.txt": "2b5dfc3b8fe2eee09c247617587ac298cba934e8b891e4f1c5470e881943723d",
+    "docs/pilot/g2.7a/fixtures/preflight-session-b-turn-1-v1.txt": "958ad26637372fb4d67f4ac20a970d1cb4002da6ef46bb916c83ecc365aff263",
+    "docs/pilot/g2.7a/fixtures/preflight-system-v1.txt": "25049a3ca382bbda5df20dcf99f651173187a2c60ed108a6f2de8a2b0d3ca72d"
+  },
+  "manifest_version": "v1",
+  "negative_control_rule": "Session B final response must not contain the nonce; exact 모름 is cooperative but not required.",
+  "nonce": "CPX-G2-ISO-012fb514aefc248b0e058f8f98c0e43e",
+  "official_run_mechanism_equivalence_required": [
+    "same model and runtime",
+    "same physical session-creation mechanism",
+    "same history mechanism",
+    "same learner-visible final-output extraction mechanism"
+  ],
+  "positive_control_rule": "Session A turn 2 final response, after leading/trailing whitespace removal only, must exactly equal the nonce.",
+  "prohibited_patient_inputs": [
+    "docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt",
+    "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt",
+    "docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt",
+    "docs/pilot/g2.7a/fixtures/jaundice-system-message-v1.txt",
+    "docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt"
+  ],
+  "runtime": "google-vertex/gemini-3.7-flash",
+  "session_a_call_order": [
+    "docs/pilot/g2.7a/fixtures/preflight-session-a-turn-1-v1.txt",
+    "docs/pilot/g2.7a/fixtures/preflight-session-a-turn-2-v1.txt"
+  ],
+  "session_b_call_order": [
+    "docs/pilot/g2.7a/fixtures/preflight-session-b-turn-1-v1.txt"
+  ]
+}

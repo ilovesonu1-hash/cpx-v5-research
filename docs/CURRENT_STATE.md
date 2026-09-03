@@ -84,9 +84,15 @@ specification, or the frozen prompt.
 | `G2_EXECUTION_ENVELOPE_V1_DELTA_AUDIT` | `PASS_AFTER_MINOR_PATCH / HISTORICAL / CORRECTED_BY_77B17F9` |
 | `G2_EXECUTION_ENVELOPE_V1_CORRECTION` | `ACCEPTED / MERGED / EFFECTIVE` |
 | `G2_EXECUTION_ENVELOPE_V1_CORRECTION_DELTA_AUDIT` | `PASS / 0 BLOCKERS / 0 MAJOR / 0 MINOR` |
-| `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `ELIGIBLE / NOT_STARTED / NOT_ACCEPTED` |
+| `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_INPUT_BUNDLE_V1` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_PAYLOAD_SNAPSHOTS_V1` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_EXECUTION_MANIFEST_V1` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_PREFLIGHT_MANIFEST_V1` | `PROPOSED / NOT YET ACCEPTED / NOT_EXECUTED` |
+| `G2_RUNNER_V1` | `PROPOSED / REAL_TRANSPORT_INTERFACE_PARTIALLY_VERIFIED` |
 | `G2_FULL_COVERAGE` | `NOT_EXECUTED / UNAUTHORIZED` |
 | `SESSION_ISOLATION_BASELINE` | `NOT_ESTABLISHED` |
+| `ISOLATION_PREFLIGHT_EXECUTED` | `NO` |
 | `ARCHITECTURE_ESCALATION` | `NOT_JUSTIFIED` |
 | `PRODUCTION_IMPLEMENTATION_AUTHORIZED` | `NO` |
 
@@ -141,6 +147,32 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md` | accepted isolated 58-unit full-coverage execution envelope | active normative execution envelope |
 | `docs/pilot/g2.7a-execution-envelope-v1-delta-audit.md` | independent delta audit of the v1 execution-envelope candidate | historical audit evidence |
 | `docs/pilot/g2.7a-execution-envelope-v1-correction-delta-audit.md` | independent final audit of the authorized v1 correction delta | historical audit evidence |
+| `docs/pilot/g2.7a/fixture-runner-candidate-v1.md` | G2.7a candidate implementation report and validation record | proposed implementation evidence / not accepted |
+| `docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt` | exact canonical transmitted generic prompt block | proposed frozen pilot fixture / not accepted |
+| `docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt` | jaundice patient payload snapshot | proposed frozen pilot fixture / not accepted |
+| `docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt` | palpitations patient payload snapshot | proposed frozen pilot fixture / not accepted |
+| `docs/pilot/g2.7a/fixtures/jaundice-system-message-v1.txt` | assembled jaundice system message | proposed frozen pilot fixture / not accepted |
+| `docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt` | assembled palpitations system message | proposed frozen pilot fixture / not accepted |
+| `docs/pilot/g2.7a/fixtures/preflight-system-v1.txt` | neutral isolation-preflight system instruction | proposed frozen pilot fixture / not accepted / not executed |
+| `docs/pilot/g2.7a/fixtures/preflight-session-a-turn-1-v1.txt` | neutral preflight positive-control setup | proposed frozen pilot fixture / not accepted / not executed |
+| `docs/pilot/g2.7a/fixtures/preflight-session-a-turn-2-v1.txt` | neutral preflight positive-control recall | proposed frozen pilot fixture / not accepted / not executed |
+| `docs/pilot/g2.7a/fixtures/preflight-session-b-turn-1-v1.txt` | neutral preflight negative-control recall | proposed frozen pilot fixture / not accepted / not executed |
+| `docs/pilot/g2.7a/manifests/payload-provenance-v1.json` | exact payload source and fact-inventory provenance | proposed pilot manifest / not accepted |
+| `docs/pilot/g2.7a/manifests/preflight-manifest-v1.json` | exact neutral preflight inputs and fail-closed rules | proposed pilot manifest / not accepted / not executed |
+| `docs/pilot/g2.7a/manifests/execution-manifest-v1.json` | 58-unit, 48-execution-unit, 64-call plan | proposed pilot manifest / not accepted |
+| `docs/pilot/g2.7a/manifests/ambiguity-map-v1.json` | accepted predeclared local ambiguity rules | proposed pilot manifest / not accepted |
+| `docs/pilot/g2.7a/manifests/criticality-map-v1.json` | explicit-source-only provisional criticality classification | proposed pilot manifest / not accepted |
+| `docs/pilot/g2.7a/manifests/input-bundle-v1.json` | aggregate candidate input identity | proposed pilot manifest / not accepted |
+| `docs/pilot/g2.7a/specs/raw-response-record-v1.md` | attempted-call raw-record contract | proposed pilot specification / not accepted |
+| `docs/pilot/g2.7a/specs/scorecard-v1.md` | human-only 58-row scorecard contract | proposed pilot specification / not accepted |
+| `docs/pilot/g2.7a/templates/scorecard-v1.csv` | unscored 58-row scorecard template | proposed pilot template / not accepted |
+| `docs/pilot/g2.7a/transport-capability-v1.md` | no-call real-transport capability inspection | proposed capability evidence / partially verified / not executed |
+| `tools/pilot/g2_7a/build_bundle.py` | deterministic pinned-source bundle builder | proposed pilot tooling / not accepted |
+| `tools/pilot/g2_7a/validate_bundle.py` | deterministic source, bundle, count, and safety validator | proposed pilot tooling / not accepted |
+| `tools/pilot/g2_7a/runner.py` | execution-disabled plan/validate runner and retry record logic | proposed pilot tooling / not accepted / execution disabled |
+| `tools/pilot/g2_7a/transport.py` | minimal transport interface and in-memory fake only | proposed pilot tooling / real adapter absent |
+| `tools/pilot/g2_7a/tests/test_bundle.py` | deterministic bundle and accounting tests | proposed pilot test evidence / not accepted |
+| `tools/pilot/g2_7a/tests/test_runner.py` | fake-transport, retry, preservation, and refusal tests | proposed pilot test evidence / not accepted |
 | `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
 | `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
 | `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
@@ -221,35 +253,13 @@ Broader clinician and SP-methodology questions remain listed in
 
 ## Next permitted sequence
 
-Each step is *eligible*, not authorized. Completing one does not start the next.
+The next permitted task is an **independent read-only audit of the G2.7a
+fixture, manifest, validator, and runner candidate**.
 
-The next eligible task is **pilot-only fixture and runner candidate
-implementation under the accepted execution envelope**.
-
-Under a separate branch and explicit implementation authorization, that task
-may create:
-
-- two canonical payload snapshots;
-- canonical assembled system messages;
-- exact neutral preflight messages;
-- a frozen preflight manifest;
-- a 58-unit execution manifest;
-- a raw-response record specification;
-- a scorecard template;
-- a minimal `PILOT_ONLY / NON_PRODUCTION` runner; and
-- deterministic validators.
-
-It may not:
-
-- perform the isolation preflight;
-- call the patient model;
-- score model output;
-- run the 58-unit suite;
-- modify the accepted envelope; or
-- modify prompt, contract, trajectory, or evaluation semantics.
-
-Fixture/runner eligibility is not execution authorization. The isolation
-baseline remains unestablished and the 58-unit execution remains unauthorized.
+Candidate completion does not authorize the isolation preflight, patient-model
+calls, semantic scoring, or the 58-unit suite. The session-isolation baseline
+remains unestablished and full coverage remains unauthorized. Acceptance and
+any later execution authorization require separate explicit records.
 
 ## Explicitly unauthorized
 

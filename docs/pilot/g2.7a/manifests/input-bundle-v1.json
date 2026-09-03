@@ -1,0 +1,85 @@
+{
+  "aggregate": {
+    "algorithm": "sha256 of canonical compact JSON mapping sorted logical component names to SHA-256 values",
+    "canonical_json_terminal_newline": false,
+    "input_bundle_id_included_in_hash": false
+  },
+  "classification": "PILOT_ONLY / NON_PRODUCTION",
+  "components": {
+    "accepted_execution_envelope": "2b69b1d1fbf0c1a5fcc0ab8177362e998a198860d763e4a65552e90e797f4fc5",
+    "ambiguity_map": "960e25b4e4c7ec8924fb71fde3646a2f8f4885b624893fce46e8dd17eb46ff82",
+    "criticality_map": "f260d7e305e2da192e9264d393dc97b12bda05183c100636afd57aec9fb47944",
+    "evaluation_spec": "defffb1e40d3da49d67ca0fda7db9212c4e05f0458f7969cab872dab798794ad",
+    "execution_manifest": "184da7a421b248f15dd867a38692ea1022c81383380661297a17b554704214f8",
+    "jaundice_contract": "a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df",
+    "jaundice_payload": "848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935",
+    "jaundice_system_message": "4eb9f01ecd8a21eeb5b18d48c51855be5ba0562ad46bd1c6408124aaa109eada",
+    "jaundice_trajectories": "267a645877cae27839e0a82dca019cdfb00c7d722e10175fb4b4abe9fc95fd7b",
+    "palpitations_contract": "36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9",
+    "palpitations_payload": "54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7",
+    "palpitations_system_message": "15ac92444408efd1262654eb34e3144d59a8d971324aa755fd8474a20c3a9637",
+    "palpitations_trajectories": "becab7ac4df836a72f3d5f902c3cba3f6190fa37eed99ee4542f9704526eae75",
+    "preflight_manifest": "c027265b98e64b47ee4595b26d0deecaaf4398086455ab74d77f47b27a1c21b6",
+    "prompt_block": "f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8",
+    "prompt_document": "373351aaa9d254e42a88c0daf209124fefb3ff59fc59571095345e28ea451d72",
+    "raw_response_spec": "fb2e2e01c01764adadf92cfcfabac40bd0e3cb95ec33b85343fc2acd579c3de1",
+    "scorecard_spec": "18a562feef275e90548b52af932125aeedfcfae65c055edc23a20ed4c0e936b4",
+    "scorecard_template": "a1df224d92bf83eb69a6bad847766c40650b499efcf00c69f577e9a87dd612bd"
+  },
+  "identities": {
+    "accepted_execution_envelope": {
+      "commit": "77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4",
+      "file_sha256": "2b69b1d1fbf0c1a5fcc0ab8177362e998a198860d763e4a65552e90e797f4fc5",
+      "path": "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md"
+    },
+    "accepted_execution_envelope_merge": "f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd",
+    "effective_semantic_checkpoint": "33cca3781b301c29af965430c3caaf32378c28ff",
+    "governing_main": "1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6",
+    "payloads": {
+      "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt": "848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935",
+      "docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt": "54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7"
+    },
+    "prompt_document": {
+      "path": "docs/pilot/sp-system-prompt-v0.1.md",
+      "sha256": "373351aaa9d254e42a88c0daf209124fefb3ff59fc59571095345e28ea451d72",
+      "source_commit": "997e5200370ee5f5823af4c24b86c5d62f4625ee"
+    },
+    "semantic_sources": {
+      "docs/pilot/g2-evaluation-spec.md": {
+        "git_blob_sha": "d9b911cadf45572986f926186746951c14234744",
+        "sha256": "defffb1e40d3da49d67ca0fda7db9212c4e05f0458f7969cab872dab798794ad",
+        "source_commit": "33cca3781b301c29af965430c3caaf32378c28ff"
+      },
+      "docs/pilot/jaundice-behavior-contract.md": {
+        "git_blob_sha": "d574c1740501061b20c2a32505aed9caf2abcea3",
+        "sha256": "a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df",
+        "source_commit": "33cca3781b301c29af965430c3caaf32378c28ff"
+      },
+      "docs/pilot/jaundice-trajectories.md": {
+        "git_blob_sha": "767912271f90a516d9ec59cbc533f751e004bfc6",
+        "sha256": "267a645877cae27839e0a82dca019cdfb00c7d722e10175fb4b4abe9fc95fd7b",
+        "source_commit": "33cca3781b301c29af965430c3caaf32378c28ff"
+      },
+      "docs/pilot/palpitations-behavior-contract.md": {
+        "git_blob_sha": "09bf2c36d153d970c93971ca82ad8ee039487bc4",
+        "sha256": "36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9",
+        "source_commit": "33cca3781b301c29af965430c3caaf32378c28ff"
+      },
+      "docs/pilot/palpitations-trajectories.md": {
+        "git_blob_sha": "ad0067d14f6d3dad894eb0eac28e7bca208b2a3c",
+        "sha256": "becab7ac4df836a72f3d5f902c3cba3f6190fa37eed99ee4542f9704526eae75",
+        "source_commit": "33cca3781b301c29af965430c3caaf32378c28ff"
+      }
+    },
+    "system_messages": {
+      "docs/pilot/g2.7a/fixtures/jaundice-system-message-v1.txt": "4eb9f01ecd8a21eeb5b18d48c51855be5ba0562ad46bd1c6408124aaa109eada",
+      "docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt": "15ac92444408efd1262654eb34e3144d59a8d971324aa755fd8474a20c3a9637"
+    },
+    "transmitted_prompt_block": {
+      "path": "docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt",
+      "sha256": "f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8"
+    }
+  },
+  "input_bundle_id": "sha256:9c15bb52b494008eadcf7919fba6a51c2227081c745f4663873ecffdba7b423b",
+  "manifest_version": "v1"
+}

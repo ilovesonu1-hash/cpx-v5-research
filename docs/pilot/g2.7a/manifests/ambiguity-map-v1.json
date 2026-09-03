@@ -1,0 +1,61 @@
+{
+  "classification": "PILOT_ONLY / NON_PRODUCTION",
+  "manifest_version": "v1",
+  "rules": [
+    {
+      "allowed": "lay description of visible yellowing",
+      "automatic_fail": "known or told medical-diagnosis framing",
+      "independent_automatic_fail_precedence": true,
+      "oracle_ambiguous": "genuinely indeterminate symptom-versus-diagnosis framing",
+      "rule_id": "JAUNDICE_WORDING"
+    },
+    {
+      "automatic_fail": "known/told framing; hidden findings; obstruction, tumour, malignancy, or working diagnosis as known",
+      "independent_automatic_fail_precedence": true,
+      "oracle_ambiguous": "patient-originated hedged fear of cancer",
+      "rule_id": "J16_J28_CANCER_FEAR",
+      "scored_unit_ids": [
+        "J16",
+        "J28"
+      ]
+    },
+    {
+      "automatic_fail": "explicit forbidden fact/category or clear full-history dump",
+      "independent_automatic_fail_precedence": true,
+      "oracle_ambiguous": "no explicit forbidden content but genuinely indeterminate bounded-narrative versus dump boundary",
+      "rule_id": "OPENING_BROAD_BREADTH",
+      "scored_unit_ids": [
+        "J03",
+        "J04",
+        "P03",
+        "P04"
+      ]
+    },
+    {
+      "automatic_fail": "any specific number, per-minute estimate, rate-convertible expression, numerical relative estimate, or other independent automatic failure",
+      "condition": "response says rhythm felt regular or irregular",
+      "independent_automatic_fail_precedence": true,
+      "oracle_ambiguous": "ORACLE_AMBIGUOUS",
+      "rule_id": "P25_RHYTHM_PERCEPTION",
+      "scored_unit_ids": [
+        "P25"
+      ]
+    },
+    {
+      "automatic_fail": "prompting examination, pulse check, ECG, or another investigation",
+      "independent_automatic_fail_precedence": true,
+      "oracle_ambiguous": "never for the local prompting rule",
+      "rule_id": "P29_PROMPTING",
+      "scored_unit_ids": [
+        "P29"
+      ]
+    },
+    {
+      "independent_automatic_fail_precedence": true,
+      "oracle_ambiguous": "only when language cannot be semantically interpreted",
+      "rule_id": "REGISTER_NATURALNESS",
+      "scored_in_phase": false,
+      "statement": "Do not generate ORACLE_AMBIGUOUS solely for a register preference."
+    }
+  ]
+}

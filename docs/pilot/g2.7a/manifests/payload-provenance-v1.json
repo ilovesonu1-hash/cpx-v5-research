@@ -1,0 +1,127 @@
+{
+  "cases": [
+    {
+      "case": "jaundice",
+      "duplicate_fact_ids": [],
+      "excluded_source_sections": [
+        "case-selection rationale",
+        "literature explanation",
+        "open review questions",
+        "evaluator commentary",
+        "historical implementation commentary"
+      ],
+      "fact_count": 25,
+      "forbidden_fact_ids_retained": [
+        "J-T19",
+        "J-T20",
+        "J-T21",
+        "J-T22",
+        "J-T23",
+        "J-T24"
+      ],
+      "included_fact_ids": [
+        "J-T01",
+        "J-T02",
+        "J-T03",
+        "J-T04",
+        "J-T05",
+        "J-T06",
+        "J-T07",
+        "J-T08",
+        "J-T09",
+        "J-T10",
+        "J-T11",
+        "J-T12",
+        "J-T13",
+        "J-T14",
+        "J-T15",
+        "J-T16",
+        "J-T17",
+        "J-T18",
+        "J-T19",
+        "J-T20",
+        "J-T21",
+        "J-T22",
+        "J-T23",
+        "J-T24",
+        "J-T25"
+      ],
+      "missing_fact_ids": [],
+      "payload_path": "docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt",
+      "payload_sha256": "848476d74902fcf4fa1e024145dbd7ac031acaa5961d285ff3d2f636925a4935",
+      "source_contract_blob_sha": "d574c1740501061b20c2a32505aed9caf2abcea3",
+      "source_contract_path": "docs/pilot/jaundice-behavior-contract.md",
+      "source_contract_sha256": "a22e976baf1051fef2b8e3d997cdc0cffc5b8f6533414733af3989d35e1272df",
+      "source_semantic_commit": "33cca3781b301c29af965430c3caaf32378c28ff",
+      "station_frame_source": [
+        "docs/pilot/jaundice-behavior-contract.md#station-frame",
+        "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md#2-payload-contract"
+      ]
+    },
+    {
+      "case": "palpitations",
+      "duplicate_fact_ids": [],
+      "excluded_source_sections": [
+        "case-selection rationale",
+        "literature explanation",
+        "open review questions",
+        "evaluator commentary",
+        "historical implementation commentary"
+      ],
+      "fact_count": 30,
+      "forbidden_fact_ids_retained": [
+        "P-T25",
+        "P-T26",
+        "P-T27",
+        "P-T28",
+        "P-T29",
+        "P-T30"
+      ],
+      "included_fact_ids": [
+        "P-T01",
+        "P-T02",
+        "P-T03",
+        "P-T04",
+        "P-T05",
+        "P-T06",
+        "P-T07",
+        "P-T08",
+        "P-T09",
+        "P-T10",
+        "P-T11",
+        "P-T12",
+        "P-T13",
+        "P-T14",
+        "P-T15",
+        "P-T16",
+        "P-T17",
+        "P-T18",
+        "P-T19",
+        "P-T20",
+        "P-T21",
+        "P-T22",
+        "P-T23",
+        "P-T24",
+        "P-T25",
+        "P-T26",
+        "P-T27",
+        "P-T28",
+        "P-T29",
+        "P-T30"
+      ],
+      "missing_fact_ids": [],
+      "payload_path": "docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt",
+      "payload_sha256": "54440b644bd568e7f88600922d0e07d8ad3c9f694fc3213a5f190ccbb957c1a7",
+      "source_contract_blob_sha": "09bf2c36d153d970c93971ca82ad8ee039487bc4",
+      "source_contract_path": "docs/pilot/palpitations-behavior-contract.md",
+      "source_contract_sha256": "36124a164c1325da072a879697762ce6356b25f1495677f7ddd070ae581ae0a9",
+      "source_semantic_commit": "33cca3781b301c29af965430c3caaf32378c28ff",
+      "station_frame_source": [
+        "docs/pilot/palpitations-behavior-contract.md#station-frame",
+        "docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md#2-payload-contract"
+      ]
+    }
+  ],
+  "classification": "PILOT_ONLY / NON_PRODUCTION",
+  "manifest_version": "v1"
+}
