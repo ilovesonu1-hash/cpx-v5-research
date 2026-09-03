@@ -60,7 +60,9 @@ G2.1b acceptance record:
 | `G2_1B_ORACLE_CLARIFICATION` | `ACCEPTED / MERGED / EFFECTIVE` |
 | `G2_PROMPT_V0_1` | `FROZEN_UNCHANGED` |
 | `G2_SMALL_PROBE` | `COMPLETE_WITH_ERRATUM` |
-| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `ELIGIBLE / NOT_STARTED / NOT_ACCEPTED` |
+| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `REVISION_REQUIRED / 1 BLOCKER / 6 MAJOR / 10 MINOR` |
+| `G2_EXECUTION_ENVELOPE_V1` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `BLOCKED_PENDING_ENVELOPE_ACCEPTANCE` |
 | `G2_FULL_COVERAGE` | `NOT_EXECUTED / UNAUTHORIZED` |
 | `SESSION_ISOLATION_BASELINE` | `NOT_ESTABLISHED` |
 | `ARCHITECTURE_ESCALATION` | `NOT_JUSTIFIED` |
@@ -68,6 +70,15 @@ G2.1b acceptance record:
 
 No clinician or SP-educator acceptance has occurred. "Provisional gold" means
 executable as a test oracle, not accepted by a domain expert.
+
+The structural pre-batch audit is complete and its verdict is recorded. Its
+findings are treated in `docs/pilot/g2-structural-prebatch-disposition.md`,
+which is `PROPOSED / NOT YET ACCEPTED`. The audited envelope was a chat-issued
+specification with no repository SHA; the first repository-pinned
+execution-envelope candidate is
+`docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md`. Neither the
+disposition nor the envelope is accepted, so no fixture, payload snapshot,
+runner, or execution is eligible.
 
 ## Active artifact owners
 
@@ -88,6 +99,9 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.1a-language-oracle-delta-audit.md` | independent final-state/delta audit of G2.1a | historical audit evidence |
 | `docs/pilot/g2.1b-oracle-clarification-disposition.md` | accepted treatment of the G2.1a delta-audit findings | disposition record |
 | `docs/pilot/g2.1b-oracle-clarification-delta-audit.md` | independent pre-merge delta audit of G2.1b | historical audit evidence |
+| `docs/pilot/g2-structural-prebatch-audit.md` | independent structural pre-batch audit of the chat-issued execution envelope | historical audit evidence |
+| `docs/pilot/g2-structural-prebatch-disposition.md` | proposed treatment of the structural pre-batch audit findings | disposition record |
+| `docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md` | proposed isolated 58-unit full-coverage execution envelope, not yet accepted | proposed normative candidate |
 | `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
 | `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
 | `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
@@ -170,14 +184,20 @@ Broader clinician and SP-methodology questions remain listed in
 
 Each step is *eligible*, not authorized. Completing one does not start the next.
 
-1. An independent structural pre-batch audit is the next eligible task.
-2. If that audit accepts an exact isolated execution envelope, prepare frozen
-   pilot payloads and fixtures.
-3. Only after explicit acceptance of that envelope may the isolated
-   58-trajectory coverage run begin.
+The next permitted task is an **independent read-only delta/final-state audit of
+the proposed v1 execution envelope**,
+`docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md`.
 
-The structural pre-batch audit is eligible but has not started and is not
-accepted. The 58-trajectory execution remains unauthorized.
+1. Independent read-only delta/final-state audit of the proposed v1 envelope.
+2. Explicit human acceptance of the structural pre-batch disposition and the
+   v1 envelope, recorded here.
+3. Only after that acceptance do frozen pilot payloads and fixtures become
+   eligible.
+4. Only after payloads, fixtures, and a runner exist under an accepted envelope
+   may the isolated 58-unit coverage run begin.
+
+Fixture creation, runner creation, and execution are **not** eligible. The
+58-unit execution remains unauthorized.
 
 ## Explicitly unauthorized
 
