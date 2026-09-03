@@ -99,6 +99,33 @@ names — not by a header string inside a historical file. Normalizing those
 headers would rewrite accepted historical evidence to match later state, which
 the repository invariants forbid.
 
+## Auditor identity provenance
+
+The structural pre-batch audit's model/provider identity is dispositioned as
+follows.
+
+- The original structural-audit model/provider **cannot be independently
+  verified from repository state**.
+- No model/provider identity will be inferred or retroactively fabricated.
+- This limitation is explicitly **accepted as provenance metadata**. It does
+  not alter the reproduced findings and does not alter the corrected envelope.
+- If the repository owner later supplies a certain first-hand attestation, it
+  must be recorded as `OWNER_ATTESTED`, never as `REPOSITORY_VERIFIED`.
+- Acceptance of the v1 envelope does **not** depend on guessing the auditor
+  model.
+
+The distinction between `OWNER_ATTESTED` and `REPOSITORY_VERIFIED` is kept
+because the two carry different evidential weight. A verifiable identity is
+reproducible from committed state by any later reader; an owner attestation is
+a first-hand claim recorded on trust. Collapsing them would make the weaker
+claim indistinguishable from the stronger one in every later reading.
+
+`docs/pilot/g2-structural-prebatch-audit.md` is **not** rewritten. It remains
+immutable historical evidence, including its recorded
+`NOT_VERIFIABLE_FROM_REPOSITORY_STATE` value. The subsequent v1 delta audit,
+`docs/pilot/g2.7a-execution-envelope-v1-delta-audit.md`, carries a fully
+repository-pinned base and target and names its auditor.
+
 ## Explicit scope
 
 This disposition makes:
