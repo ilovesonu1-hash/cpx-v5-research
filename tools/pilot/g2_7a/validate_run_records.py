@@ -89,7 +89,7 @@ def _safe_identifier(value: object) -> bool:
 def _attempt_key(row: Mapping[str, Any]) -> tuple[str, int] | None:
     unit = row.get("execution_unit_id")
     attempt = row.get("unit_attempt_index")
-    if not isinstance(unit, str) or not isinstance(attempt, int):
+    if not isinstance(unit, str) or type(attempt) is not int:
         return None
     return unit, attempt
 
@@ -98,6 +98,28 @@ def _system_hash_for_case(bundle: Mapping[str, Any], case: str) -> str | None:
     suffix = f"/{case}-system-message-v1.txt"
     messages = bundle.get("identities", {}).get("system_messages", {})
     return next((value for path, value in messages.items() if path.endswith(suffix)), None)
+
+
+def _successful_call(record: Mapping[str, Any]) -> bool:
+    status = record.get("provider_completion_status")
+    return (
+        record.get("execution_error_class") is None
+        and record.get("execution_error_message_safe") is None
+        and isinstance(record.get("final_patient_response"), str)
+        and isinstance(status, str)
+        and bool(status)
+        and status != "execution_error"
+    )
+
+
+def _failed_call(record: Mapping[str, Any]) -> bool:
+    return (
+        isinstance(record.get("execution_error_class"), str)
+        and bool(record.get("execution_error_class"))
+        and isinstance(record.get("execution_error_message_safe"), str)
+        and record.get("final_patient_response") is None
+        and record.get("provider_completion_status") == "execution_error"
+    )
 
 
 def validate_records(
@@ -146,6 +168,8 @@ def validate_records(
         all(row.get("input_bundle_id") == input_bundle_id for row in all_rows),
         "RUN_INPUT_BUNDLE_ID_MISMATCH",
     )
+    if not result.ok:
+        return result
 
     events_by_attempt: dict[tuple[str, int], list[Mapping[str, Any]]] = {}
     calls_by_attempt: dict[tuple[str, int], list[Mapping[str, Any]]] = {}
@@ -165,7 +189,8 @@ def validate_records(
     )
     result.check(
         all(
-            events[0].get("event_type") in TERMINAL_EVENT_TYPES
+            isinstance(events[0].get("event_type"), str)
+            and events[0]["event_type"] in TERMINAL_EVENT_TYPES
             for events in events_by_attempt.values()
             if len(events) == 1
         ),
@@ -173,13 +198,18 @@ def validate_records(
     )
 
     sessions_by_attempt: dict[tuple[str, int], set[str]] = {}
-    safe_ids_valid = True
+    safe_ids_valid = all(_safe_identifier(row.get("safe_session_id")) for row in call_records)
+    for event in attempt_events:
+        if event.get("event_type") == "SESSION_CREATION_FAILED":
+            valid = "safe_session_id" in event and event["safe_session_id"] is None
+        else:
+            valid = _safe_identifier(event.get("safe_session_id"))
+        safe_ids_valid = safe_ids_valid and valid
     for row in all_rows:
         key = _attempt_key(row)
         session_id = row.get("safe_session_id")
-        if session_id is None or key is None:
+        if not _safe_identifier(session_id) or key is None:
             continue
-        safe_ids_valid = safe_ids_valid and _safe_identifier(session_id)
         sessions_by_attempt.setdefault(key, set()).add(session_id)
     result.check(safe_ids_valid, "RUN_SAFE_SESSION_ID_INVALID")
     result.check(
@@ -259,7 +289,7 @@ def validate_records(
                 duplicate_run_id = True
             seen_run_ids.add(run_id)
         planned_id = record.get("planned_call_id")
-        planned = call_by_id.get(planned_id)
+        planned = call_by_id.get(planned_id) if isinstance(planned_id, str) else None
         if planned is None:
             unknown_call = True
             continue
@@ -279,24 +309,72 @@ def validate_records(
             bundle, str(record.get("case"))
         ):
             plan_mismatch = True
-        error_class = record.get("execution_error_class")
-        safe_message = record.get("execution_error_message_safe")
-        final_response = record.get("final_patient_response")
-        completion_status = record.get("provider_completion_status")
-        if error_class is None:
-            if safe_message is not None or not isinstance(final_response, str):
-                nullability_invalid = True
-            if completion_status in (None, "execution_error"):
-                nullability_invalid = True
-        else:
-            if not isinstance(error_class, str) or not isinstance(safe_message, str):
-                nullability_invalid = True
-            if final_response is not None or completion_status != "execution_error":
-                nullability_invalid = True
+        if not (_successful_call(record) or _failed_call(record)):
+            nullability_invalid = True
     result.check(record_shape_valid and not duplicate_run_id, "RUN_ID_INVALID_OR_DUPLICATE")
     result.check(not unknown_call, "RUN_PLANNED_CALL_UNKNOWN")
     result.check(not plan_mismatch, "RUN_PLANNED_CALL_MISMATCH")
     result.check(not nullability_invalid, "RUN_RECORD_NULLABILITY_INVALID")
+
+    prefixes_valid = True
+    terminal_calls_coherent = True
+    retry_termination_valid = True
+    for key in attempt_keys:
+        unit_id, attempt_index = key
+        attempt_calls = calls_by_attempt.get(key, [])
+        planned_ids = unit_by_id[unit_id]["planned_call_ids"]
+        actual_ids = [record.get("planned_call_id") for record in attempt_calls]
+        prefixes_valid = prefixes_valid and (
+            len(actual_ids) <= len(planned_ids)
+            and actual_ids == planned_ids[:len(actual_ids)]
+        )
+        events = events_by_attempt.get(key, [])
+        if len(events) != 1:
+            terminal_calls_coherent = False
+            continue
+        event = events[0]
+        event_type = event.get("event_type")
+        valid = all(_successful_call(record) for record in attempt_calls[:-1])
+        if event_type == "ATTEMPT_COMPLETED":
+            valid = valid and actual_ids == planned_ids and all(
+                _successful_call(record)
+                and record.get("authoritative_attempt") is True
+                and record.get("physical_isolation_verified") is True
+                for record in attempt_calls
+            )
+            retry_termination_valid = retry_termination_valid and (
+                attempt_index == max(attempt_indices_by_unit[unit_id])
+            )
+        else:
+            valid = valid and all(
+                record.get("authoritative_attempt") is False for record in attempt_calls
+            )
+            if event_type == "SESSION_CREATION_FAILED":
+                valid = valid and not attempt_calls
+            elif event_type == "ATTEMPT_FAILED":
+                valid = valid and bool(attempt_calls) and _failed_call(attempt_calls[-1])
+                if attempt_calls:
+                    valid = valid and all(
+                        event.get(field) == attempt_calls[-1].get(field)
+                        for field in ("execution_error_class", "execution_error_message_safe")
+                    )
+            elif event_type == "SESSION_CLOSE_FAILED":
+                valid = valid and all(
+                    record.get("physical_isolation_verified") is False
+                    for record in attempt_calls
+                )
+                if attempt_calls:
+                    valid = valid and (
+                        _successful_call(attempt_calls[-1]) or _failed_call(attempt_calls[-1])
+                    )
+                if len(attempt_calls) < len(planned_ids):
+                    valid = valid and bool(attempt_calls) and _failed_call(attempt_calls[-1])
+            else:
+                valid = False
+        terminal_calls_coherent = terminal_calls_coherent and valid
+    result.check(prefixes_valid, "RUN_ATTEMPT_CALL_PREFIX_INVALID")
+    result.check(terminal_calls_coherent, "RUN_ATTEMPT_TERMINAL_CALL_CONTRADICTION")
+    result.check(retry_termination_valid, "RUN_RETRY_AFTER_COMPLETION")
 
     authoritative_event_by_unit: dict[str, list[tuple[int, Mapping[str, Any]]]] = {}
     for (unit, attempt), events in events_by_attempt.items():
@@ -321,11 +399,13 @@ def validate_records(
         attempt_calls = calls_by_attempt.get((unit_id, attempt_index), [])
         expected_call_ids = unit_by_id[unit_id]["planned_call_ids"]
         actual_call_ids = [record.get("planned_call_id") for record in attempt_calls]
-        if actual_call_ids != expected_call_ids or len(set(actual_call_ids)) != len(actual_call_ids):
+        if actual_call_ids != expected_call_ids:
             authoritative_complete = False
         if not all(record.get("authoritative_attempt") is True for record in attempt_calls):
             authoritative_complete = False
         if not all(record.get("physical_isolation_verified") is True for record in attempt_calls):
+            authoritative_complete = False
+        if not all(_successful_call(record) for record in attempt_calls):
             authoritative_complete = False
         for record in attempt_calls:
             planned_id = record.get("planned_call_id")
@@ -368,7 +448,7 @@ def validate_records(
         for scored_id in expected_scored:
             encoded = row_by_id.get(scored_id, {}).get("authoritative_run_ids", "")
             try:
-                mapping_matches = mapping_matches and json.loads(encoded) == result.authoritative_run_ids_by_scored_unit[scored_id]
+                mapping_matches = mapping_matches and json.loads(encoded) == result.authoritative_run_ids_by_scored_unit.get(scored_id)
             except (json.JSONDecodeError, TypeError):
                 mapping_matches = False
         result.check(mapping_matches, "RUN_SCORECARD_EVIDENCE_MAPPING_MISMATCH")
@@ -385,6 +465,8 @@ def validate_records(
             and call_by_id["CALL-P-SETUP-DURATION-01"]["scored_turn"] is False,
             "RUN_P14_P15_SETUP_INVALID",
         )
+    if not result.ok:
+        result.authoritative_run_ids_by_scored_unit.clear()
     return result
 
 

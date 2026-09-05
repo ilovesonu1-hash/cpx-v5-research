@@ -87,6 +87,7 @@ specification, or the frozen prompt.
 | `G2_FIXTURE_RUNNER_CANDIDATE_V1_AUDIT` | `REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR` |
 | `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION_DELTA_AUDIT` | `REVISION_REQUIRED / 0 BLOCKERS / 3 MAJOR / 0 MINOR` |
+| `G2_RECORD_INTEGRITY_CORRECTION_V1` | `PROPOSED / F1-F3 CORRECTED / INDEPENDENT AUDIT PENDING` |
 | `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_INPUT_BUNDLE_V1` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_PAYLOAD_SNAPSHOTS_V1` | `PROPOSED / NOT YET ACCEPTED` |
@@ -145,6 +146,15 @@ inspection is permitted by that failed acceptance condition. The candidate
 bundle remains proposed, with unchanged input identity
 `sha256:991159fc06f2f135f97422995da029442d79584269c2fc2d10cf33011feed317`.
 
+The later explicit human task authorizes a bounded F1-F3 correction from audit
+checkpoint `3e56e8a47ed3274f76548fc92c6daf5490d8ef39`. Its treatment and
+implementation-session checks are recorded in
+`docs/pilot/g2.7a/record-integrity-correction-v1-disposition.md`: 184 bundle
+checks, 60 unit tests, and rejection of the prior F1/F2 malformed full corpora.
+These are not independent audit results. The correction remains proposed until
+a separate clean-context final-state/delta audit passes with no required findings.
+The user's conditional acceptance/merge authority does not authorize execution.
+
 ## Active artifact owners
 
 Pilot and research semantic artifacts below are effective at the recorded pilot
@@ -173,6 +183,8 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit.md` | independent static/delta audit of candidate commit f11df66 | historical audit evidence |
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit-disposition.md` | proposed treatment of the candidate audit findings | proposed disposition / not accepted |
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1-correction-delta-audit.md` | independent local corrected-candidate final-state/delta audit; required findings F1-F3 | immutable historical audit evidence / revision required |
+| `docs/pilot/g2.7a/record-integrity-correction-v1-disposition.md` | authorized F1-F3 treatment and implementation-session evidence | proposed disposition / independent audit pending |
+| `tools/pilot/g2_7a/tests/test_record_integrity.py` | full-corpus F1-F3 adversarial regression tests | proposed pilot-only validation code |
 | `docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt` | exact canonical transmitted generic prompt block | proposed frozen pilot fixture / not accepted |
 | `docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt` | jaundice patient payload snapshot | proposed frozen pilot fixture / not accepted |
 | `docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt` | palpitations patient payload snapshot | proposed frozen pilot fixture / not accepted |
@@ -281,18 +293,20 @@ Broader clinician and SP-methodology questions remain listed in
 
 ## Next permitted sequence
 
-The next step is to **explicitly authorize a bounded disposition/correction
-task for findings F1-F3 in the corrected G2.7a fixture/runner audit**, followed
-by an independent offline final-state/delta audit. Read-only investigation of
-those findings remains permitted. The audit does not itself authorize
-substantive implementation changes.
+The next step is an **independent read-only final-state/delta audit of the
+F1-F3 record-integrity correction in a clean separate context**. Rerun offline
+checks, byte-idempotence, all tests and the prior malformed-corpus reproductions.
+The explicit user task conditionally authorizes acceptance and a no-ff merge
+only after final PASS with zero blockers, zero major findings and no required
+minor findings. Any remaining blocker or major finding stops advancement.
 
 Candidate completion does not authorize the isolation preflight, patient-model
 calls, semantic scoring, or the 58-unit suite. The session-isolation baseline
 remains unestablished and full coverage remains unauthorized. Acceptance and
-any later execution authorization require separate explicit records. The
-conditional acceptance/merge gate was not met, so main remains unchanged and
-the post-merge no-call transport inspection stage was not entered.
+any later execution authorization require separate explicit records. Main
+remains unchanged while independent correction audit is pending. No-call
+inspection of the actual target transport may follow only a successful accepted
+merge under the user's task; an adapter is never implicitly accepted.
 
 ## Explicitly unauthorized
 
