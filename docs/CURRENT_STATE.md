@@ -86,6 +86,7 @@ specification, or the frozen prompt.
 | `G2_EXECUTION_ENVELOPE_V1_CORRECTION_DELTA_AUDIT` | `PASS / 0 BLOCKERS / 0 MAJOR / 0 MINOR` |
 | `G2_FIXTURE_RUNNER_CANDIDATE_V1_AUDIT` | `REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR` |
 | `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION` | `PROPOSED / NOT YET ACCEPTED` |
+| `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION_DELTA_AUDIT` | `REVISION_REQUIRED / 0 BLOCKERS / 3 MAJOR / 0 MINOR` |
 | `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_INPUT_BUNDLE_V1` | `PROPOSED / NOT YET ACCEPTED` |
 | `G2_PAYLOAD_SNAPSHOTS_V1` | `PROPOSED / NOT YET ACCEPTED` |
@@ -132,6 +133,18 @@ proposed on the candidate branch and is not yet accepted. Target capability for
 the required Gemini-serving harness remains unverified, so the runner remains
 execution-disabled.
 
+The independent local final-state/delta audit of corrected candidate
+`710e6b4b4e7030e25cce1b106401b915a301eb20` returned
+`REVISION_REQUIRED / 0 BLOCKERS / 3 MAJOR / 0 MINOR`. Bundle validation passes
+184 checks and all 40 unit tests pass, but independent full-corpus mutations
+demonstrate remaining session-identity, authoritative-completion, and
+failed-attempt/retry record-validation defects. The detailed findings are owned
+by `docs/pilot/g2.7a/fixture-runner-candidate-v1-correction-delta-audit.md`.
+Conditional acceptance is not activated; no main merge or post-merge transport
+inspection is permitted by that failed acceptance condition. The candidate
+bundle remains proposed, with unchanged input identity
+`sha256:991159fc06f2f135f97422995da029442d79584269c2fc2d10cf33011feed317`.
+
 ## Active artifact owners
 
 Pilot and research semantic artifacts below are effective at the recorded pilot
@@ -159,6 +172,7 @@ separately pinned byte identity, because it is frozen against a completed probe.
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1.md` | G2.7a candidate implementation report and validation record | proposed implementation evidence / not accepted |
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit.md` | independent static/delta audit of candidate commit f11df66 | historical audit evidence |
 | `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit-disposition.md` | proposed treatment of the candidate audit findings | proposed disposition / not accepted |
+| `docs/pilot/g2.7a/fixture-runner-candidate-v1-correction-delta-audit.md` | independent local corrected-candidate final-state/delta audit; required findings F1-F3 | immutable historical audit evidence / revision required |
 | `docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt` | exact canonical transmitted generic prompt block | proposed frozen pilot fixture / not accepted |
 | `docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt` | jaundice patient payload snapshot | proposed frozen pilot fixture / not accepted |
 | `docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt` | palpitations patient payload snapshot | proposed frozen pilot fixture / not accepted |
@@ -267,13 +281,18 @@ Broader clinician and SP-methodology questions remain listed in
 
 ## Next permitted sequence
 
-The next permitted task is an **independent read-only final-state/delta audit of
-the corrected G2.7a fixture/runner candidate**.
+The next step is to **explicitly authorize a bounded disposition/correction
+task for findings F1-F3 in the corrected G2.7a fixture/runner audit**, followed
+by an independent offline final-state/delta audit. Read-only investigation of
+those findings remains permitted. The audit does not itself authorize
+substantive implementation changes.
 
 Candidate completion does not authorize the isolation preflight, patient-model
 calls, semantic scoring, or the 58-unit suite. The session-isolation baseline
 remains unestablished and full coverage remains unauthorized. Acceptance and
-any later execution authorization require separate explicit records.
+any later execution authorization require separate explicit records. The
+conditional acceptance/merge gate was not met, so main remains unchanged and
+the post-merge no-call transport inspection stage was not entered.
 
 ## Explicitly unauthorized
 
