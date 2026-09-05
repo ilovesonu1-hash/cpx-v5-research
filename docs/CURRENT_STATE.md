@@ -1,332 +1,119 @@
 # CPX v5 current state
 
-## Scope
+Mutable owner of phase, accepted identities, gates, blockers and next action.
+AGENTS.md routes detailed behavior to its owners. Superseded state is preserved
+at review base 456c31af6b8fc0325de6adae510da2a0f3348528 and in the existing
+immutable evidence below; historical audit bytes are not rewritten.
 
-This file owns only the present phase, the effective checkpoint, current
-gate/readiness state, blockers, active artifact identities, and the next
-permitted action.
-
-It does not own detailed behavior, oracle definitions, evidence extraction,
-audit prose, or historical narrative. Use `AGENTS.md` to route a task to its
-active normative owner.
-
-## Canonical checkpoint
+## Identities
 
 | Field | Current value |
 |---|---|
-| Repository | `ilovesonu1-hash/cpx-v5-research` |
-| Default branch | `main` |
-| Effective pilot semantic checkpoint | `33cca3781b301c29af965430c3caaf32378c28ff` |
-| Checkpoint parent | `a1bc72238acc05b25d25f251c7d8b4a53dd8e506` |
-| Checkpoint role | accepted G2.1b P25 oracle clarification |
-| Governance bootstrap | **ACCEPTED / MERGED / EFFECTIVE** |
+| Repository | ilovesonu1-hash/cpx-v5-research |
+| Reference main at review fetch | 1db27d6c91abf5d2bcc87a0e11bdb4dfb46fbee6; unchanged by this task |
+| Review base / prior F1-F3 correction | 456c31af6b8fc0325de6adae510da2a0f3348528 |
+| Review branch | pilot/g2.7a-offline-review-v1 |
+| Accepted governance proposal / merge | ce254e5bb26906e1a6dd4dfe57d96e6cc8398bd8 / 43704a8e670d16fdd101d28a988acf8b96ec0089 |
+| Effective patient semantic checkpoint | 33cca3781b301c29af965430c3caaf32378c28ff |
+| Accepted G2.1b merge | e734964521041a281c51c6bf6a1984c7ec4c013d |
+| Accepted execution envelope / merge | 77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4 / f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd |
+| Frozen prompt source | 997e5200370ee5f5823af4c24b86c5d62f4625ee |
+| Prompt document SHA-256 | 373351aaa9d254e42a88c0daf209124fefb3ff59fc59571095345e28ea451d72 |
+| Transmitted prompt SHA-256 | f4df500f622633480cd9525fa2f61e57c94921af12fa51b0842b506d8f9040b8 |
 
-The governance bootstrap that introduced `CLAUDE.md`, `AGENTS.md`, and this file
-is accepted and effective on `main`. Its governance checkpoint is recorded
-separately from the pilot semantic checkpoint above.
+The accepted envelope retains its historical proposal heading; the accepted
+checkpoint above governs. It does not authorize execution. Patient semantic
+sources, prompt and frozen input bytes are unchanged by this review.
 
-| Governance field | Value |
-|---|---|
-| Accepted governance proposal | `ce254e5bb26906e1a6dd4dfe57d96e6cc8398bd8` |
-| Original proposal | `e9f7200bb14f08ea325ec378a50489f0b7c62dd7` |
-| Accepted merge commit | `43704a8e670d16fdd101d28a988acf8b96ec0089` |
-| Independent bootstrap audit | `PASS_AFTER_MINOR_PATCH`, 0 blockers |
-| Delta audit of the correction | `PASS`, 0 blockers, 0 major findings |
-| Human acceptance | `RECORDED` |
-| Accepted treatment | `docs/governance/context-bootstrap-audit-disposition.md` |
+Proposed input_bundle_id:
 
-The governance acceptance itself changed no pilot semantics and authorized no
-G2 execution. The later accepted G2.1b semantic checkpoint is recorded
-separately above.
+`sha256:991159fc06f2f135f97422995da029442d79584269c2fc2d10cf33011feed317`
 
-G2.1b acceptance record:
+The bundle component map owns individual source/fixture/spec hashes. Tooling
+acceptance is separate, not a self-referential hash. Plan: 25/30 facts; 58 scored
+units/score rows; 64 calls; 48 sessions (38 single + 9 sequence + 1 P29).
+P29 has six calls; preflight remains outside official totals.
 
-| Field | Value |
-|---|---|
-| Accepted proposal | `33cca3781b301c29af965430c3caaf32378c28ff` |
-| Acceptance merge | `e734964521041a281c51c6bf6a1984c7ec4c013d` |
-| Independent delta audit | ChatGPT GPT-5.6 Pro: `PASS`, 0 blockers, 0 major findings |
-| Human acceptance | `RECORDED` |
-
-G2.7a execution-envelope acceptance record:
-
-| Field | Value |
-|---|---|
-| Original envelope candidate | `1c8314945c203d935f35ef09b323713d0d62c92f` |
-| Accepted corrected envelope | `77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4` |
-| Accepted merge | `f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd` |
-| Structural pre-batch audit | `REVISION_REQUIRED / HISTORICAL / RESOLVED_BY_ENVELOPE_V1` |
-| Initial v1 delta audit | `PASS_AFTER_MINOR_PATCH / HISTORICAL / CORRECTED` |
-| Correction-delta audit | ChatGPT GPT-5.6 Pro: `PASS`, 0 blockers, 0 major findings, 0 minor findings |
-| Human acceptance | `RECORDED` |
-| Auditor-identity limitation | `ACCEPTED AS PROVENANCE LIMITATION`; original structural-audit model/provider remains `NOT_VERIFIABLE_FROM_REPOSITORY_STATE` unless separately `OWNER_ATTESTED` |
-
-The execution-envelope checkpoint is separate from the effective patient
-semantic checkpoint. Accepting G2.7a changes execution control and readiness,
-not patient facts, behavior contracts, trajectory oracles, the evaluation
-specification, or the frozen prompt.
-
-## Current phase and gate state
+## Gates and blockers
 
 | Gate | State |
 |---|---|
-| `G1_RESEARCH_EXPANSION` | `PAUSED` |
-| `G1_PRODUCT_BASELINE` | `REACHED` |
-| `G2_CONTRACTS` | `EXECUTABLE_AS_PROVISIONAL_GOLD` |
-| `G2_1A_LANGUAGE_ORACLE_PATCH` | `COMPLETE` |
-| `G2_1A_DELTA_AUDIT` | `REVISION_REQUIRED / HISTORICAL / CORRECTED_BY_G2_1B` |
-| `G2_1B_ORACLE_CLARIFICATION` | `ACCEPTED / MERGED / EFFECTIVE` |
-| `G2_PROMPT_V0_1` | `FROZEN_UNCHANGED` |
-| `G2_SMALL_PROBE` | `COMPLETE_WITH_ERRATUM` |
-| `G2_STRUCTURAL_PRE_BATCH_AUDIT` | `REVISION_REQUIRED / HISTORICAL / RESOLVED_BY_ACCEPTED_ENVELOPE_V1` |
-| `G2_STRUCTURAL_PRE_BATCH_DISPOSITION` | `ACCEPTED / MERGED / EFFECTIVE` |
-| `G2_EXECUTION_ENVELOPE_V1` | `ACCEPTED / MERGED / EFFECTIVE` |
-| `G2_EXECUTION_ENVELOPE_V1_DELTA_AUDIT` | `PASS_AFTER_MINOR_PATCH / HISTORICAL / CORRECTED_BY_77B17F9` |
-| `G2_EXECUTION_ENVELOPE_V1_CORRECTION` | `ACCEPTED / MERGED / EFFECTIVE` |
-| `G2_EXECUTION_ENVELOPE_V1_CORRECTION_DELTA_AUDIT` | `PASS / 0 BLOCKERS / 0 MAJOR / 0 MINOR` |
-| `G2_FIXTURE_RUNNER_CANDIDATE_V1_AUDIT` | `REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR` |
-| `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_FIXTURE_RUNNER_CANDIDATE_V1_CORRECTION_DELTA_AUDIT` | `REVISION_REQUIRED / 0 BLOCKERS / 3 MAJOR / 0 MINOR` |
-| `G2_RECORD_INTEGRITY_CORRECTION_V1` | `PROPOSED / F1-F3 CORRECTED / INDEPENDENT AUDIT PENDING` |
-| `G2_FIXTURE_RUNNER_IMPLEMENTATION` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_INPUT_BUNDLE_V1` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_PAYLOAD_SNAPSHOTS_V1` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_EXECUTION_MANIFEST_V1` | `PROPOSED / NOT YET ACCEPTED` |
-| `G2_PREFLIGHT_MANIFEST_V1` | `PROPOSED / NOT YET ACCEPTED / NOT_EXECUTED` |
-| `G2_RUNNER_V1` | `PROPOSED / HARNESS_CAPABILITY_UNVERIFIED / EXECUTION_DISABLED` |
-| `G2_FULL_COVERAGE` | `NOT_EXECUTED / UNAUTHORIZED` |
-| `SESSION_ISOLATION_BASELINE` | `NOT_ESTABLISHED` |
-| `ISOLATION_PREFLIGHT_EXECUTED` | `NO` |
-| `ARCHITECTURE_ESCALATION` | `NOT_JUSTIFIED` |
-| `PRODUCTION_IMPLEMENTATION_AUTHORIZED` | `NO` |
+| G1_RESEARCH_EXPANSION | PAUSED; product baseline reached |
+| G2_CONTRACTS | EXECUTABLE_AS_PROVISIONAL_GOLD; no clinician/SP-educator acceptance |
+| G2_1B_ORACLE_CLARIFICATION | ACCEPTED / MERGED / EFFECTIVE |
+| G2_EXECUTION_ENVELOPE_V1 | ACCEPTED / MERGED / EFFECTIVE |
+| G2_FIXTURE_RUNNER_IMPLEMENTATION | PROPOSED / REVIEW_READY / NOT YET ACCEPTED |
+| G2_INPUT_BUNDLE_V1 / G2_PAYLOAD_SNAPSHOTS_V1 / G2_EXECUTION_MANIFEST_V1 | PROPOSED / UNCHANGED / NOT YET ACCEPTED |
+| G2_PREFLIGHT_MANIFEST_V1 | PROPOSED / NOT_EXECUTED / UNAUTHORIZED |
+| G2_RUNNER_V1 | PROPOSED / HARNESS_CAPABILITY_UNVERIFIED / EXECUTION_DISABLED |
+| SESSION_ISOLATION_BASELINE | NOT_ESTABLISHED |
+| ISOLATION_PREFLIGHT_EXECUTED | NO |
+| G2_FULL_COVERAGE | NOT_EXECUTED / UNAUTHORIZED |
+| MODEL_JUDGE | NONE; semantic scorer HUMAN |
+| PROMPT_V0_1_MODIFIED | NO |
+| ARCHITECTURE_ESCALATION | NOT_JUSTIFIED |
+| PRODUCTION_IMPLEMENTATION_AUTHORIZED | NO |
 
-No clinician or SP-educator acceptance has occurred. "Provisional gold" means
-executable as a test oracle, not accepted by a domain expert.
+The demonstrated exhaustion and final scorecard-ID defects are corrected in
+this review diff, with F1-F3 protections retained. The single offline checkpoint
+report owns findings, decisions and actual verification; this is implementation
+self-verification, not independent acceptance.
 
-The structural pre-batch audit is historical evidence. Its
-`REVISION_REQUIRED` findings are resolved by the accepted disposition and the
-accepted corrected v1 envelope. The audited original envelope was a chat-issued
-specification with no repository SHA; this provenance limitation is accepted
-without inventing an auditor identity.
+Execution blockers remain: no accepted real adapter/control bundle, no passing
+authorized preflight, no execution authorization. The actual Paseo/OpenCode path
+still lacks verified fresh physical-session initialization with the exact patient
+system message. Final-output extraction and close semantics also remain unverified.
 
-An independent GitHub-connected read-only delta audit by ChatGPT GPT-5.6 Pro of
-`c02ab75a..1c831494` returned `PASS_AFTER_MINOR_PATCH` with 0 blockers, 0
-major findings, and 3 minor findings. The substantive envelope was found
-structurally acceptable, and the architecture direction remains
-`KEEP_MINIMAL_EXECUTION_DESIGN`.
+Human review questions remain unadjudicated under the accepted G2.1b disposition
+and ambiguity map. Prompt-document limitation 6 is historical commentary:
+accepted reproducible J-T11 alcohol quantity, not discretionary minimisation,
+remains active. The historical 12-call probe is not a provenance-complete
+session-isolation baseline; its corrected results remain in the existing owner.
 
-The exact authorized corrections at `77b17f9` were independently audited by
-ChatGPT GPT-5.6 Pro with verdict `PASS`, 0 blockers, 0 major findings, and 0
-remaining minor findings. Human acceptance is recorded and the corrected
-envelope is merged and effective.
+## Owner links
 
-The accepted envelope retains its proposal-time heading as immutable historical
-context. Its exact accepted byte identity is carried by accepted commit
-`77b17f9a5716e67b7ccaf2c589572cc4b0ea23c4`, merge record
-`f5f2ac2675caa270444b5b0e8223d8cb7fe2f7fd`, and this current-state record.
-Fixture and runner implementation is now eligible under a separate task;
-patient-model execution remains unauthorized.
+All unaccepted tooling, fixtures, manifests and specifications remain pilot-only.
 
-The independent GitHub-connected static/delta audit of fixture/runner candidate
-`f11df66df7fc12a860cc1beac76bcd53685f22f7` returned
-`REVISION_REQUIRED / 1 BLOCKER / 4 MAJOR / 2 MINOR`. Its bounded correction is
-proposed on the candidate branch and is not yet accepted. Target capability for
-the required Gemini-serving harness remains unverified, so the runner remains
-execution-disabled.
+| Owner | Role / class |
+|---|---|
+| docs/pilot/g2.7a/offline-review-checkpoint-v1.md | current implementation report; proposed, not independent audit |
+| tools/pilot/g2_7a/verify_offline.py | one offline entrypoint; candidate-only checks, no authority to execute |
+| tools/pilot/g2_7a/validate_bundle.py | reusable source/bundle integrity |
+| tools/pilot/g2_7a/validate_run_records.py | raw/event integrity and coherent exhaustion |
+| tools/pilot/g2_7a/tests/ | existing standard-library regression suite |
+| tools/pilot/g2_7a/build_bundle.py | unchanged deterministic builder |
+| tools/pilot/g2_7a/runner.py; tools/pilot/g2_7a/transport.py | unchanged disabled runner and fake-only transport |
+| docs/pilot/g2.7a/fixtures/ | proposed frozen prompt/payload/system/preflight bytes |
+| docs/pilot/g2.7a/manifests/input-bundle-v1.json | identity and component-hash owner |
+| docs/pilot/g2.7a/manifests/ | provenance, preflight, execution, ambiguity, criticality |
+| docs/pilot/g2.7a/specs/; docs/pilot/g2.7a/templates/scorecard-v1.csv | proposed raw/event/score specs and unscored template |
+| docs/pilot/g2.7a/transport-capability-v1.md | no-call observations; capability unverified |
+| docs/pilot/sp-system-prompt-v0.1.md | frozen generic prompt |
+| docs/pilot/jaundice-behavior-contract.md; docs/pilot/palpitations-behavior-contract.md | active case truth/knowledge/disclosure |
+| docs/pilot/jaundice-trajectories.md; docs/pilot/palpitations-trajectories.md | active trajectory oracles |
+| docs/pilot/g2-evaluation-spec.md | active scoring/metrics |
+| docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md | accepted control envelope, not execution authorization |
+| docs/pilot/g2.7a/fixture-runner-candidate-v1.md | original implementation evidence |
+| docs/pilot/g2.7a/fixture-runner-candidate-v1-audit.md; docs/pilot/g2.7a/fixture-runner-candidate-v1-audit-disposition.md | preserved first audit/treatment |
+| docs/pilot/g2.7a/fixture-runner-candidate-v1-correction-delta-audit.md | immutable F1-F3 audit, REVISION_REQUIRED at its target |
+| docs/pilot/g2.7a/record-integrity-correction-v1-disposition.md | preserved F1-F3 correction; independent review pending |
+| docs/pilot/g2.7a-execution-envelope-v1-correction-delta-audit.md | accepted envelope audit |
+| docs/pilot/g2-structural-prebatch-disposition.md | accepted pre-batch treatment |
+| docs/pilot/g2.1b-oracle-clarification-disposition.md | accepted semantic treatment and pending human questions |
+| docs/pilot/g2.2-probe-results.md | historical probe and erratum, provenance limitation retained |
+| docs/governance/context-bootstrap-audit-disposition.md | accepted governance treatment |
+| docs/research/g1-product-baseline.md | active research-expansion policy |
 
-The independent local final-state/delta audit of corrected candidate
-`710e6b4b4e7030e25cce1b106401b915a301eb20` returned
-`REVISION_REQUIRED / 0 BLOCKERS / 3 MAJOR / 0 MINOR`. Bundle validation passes
-184 checks and all 40 unit tests pass, but independent full-corpus mutations
-demonstrate remaining session-identity, authoritative-completion, and
-failed-attempt/retry record-validation defects. The detailed findings are owned
-by `docs/pilot/g2.7a/fixture-runner-candidate-v1-correction-delta-audit.md`.
-Conditional acceptance is not activated; no main merge or post-merge transport
-inspection is permitted by that failed acceptance condition. The candidate
-bundle remains proposed, with unchanged input identity
-`sha256:991159fc06f2f135f97422995da029442d79584269c2fc2d10cf33011feed317`.
+## Next permitted action
 
-The later explicit human task authorizes a bounded F1-F3 correction from audit
-checkpoint `3e56e8a47ed3274f76548fc92c6daf5490d8ef39`. Its treatment and
-implementation-session checks are recorded in
-`docs/pilot/g2.7a/record-integrity-correction-v1-disposition.md`: 184 bundle
-checks, 60 unit tests, and rejection of the prior F1/F2 malformed full corpora.
-These are not independent audit results. The correction remains proposed until
-a separate clean-context final-state/delta audit passes with no required findings.
-The user's conditional acceptance/merge authority does not authorize execution.
+External read-only review of this one checkpoint. Use
+`python -B tools/pilot/g2_7a/verify_offline.py` after code/input changes.
+Documentation-only edits need bounded diff, owner-link and secret/path checks,
+not repeated full validation. STATIC_REVIEW_ONLY cannot satisfy the independent
+execution-verification gate.
 
-## Active artifact owners
-
-Pilot and research semantic artifacts below are effective at the recorded pilot
-semantic checkpoint unless separately identified. Governance records belong to
-the separately recorded governance checkpoint. Only the system prompt carries a
-separately pinned byte identity, because it is frozen against a completed probe.
-
-| Path | Role | Class |
-|---|---|---|
-| `docs/pilot/sp-system-prompt-v0.1.md` | generic SP behavioral prompt, frozen | active normative |
-| `docs/pilot/jaundice-behavior-contract.md` | jaundice case truth, knowledge, disclosure eligibility, forbidden set | active normative |
-| `docs/pilot/palpitations-behavior-contract.md` | palpitations case truth, knowledge, disclosure eligibility, forbidden set | active normative |
-| `docs/pilot/jaundice-trajectories.md` | jaundice gold trajectory oracle | active normative |
-| `docs/pilot/palpitations-trajectories.md` | palpitations gold trajectory oracle | active normative |
-| `docs/pilot/g2-evaluation-spec.md` | metrics, scoring rules, provisional thresholds | active normative |
-| `docs/pilot/g2.1a-language-oracle-disposition.md` | accepted treatment of the language and oracle audit | disposition record |
-| `docs/pilot/g2.1a-language-oracle-delta-audit.md` | independent final-state/delta audit of G2.1a | historical audit evidence |
-| `docs/pilot/g2.1b-oracle-clarification-disposition.md` | accepted treatment of the G2.1a delta-audit findings | disposition record |
-| `docs/pilot/g2.1b-oracle-clarification-delta-audit.md` | independent pre-merge delta audit of G2.1b | historical audit evidence |
-| `docs/pilot/g2-structural-prebatch-audit.md` | independent structural pre-batch audit of the chat-issued execution envelope | historical audit evidence |
-| `docs/pilot/g2-structural-prebatch-disposition.md` | accepted treatment of the structural pre-batch audit findings | disposition record |
-| `docs/pilot/g2.7a-isolated-full-coverage-envelope-v1.md` | accepted isolated 58-unit full-coverage execution envelope | active normative execution envelope |
-| `docs/pilot/g2.7a-execution-envelope-v1-delta-audit.md` | independent delta audit of the v1 execution-envelope candidate | historical audit evidence |
-| `docs/pilot/g2.7a-execution-envelope-v1-correction-delta-audit.md` | independent final audit of the authorized v1 correction delta | historical audit evidence |
-| `docs/pilot/g2.7a/fixture-runner-candidate-v1.md` | G2.7a candidate implementation report and validation record | proposed implementation evidence / not accepted |
-| `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit.md` | independent static/delta audit of candidate commit f11df66 | historical audit evidence |
-| `docs/pilot/g2.7a/fixture-runner-candidate-v1-audit-disposition.md` | proposed treatment of the candidate audit findings | proposed disposition / not accepted |
-| `docs/pilot/g2.7a/fixture-runner-candidate-v1-correction-delta-audit.md` | independent local corrected-candidate final-state/delta audit; required findings F1-F3 | immutable historical audit evidence / revision required |
-| `docs/pilot/g2.7a/record-integrity-correction-v1-disposition.md` | authorized F1-F3 treatment and implementation-session evidence | proposed disposition / independent audit pending |
-| `tools/pilot/g2_7a/tests/test_record_integrity.py` | full-corpus F1-F3 adversarial regression tests | proposed pilot-only validation code |
-| `docs/pilot/g2.7a/fixtures/prompt-block-v0.1.txt` | exact canonical transmitted generic prompt block | proposed frozen pilot fixture / not accepted |
-| `docs/pilot/g2.7a/fixtures/jaundice-payload-v1.txt` | jaundice patient payload snapshot | proposed frozen pilot fixture / not accepted |
-| `docs/pilot/g2.7a/fixtures/palpitations-payload-v1.txt` | palpitations patient payload snapshot | proposed frozen pilot fixture / not accepted |
-| `docs/pilot/g2.7a/fixtures/jaundice-system-message-v1.txt` | assembled jaundice system message | proposed frozen pilot fixture / not accepted |
-| `docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt` | assembled palpitations system message | proposed frozen pilot fixture / not accepted |
-| `docs/pilot/g2.7a/fixtures/preflight-system-v1.txt` | neutral isolation-preflight system instruction | proposed frozen pilot fixture / not accepted / not executed |
-| `docs/pilot/g2.7a/fixtures/preflight-session-a-turn-1-v1.txt` | neutral preflight positive-control setup | proposed frozen pilot fixture / not accepted / not executed |
-| `docs/pilot/g2.7a/fixtures/preflight-session-a-turn-2-v1.txt` | neutral preflight positive-control recall | proposed frozen pilot fixture / not accepted / not executed |
-| `docs/pilot/g2.7a/fixtures/preflight-session-b-turn-1-v1.txt` | neutral preflight negative-control recall | proposed frozen pilot fixture / not accepted / not executed |
-| `docs/pilot/g2.7a/manifests/payload-provenance-v1.json` | exact payload source and fact-inventory provenance | proposed pilot manifest / not accepted |
-| `docs/pilot/g2.7a/manifests/preflight-manifest-v1.json` | exact neutral preflight inputs and fail-closed rules | proposed pilot manifest / not accepted / not executed |
-| `docs/pilot/g2.7a/manifests/execution-manifest-v1.json` | 58-unit, 48-execution-unit, 64-call plan | proposed pilot manifest / not accepted |
-| `docs/pilot/g2.7a/manifests/ambiguity-map-v1.json` | accepted predeclared local ambiguity rules | proposed pilot manifest / not accepted |
-| `docs/pilot/g2.7a/manifests/criticality-map-v1.json` | explicit-source-only provisional criticality classification | proposed pilot manifest / not accepted |
-| `docs/pilot/g2.7a/manifests/input-bundle-v1.json` | aggregate candidate input identity | proposed pilot manifest / not accepted |
-| `docs/pilot/g2.7a/specs/raw-response-record-v1.md` | attempted-call raw-record contract | proposed pilot specification / not accepted |
-| `docs/pilot/g2.7a/specs/execution-attempt-event-v1.md` | execution-unit attempt lifecycle event contract | proposed pilot specification / not accepted |
-| `docs/pilot/g2.7a/specs/scorecard-v1.md` | human-only 58-row scorecard contract | proposed pilot specification / not accepted |
-| `docs/pilot/g2.7a/templates/scorecard-v1.csv` | unscored 58-row scorecard template | proposed pilot template / not accepted |
-| `docs/pilot/g2.7a/transport-capability-v1.md` | no-call target transport capability inspection | proposed capability evidence / target harness unverified / not executed |
-| `tools/pilot/g2_7a/build_bundle.py` | deterministic pinned-source bundle builder | proposed pilot tooling / not accepted |
-| `tools/pilot/g2_7a/validate_bundle.py` | deterministic source, bundle, count, and safety validator | proposed pilot tooling / not accepted |
-| `tools/pilot/g2_7a/validate_run_records.py` | deterministic future raw-call, attempt-event, and session validator | proposed pilot tooling / not accepted / no external calls |
-| `tools/pilot/g2_7a/runner.py` | execution-disabled plan/validate runner and retry record logic | proposed pilot tooling / not accepted / execution disabled |
-| `tools/pilot/g2_7a/transport.py` | minimal transport interface and in-memory fake only | proposed pilot tooling / real adapter absent |
-| `tools/pilot/g2_7a/tests/test_bundle.py` | deterministic bundle and accounting tests | proposed pilot test evidence / not accepted |
-| `tools/pilot/g2_7a/tests/test_runner.py` | fake-transport, retry, preservation, and refusal tests | proposed pilot test evidence / not accepted |
-| `tools/pilot/g2_7a/tests/test_run_records.py` | deterministic completed-record/session topology tests | proposed pilot test evidence / not accepted |
-| `docs/pilot/g2.1-contract-review.md` | contract executability review and open expert questions | historical evidence |
-| `docs/pilot/g2.2-probe-plan.md` | historical small-probe execution plan and as-run limitation record | historical evidence |
-| `docs/pilot/g2.2-probe-results.md` | historical small-probe scored dispositions, aggregate results, and erratum; the complete P25 response is preserved, but a complete immutable raw-response corpus was not retained for all 12 calls | historical evidence |
-| `docs/pilot/g2-plan.md` | G2 phase sequence and architecture restraint | active normative |
-| `docs/governance/context-bootstrap-audit-disposition.md` | accepted treatment of the independent context-bootstrap audit | disposition record |
-| `docs/research/g1-product-baseline.md` | product-evidence baseline and research-expansion policy | active normative |
-| `docs/research/g1-status.md` | historical publication-style G1 record, expansion paused | historical evidence |
-
-Frozen system-prompt identity:
-
-- source commit: `997e5200370ee5f5823af4c24b86c5d62f4625ee`
-- SHA-256: `373351AAA9D254E42A88C0DAF209124FEFB3FF59FC59571095345E28EA451D72`
-
-Both were verified against the working file at the effective checkpoint.
-
-Prompt-commentary supersession: the exact generic prompt remains frozen and
-unchanged. **Known limitations** item 6 in the prompt document is non-prompt
-historical commentary from before the G2.1a alcohol correction; it does not
-govern current J-T11 behavior. The active jaundice behavior contract and the
-accepted G2.1a disposition require the reproducible approximate value and no
-discretionary under-reporting. The accepted G2.1b disposition records this
-clarification without changing the prompt file.
-
-## Current evidence and result summary
-
-| Quantity | Value |
-|---|---:|
-| Evidence-matrix candidate records | 54 |
-| Pilot cases | 2 |
-| Jaundice case facts | 25 |
-| Palpitations case facts | 30 |
-| Jaundice trajectories | 28 |
-| Palpitations trajectories | 30 |
-| Total trajectories | 58 |
-| Historical official small-probe calls | 12 |
-
-Corrected small-probe disposition:
-
-| Disposition | Count |
-|---|---:|
-| PASS | 11 |
-| FAIL | 0 |
-| ORACLE_AMBIGUOUS | 1 |
-| EXECUTION_ERROR | 0 |
-
-P25 is the single `ORACLE_AMBIGUOUS` result. The response invented no numerical
-pulse rate, so the exact-rate safety boundary held. Patient-perceived rhythm
-regularity remains unauthored, so the responsible layer is the contract and
-oracle, not the prompt and not the architecture.
-
-Historical provenance limitation: the 12-call exploratory probe predates the
-official raw-output preservation rule. It is executability evidence, not a
-provenance-complete official baseline. Every future official execution must
-freeze complete final responses before scoring. This limits provenance claims
-only; it does not retract the probe's useful conclusions — 11 PASS, 0 FAIL,
-1 `ORACLE_AMBIGUOUS`, 0 `EXECUTION_ERROR`, no numerical pulse invention in P25,
-and minimal architecture still justified.
-
-## Current unresolved human questions
-
-Carried forward from `docs/pilot/g2.1a-language-oracle-disposition.md` and still
-open:
-
-1. Patient-perceived rhythm regularity.
-2. Patient-originated hedged cancer fear.
-3. Whether `황달` is always acceptable as lay symptom language.
-4. Final age and register guidance for both synthetic patients.
-5. Whether alcohol minimisation should later be a separately authored
-   deterministic trajectory.
-6. Whether voluntary herbal disclosure under a generic medication question needs
-   a standardized rule in a future high-stakes station.
-
-Any future output whose scoring depends on one of these must be recorded
-`ORACLE_AMBIGUOUS` rather than forced into PASS or FAIL until it is adjudicated.
-
-Broader clinician and SP-methodology questions remain listed in
-`docs/pilot/g2.1-contract-review.md`.
-
-## Next permitted sequence
-
-The next step is an **independent read-only final-state/delta audit of the
-F1-F3 record-integrity correction in a clean separate context**. Rerun offline
-checks, byte-idempotence, all tests and the prior malformed-corpus reproductions.
-The explicit user task conditionally authorizes acceptance and a no-ff merge
-only after final PASS with zero blockers, zero major findings and no required
-minor findings. Any remaining blocker or major finding stops advancement.
-
-Candidate completion does not authorize the isolation preflight, patient-model
-calls, semantic scoring, or the 58-unit suite. The session-isolation baseline
-remains unestablished and full coverage remains unauthorized. Acceptance and
-any later execution authorization require separate explicit records. Main
-remains unchanged while independent correction audit is pending. No-call
-inspection of the actual target transport may follow only a successful accepted
-merge under the user's task; an adapter is never implicitly accepted.
-
-## Explicitly unauthorized
-
-- Modifying SP system prompt v0.1.
-- Session-isolation preflight, patient-model calls, scoring, or full-suite
-  execution without a separately accepted exact execution authorization.
-- Production schema design or disclosure enum freeze.
-- Any change to cpx-v4.
-- Any change to `CPX_SOURCE_ROOT`.
-- Production scenario dataset migration.
-- SP2D import.
-- Model adjudication of pending SP2D.6 labels.
-- Model or provider comparison, or automatic substitution.
-- Broad G1 literature expansion.
-- Architecture escalation.
-- Merging `design/frontend-v5`.
-- Production deployment.
-
-## Concurrent-work boundary
-
-`design/frontend-v5` is concurrent independent work. Its commits must not be
-mixed into pilot or governance commits, and integrating it requires an explicit
-later task.
+This task authorizes publishing only the review branch: no main merge, adapter,
+runtime substitution, model/provider prompt, preflight, scoring, official run,
+production integration or architecture expansion. Do not infer acceptance from
+passing tests or spawn an unapproved reviewer. Concurrent frontend work, cpx-v4,
+external evidence, production data and schemas remain untouched and outside scope.

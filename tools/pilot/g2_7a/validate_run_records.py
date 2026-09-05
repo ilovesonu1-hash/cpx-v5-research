@@ -70,6 +70,8 @@ class RunRecordValidationResult:
     checks_passed: int = 0
     errors: list[str] = field(default_factory=list)
     authoritative_run_ids_by_scored_unit: dict[str, list[str]] = field(default_factory=dict)
+    exhausted_execution_unit_ids: list[str] = field(default_factory=list)
+    execution_error_scored_unit_ids: list[str] = field(default_factory=list)
 
     def check(self, condition: bool, code: str) -> None:
         if condition:
@@ -380,8 +382,24 @@ def validate_records(
     for (unit, attempt), events in events_by_attempt.items():
         if len(events) == 1 and events[0].get("authoritative_attempt") is True:
             authoritative_event_by_unit.setdefault(unit, []).append((attempt, events[0]))
+    # Record validity is separate from experiment completion. All topology,
+    # prefix and terminal-event checks above still apply to exhausted units.
+    exhausted_units = {
+        unit for unit in required_units
+        if not authoritative_event_by_unit.get(unit)
+        and attempt_indices_by_unit.get(unit) == {1, 2, 3}
+        and all(
+            len(events_by_attempt.get((unit, attempt), [])) == 1
+            and events_by_attempt[(unit, attempt)][0].get("event_type")
+            in {"SESSION_CREATION_FAILED", "ATTEMPT_FAILED", "SESSION_CLOSE_FAILED"}
+            for attempt in (1, 2, 3)
+        )
+    }
     result.check(
-        all(len(authoritative_event_by_unit.get(unit, [])) == 1 for unit in required_units),
+        all(
+            len(authoritative_event_by_unit.get(unit, [])) == 1 or unit in exhausted_units
+            for unit in required_units
+        ),
         "RUN_AUTHORITATIVE_ATTEMPT_COUNT",
     )
 
@@ -389,6 +407,8 @@ def validate_records(
     authoritative_complete = True
     partial_nonauthoritative = True
     for unit_id in required_units:
+        if unit_id in exhausted_units:
+            continue
         authoritative_events = authoritative_event_by_unit.get(unit_id, [])
         if len(authoritative_events) != 1:
             authoritative_complete = False
@@ -438,23 +458,44 @@ def validate_records(
         for scored_id, scored in scored_by_id.items()
         if scored["execution_unit_id"] in required_units
     }
+    execution_error_scored = {
+        scored_id for scored_id in expected_scored
+        if scored_by_id[scored_id]["execution_unit_id"] in exhausted_units
+    }
     result.check(
-        set(result.authoritative_run_ids_by_scored_unit) == expected_scored,
+        set(result.authoritative_run_ids_by_scored_unit) == expected_scored - execution_error_scored,
         "RUN_SCORECARD_EVIDENCE_NOT_DERIVABLE",
     )
     if scorecard_rows is not None:
-        row_by_id = {row.get("scored_unit_id", ""): row for row in scorecard_rows}
-        mapping_matches = True
-        for scored_id in expected_scored:
-            encoded = row_by_id.get(scored_id, {}).get("authoritative_run_ids", "")
-            try:
-                mapping_matches = mapping_matches and json.loads(encoded) == result.authoritative_run_ids_by_scored_unit.get(scored_id)
-            except (json.JSONDecodeError, TypeError):
-                mapping_matches = False
-        result.check(mapping_matches, "RUN_SCORECARD_EVIDENCE_MAPPING_MISMATCH")
+        row_ids = [row.get("scored_unit_id") for row in scorecard_rows]
+        ids_valid = (
+            all(isinstance(scored_id, str) for scored_id in row_ids)
+            and len(row_ids) == len(set(row_ids))
+            and set(row_ids) == expected_scored
+        )
+        result.check(ids_valid, "RUN_SCORECARD_ID_INVENTORY_INVALID")
+        if ids_valid:
+            # Only convert once duplicates, missing and unexpected IDs are rejected.
+            row_by_id = {row["scored_unit_id"]: row for row in scorecard_rows}
+            mapping_matches = True
+            for scored_id in expected_scored:
+                row = row_by_id[scored_id]
+                encoded = row.get("authoritative_run_ids", "")
+                try:
+                    if scored_id in execution_error_scored:
+                        matches = (
+                            row.get("disposition") == "EXECUTION_ERROR"
+                            and (encoded == "" or json.loads(encoded) == [])
+                        )
+                    else:
+                        matches = json.loads(encoded) == result.authoritative_run_ids_by_scored_unit.get(scored_id)
+                    mapping_matches = mapping_matches and matches
+                except (json.JSONDecodeError, TypeError):
+                    mapping_matches = False
+            result.check(mapping_matches, "RUN_SCORECARD_EVIDENCE_MAPPING_MISMATCH")
 
     p29 = result.authoritative_run_ids_by_scored_unit.get("P29")
-    if "P29-STATION-01" in required_units:
+    if "P29-STATION-01" in required_units - exhausted_units:
         result.check(p29 is not None and len(p29) == 6, "RUN_P29_EVIDENCE_COUNT")
     if "P-SEQ-02" in required_units:
         p14_calls = scored_by_id["P14"]["planned_evidence_call_ids"]
@@ -467,6 +508,9 @@ def validate_records(
         )
     if not result.ok:
         result.authoritative_run_ids_by_scored_unit.clear()
+    else:
+        result.exhausted_execution_unit_ids = sorted(exhausted_units)
+        result.execution_error_scored_unit_ids = sorted(execution_error_scored)
     return result
 
 
@@ -521,6 +565,8 @@ def main(argv: list[str] | None = None) -> int:
     summary = {
         "checks_passed": result.checks_passed,
         "errors": result.errors,
+        "exhausted_execution_unit_ids": result.exhausted_execution_unit_ids,
+        "execution_error_scored_unit_ids": result.execution_error_scored_unit_ids,
         "status": "PASS" if result.ok else "FAIL",
     }
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))

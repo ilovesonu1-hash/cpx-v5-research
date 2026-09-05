@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Deterministic validator for the PILOT_ONLY G2.7a candidate bundle."""
+"""Reusable deterministic integrity validator for the PILOT_ONLY G2.7a bundle.
+
+Candidate-only artifact/adapter restrictions belong to verify_offline.py.
+This integrity check neither grants execution permission nor proves isolation.
+"""
 
 from __future__ import annotations
 
-import ast
 import csv
 import hashlib
 import io
@@ -12,7 +15,7 @@ import re
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Iterable, Mapping
+from typing import Any, Callable, Mapping
 
 import build_bundle as builder
 
@@ -57,24 +60,8 @@ def _is_canonical_text_fixture(data: bytes) -> bool:
     return all(not line.endswith((" ", "\t")) for line in text.split("\n"))
 
 
-def _source_imports(path: Path) -> set[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    imports: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imports.update(alias.name.split(".")[0] for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            imports.add(node.module.split(".")[0])
-    return imports
-
-
 def _expected_ids(prefix: str, count: int) -> list[str]:
     return [f"{prefix}{number:02d}" for number in range(1, count + 1)]
-
-
-def _payload_fact_ids(data: bytes, prefix: str) -> list[str]:
-    pattern = re.compile(rf"^({prefix}-T\d{{2}}) \|", re.MULTILINE)
-    return pattern.findall(data.decode("utf-8"))
 
 
 def validate_source_lifetime(
@@ -597,52 +584,6 @@ def _validate_input_bundle(root: Path, report: ValidationReport) -> None:
     report.check(set(components) == required_components, "INPUT_BUNDLE_COMPONENT_INVENTORY")
 
 
-def _validate_safety(root: Path, report: ValidationReport) -> None:
-    base = root / "docs/pilot/g2.7a"
-    forbidden_artifacts = [
-        *base.glob("**/*authorization*.json"),
-        *base.glob("**/*preflight-result*"),
-        *base.glob("**/*.jsonl"),
-        *base.glob("**/*raw-output*"),
-    ]
-    report.check(not forbidden_artifacts, "SAFETY_AUTHORIZATION_OR_RUN_OUTPUT_PRESENT")
-
-    transport_imports = _source_imports(root / "tools/pilot/g2_7a/transport.py")
-    transport_source = (root / "tools/pilot/g2_7a/transport.py").read_text(encoding="utf-8")
-    record_validator_imports = _source_imports(root / "tools/pilot/g2_7a/validate_run_records.py")
-    report.check(
-        not transport_imports.intersection({"subprocess", "socket", "requests", "urllib", "http", "asyncio"}),
-        "SAFETY_FAKE_TRANSPORT_EXTERNAL_CAPABILITY",
-    )
-    report.check(
-        not record_validator_imports.intersection(
-            {"subprocess", "socket", "requests", "urllib", "http", "asyncio"}
-        ),
-        "SAFETY_RUN_RECORD_VALIDATOR_EXTERNAL_CAPABILITY",
-    )
-    runner_source = (root / "tools/pilot/g2_7a/runner.py").read_text(encoding="utf-8")
-    report.check('DEFAULT_COMMAND = "plan"' in runner_source, "SAFETY_RUNNER_DEFAULT_NOT_PLAN")
-    report.check(builder.RUNTIME in runner_source, "SAFETY_RUNTIME_NOT_EXACT")
-    report.check("PREFLIGHT_EXECUTION_NOT_AUTHORIZED" in runner_source, "SAFETY_PREFLIGHT_REFUSAL_MISSING")
-    report.check("PATIENT_MODEL_EXECUTION_NOT_AUTHORIZED" in runner_source, "SAFETY_EXECUTION_REFUSAL_MISSING")
-    report.check(
-        "RealTransport" not in runner_source and "RealTransport" not in transport_source,
-        "SAFETY_REAL_TRANSPORT_ADAPTER_PRESENT",
-    )
-
-    candidate_files = [
-        path
-        for directory in (root / "docs/pilot/g2.7a", root / "tools/pilot/g2_7a")
-        for path in directory.rglob("*")
-        if path.is_file()
-    ]
-    private_path_pattern = re.compile(rb"[A-Za-z]:[\\/](?:Users|Documents and Settings)[\\/]")
-    report.check(
-        all(private_path_pattern.search(path.read_bytes()) is None for path in candidate_files),
-        "SAFETY_PRIVATE_ABSOLUTE_PATH_PRESENT",
-    )
-
-
 def validate_repository(root: Path) -> int:
     report = ValidationReport()
     sources = _validate_sources(root, report)
@@ -657,7 +598,6 @@ def validate_repository(root: Path) -> int:
         _validate_maps(root, report)
         _validate_scorecard(root, report)
         _validate_input_bundle(root, report)
-        _validate_safety(root, report)
     except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
         report.errors.append(f"VALIDATOR_EXCEPTION:{type(exc).__name__}:{exc}")
 

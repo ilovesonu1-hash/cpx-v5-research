@@ -5,6 +5,7 @@ import io
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -303,6 +304,12 @@ class FakeTransportTests(unittest.TestCase):
 
 
 class AuthorizationTests(unittest.TestCase):
+    def test_default_is_plan_with_fixed_runtime(self) -> None:
+        with patch.object(runner, "print_plan", return_value=0) as plan:
+            self.assertEqual(0, runner.main([]))
+        plan.assert_called_once_with()
+        self.assertEqual("google-vertex/gemini-3.7-flash", runner.RUNTIME)
+
     def test_preflight_refusal(self) -> None:
         stream = io.StringIO()
         with contextlib.redirect_stdout(stream):

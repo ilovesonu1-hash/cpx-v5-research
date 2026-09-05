@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import unittest
 
 import test_run_records as fixtures
@@ -262,6 +263,152 @@ class RecordIntegrityTests(unittest.TestCase):
                 )
                 validated = self.validate(calls + result.attempted_call_records, events + result.attempt_events)
                 self.assertTrue(validated.ok, validated.errors)
+
+    def exhausted_corpus(self, unit_id, event_types):
+        calls, events = self.corpus()
+        calls = [row for row in calls if row["execution_unit_id"] != unit_id]
+        events = [row for row in events if row["execution_unit_id"] != unit_id]
+        for attempt, event_type in enumerate(event_types, 1):
+            rows, terminal = self.helper.completed_attempt(unit_id, attempt=attempt)
+            event = terminal[0]
+            event.update(authoritative_attempt=False, event_type=event_type,
+                         execution_error_class="TRANSPORT_FAILURE",
+                         execution_error_message_safe="safe transport failure")
+            if event_type == "SESSION_CREATION_FAILED":
+                rows = []
+                event.update(safe_session_id=None, model_call_created=False)
+            else:
+                if event_type == "ATTEMPT_FAILED":
+                    rows = rows[:2]
+                    rows[-1].update(final_patient_response=None,
+                                    provider_completion_status="execution_error",
+                                    execution_error_class="TRANSPORT_FAILURE",
+                                    execution_error_message_safe="safe transport failure")
+                for row in rows:
+                    row["authoritative_attempt"] = False
+                    if event_type == "SESSION_CLOSE_FAILED":
+                        row["physical_isolation_verified"] = False
+            calls.extend(rows)
+            events.extend(terminal)
+        return calls, events
+
+    def final_scorecard(self, result):
+        return [
+            {"scored_unit_id": scored["scored_unit_id"],
+             "authoritative_run_ids": json.dumps(result.authoritative_run_ids_by_scored_unit.get(scored["scored_unit_id"], [])),
+             "disposition": "EXECUTION_ERROR" if scored["scored_unit_id"] in result.execution_error_scored_unit_ids else ""}
+            for scored in self.helper.manifest["scored_units"]
+        ]
+
+    def test_three_creation_failures_are_valid_execution_error_history(self):
+        for unit, scored_ids in (("J01-SINGLE", ["J01"]), ("P-SEQ-02", ["P14", "P15"]), ("P29-STATION-01", ["P29"])):
+            with self.subTest(unit=unit):
+                calls, events = self.exhausted_corpus(unit, ["SESSION_CREATION_FAILED"] * 3)
+                result = self.validate(calls, events)
+                self.assertTrue(result.ok, result.errors)
+                self.assertEqual([unit], result.exhausted_execution_unit_ids)
+                self.assertEqual(scored_ids, result.execution_error_scored_unit_ids)
+                self.assertEqual(58 - len(scored_ids), len(result.authoritative_run_ids_by_scored_unit))
+                self.assertFalse(any(row["execution_unit_id"] == unit for row in calls))
+
+    def test_three_call_or_close_failures_preserve_all_failed_evidence(self):
+        for event_type in ("ATTEMPT_FAILED", "SESSION_CLOSE_FAILED"):
+            with self.subTest(event_type=event_type):
+                calls, events = self.exhausted_corpus("P29-STATION-01", [event_type] * 3)
+                before = copy.deepcopy((calls, events))
+                result = self.validate(calls, events)
+                self.assertTrue(result.ok, result.errors)
+                self.assertEqual(["P29"], result.execution_error_scored_unit_ids)
+                self.assertNotIn("P29", result.authoritative_run_ids_by_scored_unit)
+                self.assertEqual(before, (calls, events))
+
+    def test_mixed_three_failure_types_are_valid(self):
+        calls, events = self.exhausted_corpus("P-SEQ-02", ["SESSION_CREATION_FAILED", "ATTEMPT_FAILED", "SESSION_CLOSE_FAILED"])
+        result = self.validate(calls, events)
+        self.assertTrue(result.ok, result.errors)
+        self.assertEqual(["P14", "P15"], result.execution_error_scored_unit_ids)
+
+    def test_incomplete_or_over_cap_failure_history_is_invalid(self):
+        for count in (0, 1, 2, 4):
+            with self.subTest(count=count):
+                calls, events = self.exhausted_corpus("J01-SINGLE", ["SESSION_CREATION_FAILED"] * count)
+                result = self.validate(calls, events)
+                self.assertFalse(result.ok)
+                self.assertEqual([], result.exhausted_execution_unit_ids)
+                self.assertEqual({}, result.authoritative_run_ids_by_scored_unit)
+
+    def test_exhaustion_cannot_hide_f1_f2_f3_contradictions(self):
+        for mutation in ("null_session", "reused_session", "false_completed_event", "reversed_prefix", "duplicate_prefix", "missing_event"):
+            with self.subTest(mutation=mutation):
+                calls, events = self.exhausted_corpus("P-SEQ-02", ["ATTEMPT_FAILED"] * 3)
+                rows = [row for row in calls if row["execution_unit_id"] == "P-SEQ-02"]
+                terminal = [row for row in events if row["execution_unit_id"] == "P-SEQ-02"]
+                if mutation == "null_session": rows[0]["safe_session_id"] = None
+                elif mutation == "reused_session":
+                    for row in rows[2:4] + [terminal[1]]: row["safe_session_id"] = rows[0]["safe_session_id"]
+                elif mutation == "false_completed_event": terminal[0]["event_type"] = "ATTEMPT_COMPLETED"
+                elif mutation == "reversed_prefix":
+                    index = calls.index(rows[0]); calls[index:index + 2] = [rows[1], rows[0]]
+                elif mutation == "duplicate_prefix": rows[1]["planned_call_id"] = rows[0]["planned_call_id"]
+                else: events.remove(terminal[0])
+                self.assertFalse(self.validate(calls, events).ok)
+
+    def test_third_success_is_authoritative_not_exhausted(self):
+        calls, events = self.exhausted_corpus("P-SEQ-02", ["SESSION_CREATION_FAILED"] * 2)
+        complete, terminal = self.helper.completed_attempt("P-SEQ-02", attempt=3)
+        result = self.validate(calls + complete, events + terminal)
+        self.assertTrue(result.ok, result.errors)
+        self.assertEqual([], result.exhausted_execution_unit_ids)
+        self.assertEqual([row["run_id"] for row in complete], result.authoritative_run_ids_by_scored_unit["P15"])
+
+    def test_scorecard_ids_rejected_before_dictionary_conversion(self):
+        calls, events = self.corpus()
+        rows = self.final_scorecard(self.validate(calls, events))
+        variants = {
+            "duplicate": rows + [dict(rows[0])],
+            "missing": rows[1:],
+            "unexpected": rows + [{"scored_unit_id": "EXTRA", "authoritative_run_ids": "[]"}],
+            "missing_field": [{}] + rows[1:],
+            "unhashable": [{"scored_unit_id": []}] + rows[1:],
+        }
+        for name, scorecard in variants.items():
+            with self.subTest(name=name):
+                result = validator.validate_records(self.helper.manifest, self.helper.bundle, calls, events, scorecard_rows=scorecard)
+                self.assertFalse(result.ok)
+                self.assertIn("RUN_SCORECARD_ID_INVENTORY_INVALID", result.errors)
+                self.assertEqual({}, result.authoritative_run_ids_by_scored_unit)
+
+    def test_exhausted_scorecard_requires_execution_error_and_no_run_ids(self):
+        calls, events = self.exhausted_corpus("P-SEQ-02", ["SESSION_CREATION_FAILED"] * 3)
+        rows = self.final_scorecard(self.validate(calls, events))
+        for disposition, encoded, expected in (("EXECUTION_ERROR", "[]", True), ("EXECUTION_ERROR", "", True),
+                                                ("PASS", "[]", False), ("", "[]", False),
+                                                ("EXECUTION_ERROR", '["fabricated-run"]', False)):
+            with self.subTest(disposition=disposition, encoded=encoded):
+                scorecard = copy.deepcopy(rows)
+                for row in scorecard:
+                    if row["scored_unit_id"] in {"P14", "P15"}:
+                        row.update(disposition=disposition, authoritative_run_ids=encoded)
+                result = validator.validate_records(self.helper.manifest, self.helper.bundle, calls, events, scorecard_rows=scorecard)
+                self.assertEqual(expected, result.ok, result.errors)
+                self.assertNotIn("P14", result.authoritative_run_ids_by_scored_unit)
+
+    def test_exhausted_fake_runner_result_is_a_valid_error_record(self):
+        unit_id = "P-SEQ-02"
+        calls, events = self.exhausted_corpus(unit_id, [])
+        unit = self.helper.unit_by_id[unit_id]
+        system = (fixtures.ROOT / "docs/pilot/g2.7a/fixtures/palpitations-system-message-v1.txt").read_text(encoding="utf-8")
+        error = TransportError("CREATE_FAILED", "safe creation failure")
+        outcome = runner.run_execution_unit(
+            unit, [self.helper.call_by_id[key] for key in unit["planned_call_ids"]],
+            system, FakeTransport(create_session_outcomes=[error] * 3), self.helper.bundle["input_bundle_id"],
+            physical_isolation_verified=True,
+        )
+        self.assertFalse(outcome.completed)
+        self.assertEqual([], outcome.attempted_call_records)
+        result = self.validate(calls + outcome.attempted_call_records, events + outcome.attempt_events)
+        self.assertTrue(result.ok, result.errors)
+        self.assertEqual(["P14", "P15"], result.execution_error_scored_unit_ids)
 
 
 if __name__ == "__main__":

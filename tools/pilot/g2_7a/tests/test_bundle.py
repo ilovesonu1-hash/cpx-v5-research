@@ -8,7 +8,10 @@ import inspect
 import re
 import sys
 import unittest
+import tempfile
+from contextlib import redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -18,6 +21,7 @@ if str(MODULE_DIR) not in sys.path:
 
 import build_bundle as builder
 import validate_bundle as validator
+import verify_offline
 
 
 class BundleTests(unittest.TestCase):
@@ -35,6 +39,54 @@ class BundleTests(unittest.TestCase):
         self.assertFalse(block.endswith(b"\n"))
         self.assertEqual(53, len(block.splitlines()))
         self.assertNotIn(b"```", block)
+
+    def test_candidate_outputs_do_not_change_reusable_bundle_integrity(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, data in self.outputs.items():
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data)
+            transport = root / "tools/pilot/g2_7a/transport.py"
+            transport.parent.mkdir(parents=True)
+            transport.write_bytes((ROOT / "tools/pilot/g2_7a/transport.py").read_bytes())
+            self.assertEqual([], verify_offline.validate_candidate_snapshot(root).errors)
+            (root / "docs/pilot/g2.7a/temporary-test-records.jsonl").write_text("{}\n", encoding="utf-8")
+            with patch.object(validator, "_validate_sources", return_value=None), redirect_stdout(io.StringIO()):
+                # Git ancestry is tested separately; these temporary files have no Git repo.
+                self.assertEqual(0, validator.validate_repository(root))
+            self.assertIn("CANDIDATE_AUTHORIZATION_OR_RUN_OUTPUT_PRESENT",
+                          verify_offline.validate_candidate_snapshot(root).errors)
+
+    def test_candidate_transport_inventory_is_review_local(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            transport = root / "tools/pilot/g2_7a/transport.py"
+            transport.parent.mkdir(parents=True)
+            transport.write_bytes((ROOT / "tools/pilot/g2_7a/transport.py").read_bytes() + b"\nclass AdditionalAdapter: pass\n")
+            self.assertIn("CANDIDATE_TRANSPORT_TYPE_INVENTORY_CHANGED",
+                          verify_offline.validate_candidate_snapshot(root).errors)
+
+    def test_one_offline_entrypoint_checks_then_tests(self) -> None:
+        report = validator.ValidationReport()
+        test_result = unittest.TestResult()
+        with patch.object(builder, "main", return_value=0) as build, \
+             patch.object(validator, "validate_repository", return_value=0) as validate, \
+             patch.object(verify_offline, "validate_candidate_snapshot", return_value=report), \
+             patch.object(verify_offline, "run_tests", return_value=test_result) as tests, \
+             redirect_stdout(io.StringIO()):
+            self.assertEqual(0, verify_offline.main())
+        build.assert_called_once_with(["--check"])
+        validate.assert_called_once_with(ROOT)
+        tests.assert_called_once_with(ROOT)
+
+    def test_offline_entrypoint_stops_if_builder_check_fails(self) -> None:
+        with patch.object(builder, "main", return_value=1), \
+             patch.object(validator, "validate_repository") as validate, \
+             patch.object(verify_offline, "run_tests") as tests:
+            self.assertEqual(1, verify_offline.main())
+        validate.assert_not_called()
+        tests.assert_not_called()
 
     def test_prompt_block_hash(self) -> None:
         block = builder.extract_prompt_block(self.sources.prompt_document.content)
